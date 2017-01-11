@@ -31,9 +31,45 @@ public strictfp class RobotPlayer {
             case LUMBERJACK:
                 runLumberjack();
                 break;
+            case TANK:
+            	runTank();
+            	break;
+            case SCOUT:
+            	runScout();
+            	break;
         }
 	}
 
+    static void runTank() throws GameActionException
+    {
+    	while (true)
+    	{
+    		try
+    		{
+    			
+    		} catch (Exception e)
+    		{
+    			System.out.println("Tank Exception");
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
+    static void runScout() throws GameActionException
+    {
+    	while (true)
+    	{
+    		try
+    		{
+    			
+    		} catch (Exception e)
+    		{
+    			System.out.println("Scout Exception");
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
     static void runArchon() throws GameActionException {
         System.out.println("I'm an archon!");
 
