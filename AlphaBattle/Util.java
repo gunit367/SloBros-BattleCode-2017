@@ -2,7 +2,6 @@ package AlphaBattle;
 import battlecode.common.*;
 
 public class Util {
-	static RobotController rc;
     /**
      * Returns a random Direction
      * @return a random Direction
@@ -19,8 +18,8 @@ public class Util {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    public static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,20,3);
+    public static boolean tryMove(RobotController rc, Direction dir) throws GameActionException {
+        return tryMove(rc, dir,20,3);
     }
 
     /**
@@ -32,7 +31,7 @@ public class Util {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    public static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+    public static boolean tryMove(RobotController rc, Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
         if (rc.canMove(dir)) {
@@ -70,7 +69,7 @@ public class Util {
      * @param bullet The bullet in question
      * @return True if the line of the bullet's path intersects with this robot's current position.
      */
-    public static boolean willCollideWithMe(BulletInfo bullet) {
+    public static boolean willCollideWithMe(RobotController rc, BulletInfo bullet) {
         MapLocation myLocation = rc.getLocation();
 
         // Get relevant bullet information
