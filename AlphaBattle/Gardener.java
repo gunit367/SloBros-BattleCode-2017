@@ -8,7 +8,7 @@ public class Gardener {
 	
 
 	public Gardener(RobotController rc) {
-		Gardener.rc = rc;
+		Gardener.rc = rc; 
 	}
 	
 	public void run() {
@@ -34,7 +34,7 @@ public class Gardener {
 	                }
 
 	                // Move away from archon
-	                Util.tryMove(archonLoc.directionTo(rc.getLocation()));
+	                Util.tryMove(dir);
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();

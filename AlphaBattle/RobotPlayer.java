@@ -3,7 +3,7 @@ package AlphaBattle;
 import battlecode.common.*;
 
 public strictfp class RobotPlayer {
-    static RobotController rc;
+    public static RobotController rc;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -37,31 +37,66 @@ public strictfp class RobotPlayer {
             	runScout();
             	break;
         }
+        
+        System.out.println("Here");	
 	}
 
     static void runTank() throws GameActionException
     {
-    	Tank t = new Tank(rc);
-    	t.run();
+    	while (true)
+    	{
+    		try
+    		{
+    			
+    		} catch (Exception e)
+    		{
+    			System.out.println("Tank Exception");
+    			e.printStackTrace();
+    		}
+    	}
     }
     
     static void runScout() throws GameActionException
     {
-    	Scout s = new Scout(rc);
-    	s.run();
+    	while (true)
+    	{
+    		try
+    		{
+    			
+    		} catch (Exception e)
+    		{
+    			System.out.println("Scout Exception");
+    			e.printStackTrace();
+    		}
+    	}
     }
     
     static void runArchon() throws GameActionException {
-    	
-    	Archon a = new Archon(rc);
-    	a.run();
+    	try {
+    		System.out.println("Before");
+    		Archon a = new Archon(rc);
+    		a.run();
+    		System.out.println("After");
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
         
     }
 
 	static void runGardener() throws GameActionException {
+<<<<<<< HEAD
        Gardener gardener = new Gardener(rc);
        gardener.run();
        
+=======
+		try {
+			Gardener gardener = new Gardener(rc);
+			gardener.run();
+			System.out.println("THis is a mothafuckin gardena");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+>>>>>>> d2aeda07a65b90f162a79369414714ddebea5ee6
     }
 
     static void runSoldier() throws GameActionException {
