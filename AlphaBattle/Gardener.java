@@ -26,9 +26,7 @@ public class Gardener {
 	            	Direction dir = Util.randomDirection();
 	            	
 	                // Listen for home archon's location
-	                int xPos = rc.readBroadcast(0);
-	                int yPos = rc.readBroadcast(1);
-	                MapLocation archonLoc = new MapLocation(xPos,yPos);
+	                MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 
 	                TreeInfo[] trees = rc.senseNearbyTrees();
 	                TreeInfo tree = null;
