@@ -15,6 +15,7 @@ public class Archon {
 	{
 		// Variable Declarations
 		int farmerCount = 0;
+		int donationCount = 0;
 		Team enemy = rc.getTeam().opponent();
 		
 		System.out.println("I'm an archon!");
@@ -29,9 +30,20 @@ public class Archon {
                 Direction dir = Util.randomDirection();
 
                 // Attempt to build a gardener in this direction, with a max number of gardeners
-                if (rc.canHireGardener(dir) && farmerCount < 6) {
+                if (rc.canHireGardener(dir) && farmerCount < 3)
+                {
                     rc.hireGardener(dir);
                     farmerCount += 1;
+                }
+                else if (farmerCount >= 3 && rc.getTeamBullets() >= 50 && donationCount < 200)
+                {
+                	rc.donate(50);
+                	donationCount += 50;
+                	if(donationCount >= 200)
+                	{
+                		farmerCount = 0;
+                		donationCount = 0;
+                	}
                 }
                 
                 // Look for enemies and move away from them
