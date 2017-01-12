@@ -10,6 +10,15 @@ public class Util {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
 
+    // Needs to be implemented 
+    public static float findDistance(MapLocation location1, MapLocation location2) {
+    	return 0;
+    }
+    
+    // Needs to be implemented 
+    public static Direction getDirectionToLocation(RobotController rc, MapLocation location) {
+    	return rc.getLocation().directionTo(location);
+    }
 
     /**
      * Attempts to move in a given direction, while avoiding small obstacles directly in the path.
