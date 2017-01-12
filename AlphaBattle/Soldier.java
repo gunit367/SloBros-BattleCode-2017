@@ -15,6 +15,7 @@ public class Soldier {
 		System.out.println("I'm an soldier!");
 	    Team enemy = rc.getTeam().opponent();
         RobotInfo archon = null; 
+        MapLocation archonLoc = null; 
 
 	    // The code you want your robot to perform every round should be in this loop
 	    while (true) {
@@ -29,7 +30,7 @@ public class Soldier {
                 
                 int xPos = rc.readBroadcast(0);
                 int yPos = rc.readBroadcast(1);
-                MapLocation archonLoc = new MapLocation(xPos,yPos);
+                archonLoc = new MapLocation(xPos,yPos);
                 if (archonLoc != null && rc.canSenseLocation(archonLoc)) {
                 	archon = rc.senseRobotAtLocation(archonLoc);
                 }
@@ -58,9 +59,11 @@ public class Soldier {
                     }
                 }
 
-                if (archon != null) {
+                if (archon != null && archon.health > 0) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
-                } else {
+                } else if (archonLoc != null) {
+                	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
+                } else { 
                 	// Move randomly
                     Util.tryMove(rc, Util.randomDirection());
                 }
