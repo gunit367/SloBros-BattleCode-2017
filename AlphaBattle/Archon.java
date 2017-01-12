@@ -33,13 +33,6 @@ public class Archon {
                 MapLocation myLocation = rc.getLocation();
                 rc.broadcast(0,(int)myLocation.x);
                 rc.broadcast(1,(int)myLocation.y);
-
-                System.out.println("BULLET COUNT: " + rc.getTeamBullets());
-                if (rc.getTeamBullets() > 200.0) {
-                	rc.donate(20);
-                }
-                
-                Util.tryMove(rc, dir);
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
