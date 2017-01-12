@@ -1,12 +1,10 @@
 package AlphaBattle;
 
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotType;
+import battlecode.common.*;
+
 
 public class Gardener {
-	
+	static RobotController rc; 
 	
 
 	public Gardener() {
@@ -24,7 +22,7 @@ public class Gardener {
 	            try {
 
 	            	// Get Random Direction
-	            	Direction dir = randomDirection();
+	            	Direction dir = Util.randomDirection();
 	            	
 	                // Listen for home archon's location
 	                int xPos = rc.readBroadcast(0);
@@ -37,7 +35,7 @@ public class Gardener {
 	                }
 
 	                // Move away from archon
-	                tryMove(archonLoc.directionTo(rc.getLocation()));
+	                Util.tryMove(archonLoc.directionTo(rc.getLocation()));
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();
