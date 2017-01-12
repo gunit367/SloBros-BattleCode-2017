@@ -70,7 +70,18 @@ public strictfp class RobotPlayer {
     }
     
     static void runArchon() throws GameActionException {
-        System.out.println("I'm an archon!");
+    	
+    	Archon a = new Archon(rc);
+    	a.run();
+        
+    }
+
+	static void runGardener() throws GameActionException {
+<<<<<<< HEAD
+       Gardener gardener = new Gardener();
+       gardener.run();
+=======
+        System.out.println("I'm a gardener!");
 
         // The code you want your robot to perform every round should be in this loop
         while (true) {
@@ -78,37 +89,31 @@ public strictfp class RobotPlayer {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
 
-                // Generate a random direction
-                Direction dir = randomDirection();
+            	// Get Random Direction
+            	Direction dir = Util.randomDirection();
+            	
+                // Listen for home archon's location
+                int xPos = rc.readBroadcast(0);
+                int yPos = rc.readBroadcast(1);
+                MapLocation archonLoc = new MapLocation(xPos,yPos);
 
-                // Attempt to build a gardener in this direction
-                if (rc.canHireGardener(dir)) {
-                    rc.hireGardener(dir);
+                //Attempt to build a lumberjack in this direction
+                if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && rc.isBuildReady()) {
+                    rc.buildRobot(RobotType.LUMBERJACK, dir);
                 }
 
-                // Broadcast archon's location for other robots on the team to know
-                MapLocation myLocation = rc.getLocation();
-                rc.broadcast(0,(int)myLocation.x);
-                rc.broadcast(1,(int)myLocation.y);
+                // Move away from archon
+                tryMove(archonLoc.directionTo(rc.getLocation()));
 
-                System.out.println("BULLET COUNT: " + rc.getTeamBullets());
-                if (rc.getTeamBullets() > 200.0) {
-                	rc.donate(20);
-                }
-                
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
 
             } catch (Exception e) {
-                System.out.println("Archon Exception");
+                System.out.println("Gardener Exception");
                 e.printStackTrace();
             }
         }
-    }
-
-	static void runGardener() throws GameActionException {
-       Gardener gardener = new Gardener();
-       gardener.run();
+>>>>>>> f2269dde64189c052ef16f39844c8237c6d8cefb
     }
 
     static void runSoldier() throws GameActionException {
@@ -135,7 +140,7 @@ public strictfp class RobotPlayer {
                 }
 
                 // Move randomly
-                tryMove(randomDirection());
+                tryMove(Util.randomDirection());
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
@@ -180,7 +185,7 @@ public strictfp class RobotPlayer {
                         tryMove(toEnemy);
                     } else {
                         // Move Randomly
-                        tryMove(randomDirection());
+                        tryMove(Util.randomDirection());
                     }
                 }
 
@@ -194,6 +199,7 @@ public strictfp class RobotPlayer {
         }
     }
 
+<<<<<<< HEAD
     /**
      * Returns a random Direction
      * @return a random Direction
@@ -201,6 +207,8 @@ public strictfp class RobotPlayer {
     public static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
+=======
+>>>>>>> f2269dde64189c052ef16f39844c8237c6d8cefb
 
     /**
      * Attempts to move in a given direction, while avoiding small obstacles directly in the path.
@@ -209,7 +217,7 @@ public strictfp class RobotPlayer {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    static boolean tryMove(Direction dir) throws GameActionException {
+    public static boolean tryMove(Direction dir) throws GameActionException {
         return tryMove(dir,20,3);
     }
 
@@ -222,7 +230,7 @@ public strictfp class RobotPlayer {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+    public static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
         if (rc.canMove(dir)) {
@@ -260,7 +268,7 @@ public strictfp class RobotPlayer {
      * @param bullet The bullet in question
      * @return True if the line of the bullet's path intersects with this robot's current position.
      */
-    static boolean willCollideWithMe(BulletInfo bullet) {
+    public static boolean willCollideWithMe(BulletInfo bullet) {
         MapLocation myLocation = rc.getLocation();
 
         // Get relevant bullet information
