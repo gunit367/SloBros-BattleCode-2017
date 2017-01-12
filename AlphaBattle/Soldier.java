@@ -53,6 +53,7 @@ public class Soldier {
                     }
                 }
                 
+                
                 if(archon == null && archonLoc == null)
                 {
                 	// Move randomly
