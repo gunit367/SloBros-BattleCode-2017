@@ -58,14 +58,16 @@ public class Soldier {
                         rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
                     }
                 }
-
+                
+                if(archon == null)
+                {
+                	// Move randomly
+                    Util.tryMove(rc, Util.randomDirection());
+                }
                 if (archon != null && archon.health > 0) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
                 } else if (archonLoc != null) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
-                } else { 
-                	// Move randomly
-                    Util.tryMove(rc, Util.randomDirection());
                 }
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
