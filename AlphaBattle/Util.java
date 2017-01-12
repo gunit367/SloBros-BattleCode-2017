@@ -3,7 +3,7 @@ import battlecode.common.*;
 
 public class Util {
 	static RobotController rc; 
-
+	
     /**
      * Returns a random Direction
      * @return a random Direction

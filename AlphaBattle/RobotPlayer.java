@@ -3,7 +3,7 @@ package AlphaBattle;
 import battlecode.common.*;
 
 public strictfp class RobotPlayer {
-    static RobotController rc;
+    public static RobotController rc;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -37,6 +37,8 @@ public strictfp class RobotPlayer {
             	runScout();
             	break;
         }
+        
+        System.out.println("Here");	
 	}
 
     static void runTank() throws GameActionException
@@ -70,15 +72,25 @@ public strictfp class RobotPlayer {
     }
     
     static void runArchon() throws GameActionException {
-    	
-    	Archon a = new Archon(rc);
-    	a.run();
+    	try {
+    		System.out.println("Before");
+    		Archon a = new Archon(rc);
+    		a.run();
+    		System.out.println("After");
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
         
     }
 
 	static void runGardener() throws GameActionException {
-       Gardener gardener = new Gardener();
-       gardener.run();
+		try {
+			Gardener gardener = new Gardener(rc);
+			gardener.run();
+			System.out.println("THis is a mothafuckin gardena");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     static void runSoldier() throws GameActionException {
@@ -87,49 +99,6 @@ public strictfp class RobotPlayer {
     }
 
     static void runLumberjack() throws GameActionException {
-        System.out.println("I'm a lumberjack!");
-        Team enemy = rc.getTeam().opponent();
-        
-
-        // The code you want your robot to perform every round should be in this loop
-        while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
-            try {
-
-                // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-                RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
-                TreeInfo[] trees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS);
-                
-                if(robots.length > 0 && !rc.hasAttacked()) {
-                    // Use strike() to hit all nearby robots!
-                    rc.strike();
-                } else if(trees.length > 0) {
-                	rc.strike();
-                }else {
-                    // No close robots or trees, so search for robots within sight radius
-                    robots = rc.senseNearbyRobots(-1,enemy);
-
-                    // If there is a robot, move towards it
-                    if(robots.length > 0) {
-                        MapLocation myLocation = rc.getLocation();
-                        MapLocation enemyLocation = robots[0].getLocation();
-                        Direction toEnemy = myLocation.directionTo(enemyLocation);
-
-                        Util.tryMove(toEnemy);
-                    } else {
-                        // Move Randomly
-                        Util.tryMove(Util.randomDirection());
-                    }
-                }
-
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
-
-            } catch (Exception e) {
-                System.out.println("Lumberjack Exception");
-                e.printStackTrace();
-            }
-        }
+    	
     }
 }

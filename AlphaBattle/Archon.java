@@ -7,6 +7,7 @@ public class Archon {
 	
 	public Archon(RobotController rc)
 	{
+		System.out.println("HERE");
 		Archon.rc = rc;
 	}
 	
