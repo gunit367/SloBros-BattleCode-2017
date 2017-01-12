@@ -4,9 +4,9 @@ import battlecode.common.*;
 public class Soldier {
 	static RobotController rc;
 	
-	public Soldier()
+	public Soldier(RobotController rc)
 	{
-		
+		Soldier.rc = rc;
 	}
 	
 	public void run()
@@ -20,7 +20,7 @@ public class Soldier {
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
-                MapLocation myLocation = rc.getLocation();
+                //MapLocation myLocation = rc.getLocation();
 
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);

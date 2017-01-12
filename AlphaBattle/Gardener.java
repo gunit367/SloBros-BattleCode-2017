@@ -7,9 +7,8 @@ public class Gardener {
 	static RobotController rc; 
 	
 
-	public Gardener() {
-		
-		
+	public Gardener(RobotController rc) {
+		Gardener.rc = rc;
 	}
 	
 	public void run() {

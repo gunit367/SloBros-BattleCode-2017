@@ -8,9 +8,8 @@ public class Lumberjack {
 	static RobotController rc; 
 	
 	
-	public Lumberjack() {
-		
-		
+	public Lumberjack(RobotController rc) {
+		Lumberjack.rc = rc;
 	}
 	
 	public void run() {
