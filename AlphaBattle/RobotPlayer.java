@@ -61,6 +61,7 @@ public strictfp class RobotPlayer {
 	static void runGardener() throws GameActionException {
        Gardener gardener = new Gardener(rc);
        gardener.run();
+       
     }
 
     static void runSoldier() throws GameActionException {
