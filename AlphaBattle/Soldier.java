@@ -3,6 +3,7 @@ import battlecode.common.*;
 
 public class Soldier {
 	static RobotController rc;
+	
 	public Soldier()
 	{
 		
