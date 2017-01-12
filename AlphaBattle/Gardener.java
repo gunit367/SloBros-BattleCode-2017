@@ -34,7 +34,7 @@ public class Gardener {
 	                }
 
 	                // Move away from archon
-	                Util.tryMove(rc, dir);
+	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();
