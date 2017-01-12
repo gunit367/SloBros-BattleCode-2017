@@ -1,5 +1,5 @@
 package examplefuncsplayer;
-import AlphaBattle.Soldier;
+
 import battlecode.common.*;
 
 

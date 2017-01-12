@@ -36,8 +36,8 @@ public class Soldier {
 	            // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	            Clock.yield();
 	            
-	            //Move
-	            //use Grant's 'util' class
+	            // Move
+	            //   use Grant's 'util' class
 
 	        } catch (Exception e) {
 	            System.out.println("Soldier Exception");
