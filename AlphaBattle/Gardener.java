@@ -4,8 +4,10 @@ import battlecode.common.*;
 
 
 public class Gardener {
-	static RobotController rc; 
+	static RobotController rc;
 	
+	public static final int SHAKE_AMT = 0;
+	public static final float NORTH = (float) 1.5708;
 
 	public Gardener(RobotController rc) {
 		Gardener.rc = rc; 
@@ -107,7 +109,22 @@ public class Gardener {
 	
 	// Water given tree
 	public void waterTree(TreeInfo tree) {
-		
+		if (rc.canWater() && rc.canWater(tree.ID))
+		{
+			try {
+				// Attempt to water given tree
+				rc.water(tree.ID);
+			} catch (GameActionException e) {
+				// ERROR: watering failed
+			   System.out.println("ERROR: watering tree failed!");
+			   e.printStackTrace();
+			}
+		}
+		else
+		{
+			// Cannot water the tree OR tree has already been watered
+			System.out.println("I cannot water this tree! - Gardener");
+		}
 	}
 	
 	// Plants a tree behind the robot
@@ -115,7 +132,11 @@ public class Gardener {
 		Direction dir = Util.randomDirection();
 		if (rc.canPlantTree(Util.randomDirection())) {
 			rc.plantTree(dir);
-			
+		}
+		else
+		{
+			// Cannot plant tree
+			System.out.println("I cannot plant this tree! - Gardener");
 		}
 	}
 
@@ -126,11 +147,41 @@ public class Gardener {
 	
 	// Shakes the given tree
 	public void shakeTree(TreeInfo tree) {
-		
+		if (rc.canShake(tree.ID) && tree.containedBullets > SHAKE_AMT)
+		{
+			try {
+				// Attempt to shake given tree
+				rc.shake(tree.ID);
+			} catch (GameActionException e) {
+				// ERROR: shaking failed
+				System.out.println("ERROR: shaking tree failed!");
+				e.printStackTrace();
+			}
+		}
+		else 
+		{
+			// Robot cannot shake OR bullets < SHAKE_AMT
+			System.out.println("I cannot shake this tree! - Gardener");
+		}
 	}
 	
 	// Deploys a robot given 
-	public void delpoyRobot(RobotType type) {
-		
+	public void deployRobot(RobotType type) {
+		Direction dir = new Direction(NORTH);
+		if (rc.canBuildRobot(type, dir))
+		{
+			try {
+				rc.buildRobot(type, dir);
+			} catch (GameActionException e) {
+				// ERROR: deployment failed
+				System.out.println("ERROR: buildRobot failed!");
+				e.printStackTrace();
+			}
+		}
+		else 
+		{
+		   // Robot cannot build this robot
+		   System.out.println("I cannot deploy this robot! - Gardener");
+		}
 	}
 }
