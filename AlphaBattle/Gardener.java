@@ -8,7 +8,7 @@ public class Gardener {
 	
 
 	public Gardener(RobotController rc) {
-		this.rc = rc; 
+		Gardener.rc = rc; 
 	}
 	
 	public void run() {

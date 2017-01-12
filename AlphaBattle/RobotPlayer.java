@@ -94,7 +94,7 @@ public strictfp class RobotPlayer {
     }
 
     static void runSoldier() throws GameActionException {
-        Soldier soldier = new Soldier();
+        Soldier soldier = new Soldier(rc);
         soldier.run();
     }
 
