@@ -32,6 +32,7 @@ public class Archon {
                 // Attempt to build a gardener in this direction, with a max number of gardeners
                 if (rc.canHireGardener(dir) && farmerCount < 3)
                 {
+                	System.out.println("Hiring Gardener");
                     rc.hireGardener(dir);
                     farmerCount += 1;
                 }

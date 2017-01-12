@@ -28,21 +28,18 @@ public class Soldier {
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
                 
                 
-                int xPos = rc.readBroadcast(0);
-                int yPos = rc.readBroadcast(1);
-                System.out.println("Read Archon pos at" + xPos + " " + yPos);
-                archonLoc = new MapLocation(xPos,yPos);
+                //int xPos = rc.readBroadcast(0);
+                //int yPos = rc.readBroadcast(1);
                 if (archonLoc != null && rc.canSenseLocation(archonLoc)) {
                 	archon = rc.senseRobotAtLocation(archonLoc);
                 }
                 
-                System.out.println("Looking for Archons.");
                 for (int i = 0; i < robots.length; i++) {
                 	if (robots[i].type == RobotType.ARCHON) {
                 		archon = robots[i];
-                		
+                		archonLoc = archon.location;
                 		rc.broadcast(0,(int)archon.location.x);
-                        rc.broadcast(1,(int)archon.location.y);	
+                        rc.broadcast(1,(int)archon.location.y);
                 	}
                 }
                 
@@ -56,12 +53,12 @@ public class Soldier {
                     }
                 }
                 
-                if(archon == null)
+                if(archon == null && archonLoc == null)
                 {
                 	// Move randomly
                     Util.tryMove(rc, Util.randomDirection());
                 }
-                else if (archon != null && archon.health > 0) {
+                else if (archon.health > 0) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
                 } else if (archonLoc != null) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
