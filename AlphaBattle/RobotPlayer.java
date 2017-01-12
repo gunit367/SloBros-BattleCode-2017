@@ -107,38 +107,8 @@ public strictfp class RobotPlayer {
     }
 
 	static void runGardener() throws GameActionException {
-        System.out.println("I'm a gardener!");
-
-        // The code you want your robot to perform every round should be in this loop
-        while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
-            try {
-
-            	// Get Random Direction
-            	Direction dir = randomDirection();
-            	
-                // Listen for home archon's location
-                int xPos = rc.readBroadcast(0);
-                int yPos = rc.readBroadcast(1);
-                MapLocation archonLoc = new MapLocation(xPos,yPos);
-
-                //Attempt to build a lumberjack in this direction
-                if (rc.canBuildRobot(RobotType.LUMBERJACK, dir) && rc.isBuildReady()) {
-                    rc.buildRobot(RobotType.LUMBERJACK, dir);
-                }
-
-                // Move away from archon
-                tryMove(archonLoc.directionTo(rc.getLocation()));
-
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
-
-            } catch (Exception e) {
-                System.out.println("Gardener Exception");
-                e.printStackTrace();
-            }
-        }
+       Gardener gardener = new Gardener();
+       gardener.run();
     }
 
     static void runSoldier() throws GameActionException {
@@ -228,7 +198,7 @@ public strictfp class RobotPlayer {
      * Returns a random Direction
      * @return a random Direction
      */
-    static Direction randomDirection() {
+    public static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
 
