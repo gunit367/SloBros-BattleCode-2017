@@ -37,66 +37,28 @@ public strictfp class RobotPlayer {
             	runScout();
             	break;
         }
-        
-        System.out.println("Here");	
 	}
 
     static void runTank() throws GameActionException
     {
-    	while (true)
-    	{
-    		try
-    		{
-    			
-    		} catch (Exception e)
-    		{
-    			System.out.println("Tank Exception");
-    			e.printStackTrace();
-    		}
-    	}
+    	Tank t = new Tank(rc);
+    	t.run();
     }
     
     static void runScout() throws GameActionException
     {
-    	while (true)
-    	{
-    		try
-    		{
-    			
-    		} catch (Exception e)
-    		{
-    			System.out.println("Scout Exception");
-    			e.printStackTrace();
-    		}
-    	}
+    	Scout s = new Scout(rc);
+    	s.run();
     }
     
     static void runArchon() throws GameActionException {
-    	try {
-    		System.out.println("Before");
-    		Archon a = new Archon(rc);
-    		a.run();
-    		System.out.println("After");
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-        
+    	Archon a = new Archon(rc);
+    	a.run();
     }
 
 	static void runGardener() throws GameActionException {
-<<<<<<< HEAD
        Gardener gardener = new Gardener(rc);
        gardener.run();
-       
-=======
-		try {
-			Gardener gardener = new Gardener(rc);
-			gardener.run();
-			System.out.println("THis is a mothafuckin gardena");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
->>>>>>> d2aeda07a65b90f162a79369414714ddebea5ee6
     }
 
     static void runSoldier() throws GameActionException {
