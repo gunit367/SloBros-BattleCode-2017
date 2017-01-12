@@ -84,11 +84,6 @@ public strictfp class RobotPlayer {
     }
 
 	static void runGardener() throws GameActionException {
-<<<<<<< HEAD
-       Gardener gardener = new Gardener(rc);
-       gardener.run();
-       
-=======
 		try {
 			Gardener gardener = new Gardener(rc);
 			gardener.run();
@@ -96,7 +91,6 @@ public strictfp class RobotPlayer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
->>>>>>> d2aeda07a65b90f162a79369414714ddebea5ee6
     }
 
     static void runSoldier() throws GameActionException {
