@@ -39,7 +39,7 @@ public class Archon {
                 	rc.donate(20);
                 }
                 
-                Util.tryMove(dir);
+                Util.tryMove(rc, dir);
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();

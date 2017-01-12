@@ -42,10 +42,10 @@ public class Lumberjack {
                         MapLocation enemyLocation = robots[0].getLocation();
                         Direction toEnemy = myLocation.directionTo(enemyLocation);
 
-                        Util.tryMove(toEnemy);
+                        Util.tryMove(rc, toEnemy);
                     } else {
                         // Move Randomly
-                        Util.tryMove(Util.randomDirection());
+                        Util.tryMove(rc, Util.randomDirection());
                     }
                 }
 
