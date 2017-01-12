@@ -21,7 +21,7 @@ public class Archon {
             try {
 
                 // Generate a random direction
-                Direction dir = RobotPlayer.randomDirection();
+                Direction dir = Util.randomDirection();
 
                 // Attempt to build a gardener in this direction
                 if (rc.canHireGardener(dir)) {
