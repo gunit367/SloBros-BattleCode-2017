@@ -12,13 +12,12 @@ public class Util {
 
     // Needs to be implemented 
     public static float findDistance(MapLocation location1, MapLocation location2) {
-    	return 0; 
+    	return 0;
     }
     
     // Needs to be implemented 
-    public static Direction GetDirectionToLocation(RobotController rc, MapLocation location) {
-    	return null; 
-    	
+    public static Direction getDirectionToLocation(RobotController rc, MapLocation location) {
+    	return rc.getLocation().directionTo(location);
     }
 
     /**
