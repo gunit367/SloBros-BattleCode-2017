@@ -14,6 +14,7 @@ public class Soldier {
 		//helper functions: isEnemyClose(), getEnemyLocation(), shoot(location), 
 		System.out.println("I'm an soldier!");
 	    Team enemy = rc.getTeam().opponent();
+        RobotInfo archon = null; 
 
 	    // The code you want your robot to perform every round should be in this loop
 	    while (true) {
@@ -24,7 +25,30 @@ public class Soldier {
 
                 // See if there are any nearby enemy robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
+                
+                
+                int xPos = rc.readBroadcast(0);
+                int yPos = rc.readBroadcast(1);
+                MapLocation archonLoc = new MapLocation(xPos,yPos);
+                if (archonLoc != null && rc.canSenseLocation(archonLoc)) {
+                	archon = rc.senseRobotAtLocation(archonLoc);
+                }
+                
 
+                if (archon == null) {
+                	for (int i = 0; i < robots.length; i++) {
+                		if (robots[i].type == RobotType.ARCHON) {
+                			archon = robots[i];
+                			
+                			rc.broadcast(0,(int)archon.location.x);
+                            rc.broadcast(1,(int)archon.location.y);
+                			
+                		}
+                	
+                	}
+                }
+                
+                
                 // If there are some...
                 if (robots.length > 0) {
                     // And we have enough bullets, and haven't attacked yet this turn...
@@ -34,9 +58,17 @@ public class Soldier {
                     }
                 }
 
-                // Move randomly
-                Util.tryMove(rc, Util.randomDirection());
-
+                if (archon != null) {
+                	try {
+                		rc.move(archon.location);
+                	} catch (Exception e) {
+                		
+                	}
+                } else {
+                	// Move randomly
+                    Util.tryMove(rc, Util.randomDirection());
+                }
+                
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
 
