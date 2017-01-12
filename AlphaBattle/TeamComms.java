@@ -5,6 +5,7 @@ import battlecode.common.*;
 
 public class TeamComms {
 
+	// Friendly Team Information
 	// Friendly Team Archon Location: Channels 0 and 1
 	public static final int archonX = 0;
 	public static final int archonY = 1;
@@ -16,13 +17,98 @@ public class TeamComms {
 	public static final int numScouts = 5;
 	public static final int numTanks = 6;
 	
-	//
+	
+	// Enemy Team Information: Starting at Channel 500
+	public static final int oppArchonX = 500;
+	public static final int oppArchonY = 501;
 	
 	
+	// Communication Functions
+	// Friendly Archon Location
 	public static MapLocation getArchonLoc(RobotController rc) throws GameActionException
 	{
 		int x = rc.readBroadcast(archonX);
 		int y = rc.readBroadcast(archonY);
+		return new MapLocation(x,y);
+	}
+	
+	public static void broadcastArchonLoc(RobotController rc, MapLocation l) throws GameActionException
+	{
+		if(rc.getType() == RobotType.ARCHON)
+		{
+			rc.broadcast(archonX, (int)l.x);
+			rc.broadcast(archonY, (int) l.y);
+		}
+	}
+	
+	
+	// Friendly Team Counts
+	// Gardener Counts
+	public static int getGardeners(RobotController rc) throws GameActionException
+	{
+		return rc.readBroadcast(numGardeners);
+	}
+	
+	public static void updateGardeners(RobotController rc, int n) throws GameActionException
+	{
+		rc.broadcast(numGardeners, n);
+	}
+	
+	// Soldier Counts
+	public static int getSoldiers(RobotController rc, int n) throws GameActionException
+	{
+		return rc.readBroadcast(numSoldiers);
+	}
+	
+	public static void updateSoldiers(RobotController rc, int n) throws GameActionException
+	{
+		rc.broadcast(numSoldiers, n);
+	}
+	
+	// Scouts Counts
+	public static int getScouts(RobotController rc, int n) throws GameActionException
+	{
+		return rc.readBroadcast(numScouts);
+	}
+	
+	public static void updateScouts(RobotController rc, int n) throws GameActionException
+	{
+		rc.broadcast(numScouts, n);
+	}
+	
+	// Lumberjack Counts
+	public static int getLumberjacks(RobotController rc, int n) throws GameActionException
+	{
+		return rc.readBroadcast(numLumberjacks);
+	}
+	
+	public static void updateLumberjacks(RobotController rc, int n) throws GameActionException
+	{
+		rc.broadcast(numLumberjacks, n);
+	}
+	
+	// Tank Counts
+	public static int getTanks(RobotController rc, int n) throws GameActionException
+	{
+		return rc.readBroadcast(numTanks);
+	}
+	
+	public static void updateTanks(RobotController rc, int n) throws GameActionException
+	{
+		rc.broadcast(numTanks, n);
+	}
+	
+	// Last Known Enemy Archon Location
+	public static void broadcastOppArchon(RobotController rc, MapLocation l) throws GameActionException
+	{
+		rc.broadcast(oppArchonX, (int) l.x);
+		rc.broadcast(oppArchonY, (int) l.y);
+	}
+	
+	public static MapLocation getOppArchonLoc(RobotController rc) throws GameActionException
+	{
+		int x = rc.readBroadcast(oppArchonX);
+		int y = rc.readBroadcast(oppArchonY);
 		return new MapLocation(x,y);
 	}
 	

@@ -59,7 +59,7 @@ public class Soldier {
                 	// Move randomly
                     Util.tryMove(rc, Util.randomDirection());
                 }
-                else if (archon.health > 0) {
+                else if (archon != null) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
                 } else if (archonLoc != null) {
                 	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
