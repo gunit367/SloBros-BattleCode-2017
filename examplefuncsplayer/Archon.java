@@ -1,4 +1,4 @@
-package AlphaBattle;
+package examplefuncsplayer;
 import battlecode.common.*;
 
 public class Archon {
