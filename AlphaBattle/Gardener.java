@@ -71,17 +71,13 @@ public class Gardener {
 	
 	// The Logic for a given turn
 	public void logic() throws GameActionException {
-		System.out.println("Num gardeners: " + TeamComms.getGardeners(rc));
 		if (TeamComms.getGardeners(rc) == 1) {
-			System.out.println("First gardener... Starting logic");
-			float x = rc.readBroadcast(0);
-			float y = rc.readBroadcast(1);
-			MapLocation archonLoc = new MapLocation(x, y);
+			MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+			MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
 			
-			x = rc.readBroadcast(500);
-			y = rc.readBroadcast(501);
-			MapLocation enemyArchonLoc = new MapLocation(x, y);
 			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
+		} else {
+			deployRobot(RobotType.TANK);
 		}
 	}
 	
@@ -182,12 +178,27 @@ public class Gardener {
 		boolean moveRight = false; 
 		boolean createWall = false; 
 		
+		int numTrees = 0;
+		int moves = 0;
+		
 		MapLocation sideOne = location.add(dirToEnemy.rotateLeftDegrees(90), 5);
+		Direction dirBehind = dirToEnemy.rotateLeftDegrees(90);
 
 		while (working) {
 			
 			if (createWall) {
+				if (rc.canPlantTree(dirBehind)) {
+					rc.plantTree(dirBehind);
+					numTrees++;
+					moves = 0; 
+				} else if (rc.canMove(dirBehind.rotateLeftDegrees(180)) && moves < 3) {
+					rc.move(dirBehind.rotateLeftDegrees(180));
+					moves++;
+				} 
 				
+				if (numTrees > 5) {
+					working = false; 
+				}
 				
 			} else if (moveRight) {
 				if (rc.getLocation().equals(sideOne)) {

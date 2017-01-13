@@ -182,12 +182,27 @@ public class Gardener {
 		boolean moveRight = false; 
 		boolean createWall = false; 
 		
+		int numTrees = 0;
+		int moves = 0;
+		
 		MapLocation sideOne = location.add(dirToEnemy.rotateLeftDegrees(90), 5);
+		Direction dirBehind = dirToEnemy.rotateLeftDegrees(90);
 
 		while (working) {
 			
 			if (createWall) {
+				if (rc.canPlantTree(dirBehind)) {
+					rc.plantTree(dirBehind);
+					numTrees++;
+					moves = 0; 
+				} else if (rc.canMove(dirBehind.rotateLeftDegrees(180)) && moves < 3) {
+					rc.move(dirBehind.rotateLeftDegrees(180));
+					moves++;
+				} 
 				
+				if (numTrees > 5) {
+					working = false; 
+				}
 				
 			} else if (moveRight) {
 				if (rc.getLocation().equals(sideOne)) {
@@ -195,7 +210,6 @@ public class Gardener {
 				} else if (rc.canMove(sideOne)) {
 					rc.move(sideOne);
 				}
-				
 			} else {
 				if (rc.getLocation().equals(location)) {
 					moveRight = true; 
