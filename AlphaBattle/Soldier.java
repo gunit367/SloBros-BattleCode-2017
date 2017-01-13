@@ -24,25 +24,22 @@ public class Soldier {
             try {
                 //MapLocation myLocation = rc.getLocation();
 
-                // See if there are any nearby enemy robots
+            	// Check for nearby Robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
                 
+                // Fetch Current Area of Interest
+                MapLocation aoi = TeamComms.getAreaOfInterest(rc);
+                Direction dir = rc.getLocation().directionTo(aoi);
                 
-                int xPos = rc.readBroadcast(0);
-                int yPos = rc.readBroadcast(1);
-                System.out.println("Read Archon pos at" + xPos + " " + yPos);
-                archonLoc = new MapLocation(xPos,yPos);
                 if (archonLoc != null && rc.canSenseLocation(archonLoc)) {
                 	archon = rc.senseRobotAtLocation(archonLoc);
                 }
                 
-                System.out.println("Looking for Archons.");
                 for (int i = 0; i < robots.length; i++) {
                 	if (robots[i].type == RobotType.ARCHON) {
                 		archon = robots[i];
-                		
-                		rc.broadcast(0,(int)archon.location.x);
-                        rc.broadcast(1,(int)archon.location.y);	
+                		archonLoc = archon.location;
+                		TeamComms.broadcastOppArchon(rc, archonLoc);
                 	}
                 }
                 
@@ -54,17 +51,11 @@ public class Soldier {
                         // ...Then fire a bullet in the direction of the enemy.
                         rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
                     }
+                    Util.tryMove(rc, rc.getLocation().directionTo(robots[0].location));
                 }
-                
-                if(archon == null)
+                else
                 {
-                	// Move randomly
-                    Util.tryMove(rc, Util.randomDirection());
-                }
-                else if (archon != null && archon.health > 0) {
-                	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
-                } else if (archonLoc != null) {
-                	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
+                    Util.tryMove(rc, dir);
                 }
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again

@@ -43,6 +43,9 @@ public class Util {
     public static boolean tryMove(RobotController rc, Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
+    	if(rc.hasMoved())
+    		return false;
+    	
         if (rc.canMove(dir)) {
             rc.move(dir);
             return true;

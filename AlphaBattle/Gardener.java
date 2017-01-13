@@ -26,9 +26,7 @@ public class Gardener {
 	            	Direction dir = Util.randomDirection();
 	            	
 	                // Listen for home archon's location
-	                int xPos = rc.readBroadcast(0);
-	                int yPos = rc.readBroadcast(1);
-	                MapLocation archonLoc = new MapLocation(xPos,yPos);
+	                MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 
 	                TreeInfo[] trees = rc.senseNearbyTrees();
 	                TreeInfo tree = null;
@@ -38,7 +36,7 @@ public class Gardener {
 	                }
 	                
 	                if (tree != null) {
-	                	if (rc.canWater(tree.ID)) {
+	                	if (rc.canWater(tree.ID) && tree.team == rc.getTeam()) {
 	                		rc.water(tree.ID);
 	                	} else {
 	                        Util.tryMove(rc, Util.randomDirection());
@@ -51,8 +49,10 @@ public class Gardener {
 	                	plantTree(Util.randomDirection());
 	                }
 	                
-	                if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
+	                int soldierCount = TeamComms.getSoldiers(rc);
+	                if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
 	                	rc.buildRobot(RobotType.SOLDIER, dir);
+	                	TeamComms.updateSoldiers(rc, soldierCount + 1);
 	                }
 	                
 	                // Move away from archon
@@ -123,7 +123,7 @@ public class Gardener {
 		else
 		{
 			// Cannot water the tree OR tree has already been watered
-			System.out.println("I cannot water this tree! - Gardener");
+			//System.out.println("I cannot water this tree! - Gardener");
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class Gardener {
 		else
 		{
 			// Cannot plant tree
-			System.out.println("I cannot plant this tree! - Gardener");
+			//System.out.println("I cannot plant this tree! - Gardener");
 		}
 	}
 
@@ -160,7 +160,7 @@ public class Gardener {
 		else 
 		{
 			// Robot cannot shake OR bullets < SHAKE_AMT
-			System.out.println("I cannot shake this tree! - Gardener");
+			//System.out.println("I cannot shake this tree! - Gardener");
 		}
 	}
 	
@@ -180,7 +180,7 @@ public class Gardener {
 		else 
 		{
 		   // Robot cannot build this robot
-		   System.out.println("I cannot deploy this robot! - Gardener");
+		   //System.out.println("I cannot deploy this robot! - Gardener");
 		}
 	}
 }
