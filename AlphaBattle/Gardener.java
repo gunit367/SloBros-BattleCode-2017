@@ -128,7 +128,7 @@ public class Gardener {
 	// Plants a tree behind the robot
 	public void plantTree() throws GameActionException {
 		Direction dir = Util.randomDirection();
-		if (rc.canPlantTree(Util.randomDirection())) {
+		if (rc.canPlantTree(dir)) {
 			rc.plantTree(dir);
 		}
 		else

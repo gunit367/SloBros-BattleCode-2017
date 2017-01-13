@@ -38,8 +38,7 @@ public class Soldier {
                 	if (robots[i].type == RobotType.ARCHON) {
                 		archon = robots[i];
                 		archonLoc = archon.location;
-                		rc.broadcast(0,(int)archon.location.x);
-                        rc.broadcast(1,(int)archon.location.y);
+                		TeamComms.broadcastOppArchon(rc, archonLoc);
                 	}
                 }
                 
@@ -54,16 +53,7 @@ public class Soldier {
                 }
                 
                 
-                if(archon == null && archonLoc == null)
-                {
-                	// Move randomly
-                    Util.tryMove(rc, Util.randomDirection());
-                }
-                else if (archon != null) {
-                	Util.tryMove(rc, Util.getDirectionToLocation(rc, archon.location));
-                } else if (archonLoc != null) {
-                	Util.tryMove(rc, Util.getDirectionToLocation(rc, archonLoc));
-                }
+                Util.tryMove(rc, Util.randomDirection());
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
