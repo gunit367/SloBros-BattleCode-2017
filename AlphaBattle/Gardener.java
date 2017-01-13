@@ -14,8 +14,16 @@ public class Gardener {
 	}
 	
 	public void run() throws GameActionException {
-		 System.out.println("I'm a gardener!");
-
+			int gardenerNum;
+			try
+			{
+				initGardener();
+				gardenerNum = TeamComms.getGardeners(rc);
+			}
+			catch (Exception e)
+			{
+				System.out.println("Error During Gardener Init");
+			}
 	        // The code you want your robot to perform every round should be in this loop
 	        while (true) {
 
@@ -57,7 +65,7 @@ public class Gardener {
 	                
 	                // Move away from archon
 	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));*/
-	            	logic();
+	            	logic(gardenerNum);
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();
@@ -69,14 +77,44 @@ public class Gardener {
 	        }
 	}
 	
+	void initGardener()
+	{
+		
+	}
+	
 	// The Logic for a given turn
-	public void logic() throws GameActionException {
-		System.out.println("Num gardeners: " + TeamComms.getGardeners(rc));
-		if (TeamComms.getGardeners(rc) == 1) {
-			System.out.println("First gardener... Starting logic");
-			MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+	public void logic(int gardenerNum) throws GameActionException {
+		MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+		
+		if (gardenerNum == 1) {
+			// First Gardener
 			MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
-			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
+			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 5), archonLoc.directionTo(enemyArchonLoc));
+		}
+		else
+		{
+			// Other Gardener
+			//Try to spawn a scout
+			spawnScout(archonLoc);
+		}
+	}
+	
+	void spawnScout(MapLocation archonLoc)
+	{
+		try
+		{
+			Direction buildDir = rc.getLocation().directionTo(archonLoc).opposite();
+			if(rc.canBuildRobot(RobotType.SCOUT, buildDir))
+			{
+				rc.buildRobot(RobotType.SCOUT, buildDir);
+			}
+			else
+			{
+				Util.tryMove(rc, buildDir);
+			}
+		} catch (Exception e)
+		{
+			System.out.println("Failure Spawning Scout");
 		}
 	}
 	
