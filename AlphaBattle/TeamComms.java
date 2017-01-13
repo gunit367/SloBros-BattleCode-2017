@@ -21,7 +21,11 @@ public class TeamComms {
 	// Enemy Team Information: Starting at Channel 500
 	public static final int oppArchonX = 500;
 	public static final int oppArchonY = 501;
+	public static final int archonSightingTimestamp = 502;
 	
+	// Prototype for marking Locations to Explore/Secure
+	public static final int areaOfInterestX = 503;
+	public static final int areaOfInterestY = 504;
 	
 	// Communication Functions
 	// Friendly Archon Location
@@ -32,10 +36,11 @@ public class TeamComms {
 		return new MapLocation(x,y);
 	}
 	
-	public static void broadcastArchonLoc(RobotController rc, MapLocation l) throws GameActionException
+	public static void broadcastArchonLoc(RobotController rc) throws GameActionException
 	{
 		if(rc.getType() == RobotType.ARCHON)
 		{
+			MapLocation l = rc.getLocation();
 			rc.broadcast(archonX, (int)l.x);
 			rc.broadcast(archonY, (int) l.y);
 		}
@@ -55,7 +60,7 @@ public class TeamComms {
 	}
 	
 	// Soldier Counts
-	public static int getSoldiers(RobotController rc, int n) throws GameActionException
+	public static int getSoldiers(RobotController rc) throws GameActionException
 	{
 		return rc.readBroadcast(numSoldiers);
 	}
@@ -66,7 +71,7 @@ public class TeamComms {
 	}
 	
 	// Scouts Counts
-	public static int getScouts(RobotController rc, int n) throws GameActionException
+	public static int getScouts(RobotController rc) throws GameActionException
 	{
 		return rc.readBroadcast(numScouts);
 	}
@@ -77,7 +82,7 @@ public class TeamComms {
 	}
 	
 	// Lumberjack Counts
-	public static int getLumberjacks(RobotController rc, int n) throws GameActionException
+	public static int getLumberjacks(RobotController rc) throws GameActionException
 	{
 		return rc.readBroadcast(numLumberjacks);
 	}
@@ -88,7 +93,7 @@ public class TeamComms {
 	}
 	
 	// Tank Counts
-	public static int getTanks(RobotController rc, int n) throws GameActionException
+	public static int getTanks(RobotController rc) throws GameActionException
 	{
 		return rc.readBroadcast(numTanks);
 	}
@@ -104,6 +109,12 @@ public class TeamComms {
 	{
 		rc.broadcast(oppArchonX, (int) l.x);
 		rc.broadcast(oppArchonY, (int) l.y);
+		rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
+	}
+	
+	public static int getLastArchonSighting(RobotController rc) throws GameActionException
+	{
+		return rc.readBroadcast(archonSightingTimestamp);
 	}
 	
 	public static MapLocation getOppArchonLoc(RobotController rc) throws GameActionException
@@ -113,5 +124,20 @@ public class TeamComms {
 		return new MapLocation(x,y);
 	}
 	
+	public static void setAreaOfInterest(RobotController rc, MapLocation l) throws GameActionException
+	{
+		RobotType t = rc.getType();
+		if(t == RobotType.ARCHON || t == RobotType.SCOUT)
+		{
+			rc.broadcast(areaOfInterestX, (int)l.x);
+			rc.broadcast(areaOfInterestY, (int)l.y);
+		}
+	}
 	
+	public static MapLocation getAreaOfInterest(RobotController rc) throws GameActionException
+	{
+		int x = rc.readBroadcast(areaOfInterestX);
+		int y = rc.readBroadcast(areaOfInterestY);
+		return new MapLocation(x,y);
+	}
 }

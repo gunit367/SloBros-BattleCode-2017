@@ -24,12 +24,13 @@ public class Soldier {
             try {
                 //MapLocation myLocation = rc.getLocation();
 
-                // See if there are any nearby enemy robots
+            	// Check for nearby Robots
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
                 
+                // Fetch Current Area of Interest
+                MapLocation aoi = TeamComms.getAreaOfInterest(rc);
+                Direction dir = rc.getLocation().directionTo(aoi);
                 
-                //int xPos = rc.readBroadcast(0);
-                //int yPos = rc.readBroadcast(1);
                 if (archonLoc != null && rc.canSenseLocation(archonLoc)) {
                 	archon = rc.senseRobotAtLocation(archonLoc);
                 }
@@ -53,7 +54,7 @@ public class Soldier {
                 }
                 
                 
-                Util.tryMove(rc, Util.randomDirection());
+                Util.tryMove(rc, dir);
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
