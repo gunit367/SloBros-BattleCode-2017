@@ -74,13 +74,8 @@ public class Gardener {
 		System.out.println("Num gardeners: " + TeamComms.getGardeners(rc));
 		if (TeamComms.getGardeners(rc) == 1) {
 			System.out.println("First gardener... Starting logic");
-			float x = rc.readBroadcast(0);
-			float y = rc.readBroadcast(1);
-			MapLocation archonLoc = new MapLocation(x, y);
-			
-			x = rc.readBroadcast(500);
-			y = rc.readBroadcast(501);
-			MapLocation enemyArchonLoc = new MapLocation(x, y);
+			MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+			MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
 			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
 		}
 	}
