@@ -23,6 +23,7 @@ public class Gardener {
 			catch (Exception e)
 			{
 				System.out.println("Error During Gardener Init");
+				return;
 			}
 	        // The code you want your robot to perform every round should be in this loop
 	        while (true) {
@@ -84,37 +85,13 @@ public class Gardener {
 	
 	// The Logic for a given turn
 	public void logic(int gardenerNum) throws GameActionException {
-		MapLocation archonLoc = TeamComms.getArchonLoc(rc);
-		
 		if (gardenerNum == 1) {
-			// First Gardener
+			MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 			MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
-			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 5), archonLoc.directionTo(enemyArchonLoc));
-		}
-		else
-		{
-			// Other Gardener
-			//Try to spawn a scout
-			spawnScout(archonLoc);
-		}
-	}
-	
-	void spawnScout(MapLocation archonLoc)
-	{
-		try
-		{
-			Direction buildDir = rc.getLocation().directionTo(archonLoc).opposite();
-			if(rc.canBuildRobot(RobotType.SCOUT, buildDir))
-			{
-				rc.buildRobot(RobotType.SCOUT, buildDir);
-			}
-			else
-			{
-				Util.tryMove(rc, buildDir);
-			}
-		} catch (Exception e)
-		{
-			System.out.println("Failure Spawning Scout");
+			
+			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
+		} else {
+			deployRobot(RobotType.TANK);
 		}
 	}
 	
@@ -215,12 +192,27 @@ public class Gardener {
 		boolean moveRight = false; 
 		boolean createWall = false; 
 		
+		int numTrees = 0;
+		int moves = 0;
+		
 		MapLocation sideOne = location.add(dirToEnemy.rotateLeftDegrees(90), 5);
+		Direction dirBehind = dirToEnemy.rotateLeftDegrees(90);
 
 		while (working) {
 			
 			if (createWall) {
+				if (rc.canPlantTree(dirBehind)) {
+					rc.plantTree(dirBehind);
+					numTrees++;
+					moves = 0; 
+				} else if (rc.canMove(dirBehind.rotateLeftDegrees(180)) && moves < 3) {
+					rc.move(dirBehind.rotateLeftDegrees(180));
+					moves++;
+				} 
 				
+				if (numTrees > 5) {
+					working = false; 
+				}
 				
 			} else if (moveRight) {
 				if (rc.getLocation().equals(sideOne)) {
