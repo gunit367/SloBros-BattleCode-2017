@@ -51,10 +51,12 @@ public class Soldier {
                         // ...Then fire a bullet in the direction of the enemy.
                         rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
                     }
+                    Util.tryMove(rc, rc.getLocation().directionTo(robots[0].location));
                 }
-                
-                
-                Util.tryMove(rc, dir);
+                else
+                {
+                    Util.tryMove(rc, dir);
+                }
                 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
