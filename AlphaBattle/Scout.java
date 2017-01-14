@@ -31,7 +31,10 @@ public class Scout {
                         // ...Then fire a bullet in the direction of the enemy.
                         rc.fireSingleShot(rc.getLocation().directionTo(enemies[0].location));
                     }
-                    Util.tryMove(rc, rc.getLocation().directionTo(enemies[0].location));
+    				if (!rc.hasAttacked())
+    				{
+    					Util.tryMove(rc, followEnemy(enemies[0]));
+    				}
     			}
     			else
     			{
@@ -64,5 +67,12 @@ public class Scout {
 			return -1;
 		}
 		
+	}
+	
+	Direction followEnemy(RobotInfo enemy)
+	{
+		Direction dir = enemy.location.directionTo(rc.getLocation());
+		MapLocation toLoc = enemy.location.add(dir, 10);
+		return rc.getLocation().directionTo(toLoc);
 	}
 }
