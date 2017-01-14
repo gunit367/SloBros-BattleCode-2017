@@ -21,33 +21,16 @@ public class Gardener {
 
 	            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
 	            try {
+	            	
+	            	logic();
 
 	            	// Get Random Direction
-	            	/*Direction dir = Util.randomDirection();
+	            	Direction dir = Util.randomDirection();
 	            	
 	                // Listen for home archon's location
 	                MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 
-	                TreeInfo[] trees = rc.senseNearbyTrees();
-	                TreeInfo tree = null;
-	                
-	                if (trees.length > 0) {
-	                	tree = trees[0];
-	                }
-	                
-	                if (tree != null) {
-	                	if (rc.canWater(tree.ID) && tree.team == rc.getTeam()) {
-	                		rc.water(tree.ID);
-	                	} else {
-	                        Util.tryMove(rc, Util.randomDirection());
-	                	}
-	                	
-	                	if (rc.canShake(tree.ID)) {
-	                		rc.shake(tree.ID);
-	                	}
-	                } else {
-	                	plantTree(Util.randomDirection());
-	                }
+	             	             
 	                
 	                int soldierCount = TeamComms.getSoldiers(rc);
 	                if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
@@ -56,8 +39,7 @@ public class Gardener {
 	                }
 	                
 	                // Move away from archon
-	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));*/
-	            	logic();
+	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();
@@ -71,13 +53,18 @@ public class Gardener {
 	
 	// The Logic for a given turn
 	public void logic() throws GameActionException {
-		if (TeamComms.getGardeners(rc) == 1) {
-			MapLocation archonLoc = TeamComms.getArchonLoc(rc);
-			MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
-			
-			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
-		} else {
-			deployRobot(RobotType.TANK);
+		System.out.println(TeamComms.getGardeners(rc));
+		int numGardeners = TeamComms.getGardeners(rc);
+		MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+		MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
+		MapLocation wall = archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10); 
+		
+		if (numGardeners == 1) { 
+			createTreeWall(wall, archonLoc.directionTo(enemyArchonLoc));
+		} else if (numGardeners < 3) {
+			waterPath(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 7));
+		} else if (numGardeners < 6) {
+			shakePath(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 7)); 
 		}
 	}
 	
@@ -146,11 +133,6 @@ public class Gardener {
 			//System.out.println("I cannot plant this tree! - Gardener");
 		}
 	}
-
-	// Finds the fullest tree to shake if possible 
-	public TreeInfo findTreeToShake() {
-		return null; 
-	}
 	
 	// Shakes the given tree
 	public void shakeTree(TreeInfo tree) {
@@ -169,6 +151,87 @@ public class Gardener {
 		{
 			// Robot cannot shake OR bullets < SHAKE_AMT
 			//System.out.println("I cannot shake this tree! - Gardener");
+		}
+	}
+	
+	TreeInfo findTreeToWater() {
+		TreeInfo[] treeInfo = findTreesInSight();
+		
+		if (treeInfo.length == 0) {
+			return null; 
+		} 
+		
+		TreeInfo lowestInWater = treeInfo[0];
+		
+		for (int i = 0; i < treeInfo.length; i++) {
+			if (treeInfo[i].health < lowestInWater.health) {
+				lowestInWater = treeInfo[i];
+			}
+		}
+		
+		return lowestInWater; 
+				
+		
+	} 
+	
+	TreeInfo findTreeToShake() {
+		TreeInfo[] treeInfo = findTreesInSight();
+		
+		if (treeInfo.length == 0) {
+			return null; 
+		} 
+		
+		TreeInfo highestInBullets = treeInfo[0];
+		
+		for (int i = 0; i < treeInfo.length; i++) {
+			if (treeInfo[i].getContainedBullets() > highestInBullets.getContainedBullets()) {
+				highestInBullets = treeInfo[i];
+			}
+		}
+		
+		return highestInBullets; 
+				
+		
+	}
+	
+	public void waterPath(MapLocation location) throws GameActionException {
+		TreeInfo tree = findTreeToWater(); 
+		
+		
+		while (true) {
+			if (tree != null && rc.canWater(tree.ID)) {
+				rc.water(tree.ID);
+				System.out.println("Tree: " + tree.ID + "Tree Health \nTreeHealth: " + tree.getHealth() + " Max Health: " + tree.getMaxHealth());
+				if (tree.health >= 10.5) {
+					System.out.println("Max");
+					tree = findTreeToWater();
+				}
+			} else if (tree != null && rc.canMove(tree.location)){
+				rc.move(tree.location);
+			} else {
+				tree = findTreeToWater();
+				if (rc.canMove(location)) {
+					rc.move(location);
+				}			}
+			Clock.yield();
+		}
+	}
+	
+	public void shakePath(MapLocation location) throws GameActionException { 
+		TreeInfo tree = findTreeToShake(); 
+		
+		while (true) {
+			tree = findTreeToShake();
+			if (tree != null && rc.canShake(tree.ID)) {
+				rc.shake(tree.ID);
+			} else if (tree != null && rc.canMove(tree.location)){
+				rc.move(tree.location);
+			} else {
+				if (rc.canMove(location)) {
+					rc.move(location);
+				}
+			}
+			Clock.yield();
 		}
 	}
 	
