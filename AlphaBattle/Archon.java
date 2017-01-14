@@ -38,7 +38,7 @@ public class Archon {
                 updateAreaOfInterest();
 
                 // Attempt to deploy with a max number of gardeners
-                if (TeamComms.getGardeners(rc) < 2)
+                if (TeamComms.getGardeners(rc) < 2) 
                 {
                 	// This function builds a gardener if possible, and increments the unit count
                 	deployGardener(dir);
@@ -99,25 +99,22 @@ public class Archon {
 		System.out.println(enemyArchon.toString());
 	}
 	
-	void deployGardener(Direction dir)
+	void deployGardener(Direction dir) throws GameActionException
 	{
-		try
+		// Attempt to hire a gardener
+		if (rc.canHireGardener(dir))
 		{
-			// Attempt to hire a gardener
-			if (rc.canHireGardener(dir))
-			{
-				rc.hireGardener(dir);
-
-				// Increment the gardener count
+			rc.hireGardener(dir);
+		
+		
+		// Increment the gardener count
+			try {
 				incrementGardenerCount();
+			} catch (GameActionException e) {
+				// ERROR: incrementGardenerCount in deployGardener
+				System.out.println("ERROR: incrementGardenerCount in deployGardener");
+				e.printStackTrace();
 			}
-			
-		} 
-		catch (Exception e)
-		{
-			// ERROR: incrementGardenerCount in deployGardener
-			System.out.println("ERROR: incrementGardenerCount in deployGardener");
-			e.printStackTrace();
 		}
 	}
 	
