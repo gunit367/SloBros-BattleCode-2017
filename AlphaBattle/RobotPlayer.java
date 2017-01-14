@@ -43,17 +43,8 @@ public strictfp class RobotPlayer {
 
     static void runTank() throws GameActionException
     {
-    	while (true)
-    	{
-    		try
-    		{
-    			
-    		} catch (Exception e)
-    		{
-    			System.out.println("Tank Exception");
-    			e.printStackTrace();
-    		}
-    	}
+    	Tank t = new Tank(rc);
+    	t.run();
     }
     
     static void runScout() throws GameActionException
