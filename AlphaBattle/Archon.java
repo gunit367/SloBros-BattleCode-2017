@@ -107,10 +107,11 @@ public class Archon {
 			if (rc.canHireGardener(dir))
 			{
 				rc.hireGardener(dir);
+
+				// Increment the gardener count
+				incrementGardenerCount();
 			}
 			
-			// Increment the gardener count
-			incrementGardenerCount();
 		} 
 		catch (Exception e)
 		{

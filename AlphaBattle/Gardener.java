@@ -19,6 +19,7 @@ public class Gardener {
 			{
 				initGardener();
 				gardenerNum = TeamComms.getGardeners(rc);
+				System.out.println("I am Gardener Number " + gardenerNum);
 			}
 			catch (Exception e)
 			{
@@ -91,7 +92,8 @@ public class Gardener {
 			
 			createTreeWall(archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10), archonLoc.directionTo(enemyArchonLoc));
 		} else {
-			deployRobot(RobotType.TANK);
+			deployRobot(RobotType.SCOUT);
+			Util.tryMove(rc, Util.randomDirection());
 		}
 	}
 	
@@ -240,7 +242,10 @@ public class Gardener {
 		{
 			try {
 				rc.buildRobot(type, dir);
-			} catch (GameActionException e) {
+				incrementCount(type);
+			} 
+			catch (GameActionException e)
+			{
 				// ERROR: deployment failed
 				System.out.println("ERROR: buildRobot failed!");
 				e.printStackTrace();
@@ -250,6 +255,40 @@ public class Gardener {
 		{
 		   // Robot cannot build this robot
 		   //System.out.println("I cannot deploy this robot! - Gardener");
+		}
+	}
+	
+	void incrementCount(RobotType type)
+	{
+		int old;
+		try
+		{
+			switch (type)
+			{
+				case SOLDIER:
+					old = TeamComms.getSoldiers(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case LUMBERJACK:
+					old = TeamComms.getLumberjacks(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case SCOUT:
+					old = TeamComms.getScouts(rc);
+					TeamComms.updateScouts(rc, old + 1);
+					break;
+				case TANK:
+					old = TeamComms.getTanks(rc);
+					TeamComms.updateTanks(rc, old + 1);
+				case ARCHON:
+					break;
+				case GARDENER:
+					break;
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error Incrementing Counts");
 		}
 	}
 }
