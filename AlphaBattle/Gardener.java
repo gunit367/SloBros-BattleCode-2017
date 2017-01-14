@@ -4,13 +4,15 @@ import battlecode.common.*;
 
 
 public class Gardener {
-	static RobotController rc;
+	RobotController rc;
+	GardenerMemory mem;
 	
 	public static final int SHAKE_AMT = 0;
 	public static final float NORTH = (float) 1.5708;
 
 	public Gardener(RobotController rc) {
-		Gardener.rc = rc; 
+		this.rc = rc; 
+		mem = new GardenerMemory(rc);
 	}
 	
 	public void run() throws GameActionException {

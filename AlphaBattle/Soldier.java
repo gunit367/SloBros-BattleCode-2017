@@ -2,11 +2,13 @@ package AlphaBattle;
 import battlecode.common.*;
 
 public class Soldier {
-	static RobotController rc;
+	RobotController rc;
+	SoldierMemory mem;
 	
 	public Soldier(RobotController rc)
 	{
-		Soldier.rc = rc;
+		this.rc = rc;
+		mem = new SoldierMemory(rc);
 	}
 	
 	public void run()

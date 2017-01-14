@@ -5,11 +5,12 @@ import battlecode.common.*;
 
 public class Lumberjack {
 
-	static RobotController rc; 
-	
+	RobotController rc; 
+	LumberjackMemory mem;
 	
 	public Lumberjack(RobotController rc) {
-		Lumberjack.rc = rc;
+		this.rc = rc;
+		mem = new LumberjackMemory(rc);
 	}
 	
 	public void run() {

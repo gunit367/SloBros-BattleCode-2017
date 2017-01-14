@@ -3,11 +3,13 @@ import battlecode.common.*;
 
 public class Scout {
 
-	static RobotController rc;
+	RobotController rc;
+	ScoutMemory mem;
 	
 	public Scout(RobotController rc)
 	{
-		Scout.rc = rc;
+		this.rc = rc;
+		mem = new ScoutMemory(rc);
 	}
 	
 	public void run()
@@ -72,7 +74,7 @@ public class Scout {
 	Direction followEnemy(RobotInfo enemy)
 	{
 		Direction dir = enemy.location.directionTo(rc.getLocation());
-		MapLocation toLoc = enemy.location.add(dir, 10);
+		MapLocation toLoc = enemy.location.add(dir, 8.5f);
 		return rc.getLocation().directionTo(toLoc);
 	}
 }

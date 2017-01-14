@@ -3,11 +3,13 @@ import battlecode.common.*;
 
 public class Archon {
 
-	static RobotController rc;
+	RobotController rc;
+	ArchonMemory mem;
 	
 	public Archon(RobotController rc)
 	{
-		Archon.rc = rc;
+		this.rc = rc;
+		mem = new ArchonMemory(rc);
 	}
 	
 	public void run()
