@@ -199,20 +199,27 @@ public class Gardener {
 		
 		
 		while (true) {
-			if (tree != null && rc.canWater(tree.ID)) {
-				rc.water(tree.ID);
+			if (tree != null) {
 				System.out.println("Tree: " + tree.ID + "Tree Health \nTreeHealth: " + tree.getHealth() + " Max Health: " + tree.getMaxHealth());
+			}
+			
+			if (tree != null && rc.canWater(tree.ID)) {
+				System.out.println("water");
+				rc.water(tree.ID);
 				if (tree.health >= 10.5) {
 					System.out.println("Max");
 					tree = findTreeToWater();
 				}
-			} else if (tree != null && rc.canMove(tree.location)){
+			} else if (tree != null && rc.canMove(tree.location)) {
+				System.out.println("moved");
 				rc.move(tree.location);
 			} else {
+				System.out.println("Last");
 				tree = findTreeToWater();
 				if (rc.canMove(location)) {
 					rc.move(location);
-				}			}
+				}			
+			}
 			Clock.yield();
 		}
 	}
