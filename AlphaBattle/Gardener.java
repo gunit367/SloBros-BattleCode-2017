@@ -199,20 +199,22 @@ public class Gardener {
 		
 		
 		while (true) {
+			
 			if (tree != null) {
+				tree = rc.senseTree(tree.ID);
 				System.out.println("Tree: " + tree.ID + "Tree Health \nTreeHealth: " + tree.getHealth() + " Max Health: " + tree.getMaxHealth());
 			}
 			
 			if (tree != null && rc.canWater(tree.ID)) {
 				System.out.println("water");
 				rc.water(tree.ID);
-				if (tree.health >= 10.5) {
+				if (tree.health == tree.maxHealth) {
 					System.out.println("Max");
 					tree = findTreeToWater();
 				}
 			} else if (tree != null && rc.canMove(tree.location)) {
 				System.out.println("moved");
-				rc.move(tree.location);
+				Util.tryMove(rc, tree.location, 1);
 			} else {
 				System.out.println("Last");
 				tree = findTreeToWater();

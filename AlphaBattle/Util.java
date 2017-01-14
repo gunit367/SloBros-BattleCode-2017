@@ -73,6 +73,15 @@ public class Util {
         // A move never happened, so return false.
         return false;
     }
+    
+    public static boolean tryMove(RobotController rc, MapLocation location, float stride) throws GameActionException {
+    	if (location.distanceTo(rc.getLocation()) < stride) {
+    		rc.move(location);
+    	} else {
+    		return tryMove(rc, rc.getLocation().directionTo(location));
+    	}
+    	return true; 
+    }
 
     /**
      * A slightly more complicated example function, this returns true if the given bullet is on a collision
