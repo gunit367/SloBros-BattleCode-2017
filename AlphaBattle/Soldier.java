@@ -1,7 +1,7 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class Soldier {
+public class Soldier extends RobotPlayer {
 	RobotController rc;
 	SoldierMemory mem;
 	

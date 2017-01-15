@@ -1,7 +1,7 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class Tank {
+public class Tank extends RobotPlayer {
 
 	RobotController rc;
 	TankMemory mem;

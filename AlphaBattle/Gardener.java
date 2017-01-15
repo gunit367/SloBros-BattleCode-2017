@@ -3,7 +3,7 @@ package AlphaBattle;
 import battlecode.common.*;
 
 
-public class Gardener {
+public class Gardener extends RobotPlayer {
 	RobotController rc;
 	GardenerMemory mem;
 	
@@ -15,37 +15,13 @@ public class Gardener {
 		mem = new GardenerMemory(rc);
 	}
 	
+	// Gardener run method
 	public void run() throws GameActionException {
-		 System.out.println("I'm a gardener!");
-
-	        // The code you want your robot to perform every round should be in this loop
 	        while (true) {
-
-	            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
 	            try {
-	            	
-	            	logic();
-
-	            	// Get Random Direction
-	            	Direction dir = Util.randomDirection();
-	            	
-	                // Listen for home archon's location
-	                MapLocation archonLoc = TeamComms.getArchonLoc(rc);
-
-	             	             
-	                
-	                int soldierCount = TeamComms.getSoldiers(rc);
-	                if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
-	                	rc.buildRobot(RobotType.SOLDIER, dir);
-	                	TeamComms.updateSoldiers(rc, soldierCount + 1);
-	                }
-	                
-	                // Move away from archon
-	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));
-
-	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-	                Clock.yield();
-
+	            	logic(0);
+	            	Clock.yield();
+	            
 	            } catch (Exception e) {
 	                System.out.println("Gardener Exception");
 	                e.printStackTrace();
@@ -54,8 +30,18 @@ public class Gardener {
 	}
 	
 	// The Logic for a given turn
-	public void logic() throws GameActionException {
-		System.out.println(TeamComms.getGardeners(rc));
+	public void logic(int strat) throws GameActionException {
+		switch (strat) {
+		case 0:
+			wallStrat(); 
+			break; 
+		case 1: 
+			normalStrat(); 
+		}
+	}
+	
+	// Depending on gardener count, gardeners make a wall in front of archon 
+	public void wallStrat() throws GameActionException {
 		int numGardeners = TeamComms.getGardeners(rc);
 		MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 		MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
@@ -70,38 +56,27 @@ public class Gardener {
 		}
 	}
 	
+	// The normal strategy
+	public void normalStrat() throws GameActionException {
+		// Get Random Direction
+    	Direction dir = Util.randomDirection();
+    	
+        // Listen for home archon's location
+        MapLocation archonLoc = TeamComms.getArchonLoc(rc); 	             
+        
+        int soldierCount = TeamComms.getSoldiers(rc);
+        if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
+        	rc.buildRobot(RobotType.SOLDIER, dir);
+        	TeamComms.updateSoldiers(rc, soldierCount + 1);
+        }
+        
+        // Move away from archon
+        Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));		
+	}
+	
 	// Returns an array of trees in robots sight. 
 	public TreeInfo[] findTreesInSight() {
 		return rc.senseNearbyTrees();
-	}
-	
-	// NOTE: TOO MANY CODEBYTES //
-	// Returns TreeInfo for closest tree in sight, Null if no trees in sight 
-	public TreeInfo findClosestTree() {
-		TreeInfo closest; 
-		TreeInfo[] inSight; 
-		float closestDistance; 
-		
-		inSight = findTreesInSight(); 
-		closest = inSight[0];
-		
-		if (closest == null) {
-			return null; 
-		}
-				
-		closestDistance = Util.findDistance(rc.getLocation(), inSight[0].location);
-		
-		for (int i = 1; i < inSight.length; i++) {
-			float distance = Util.findDistance(rc.getLocation(), inSight[i].location);
-			if (distance < closestDistance) {
-				closest = inSight[i];
-				closestDistance = distance; 
-			}
-			
-		}
-		
-		return closest; 
-		
 	}
 	
 	// Water given tree
@@ -176,6 +151,7 @@ public class Gardener {
 		
 	} 
 	
+	// Finds lowest tree to shake
 	TreeInfo findTreeToShake() {
 		TreeInfo[] treeInfo = findTreesInSight();
 		
@@ -196,6 +172,7 @@ public class Gardener {
 		
 	}
 	
+	// The watering path for a gardener 
 	public void waterPath(MapLocation location) throws GameActionException {
 		TreeInfo tree = findTreeToWater(); 
 		
@@ -228,6 +205,7 @@ public class Gardener {
 		}
 	}
 	
+	// The shake path for a gardener 
 	public void shakePath(MapLocation location) throws GameActionException { 
 		TreeInfo tree = findTreeToShake(); 
 		
@@ -316,37 +294,32 @@ public class Gardener {
 		}
 	}
 	
-	void incrementCount(RobotType type)
-	{
-		int old;
-		try
-		{
-			switch (type)
-			{
-				case SOLDIER:
-					old = TeamComms.getSoldiers(rc);
-					TeamComms.updateSoldiers(rc, old + 1);
-					break;
-				case LUMBERJACK:
-					old = TeamComms.getLumberjacks(rc);
-					TeamComms.updateSoldiers(rc, old + 1);
-					break;
-				case SCOUT:
-					old = TeamComms.getScouts(rc);
-					TeamComms.updateScouts(rc, old + 1);
-					break;
-				case TANK:
-					old = TeamComms.getTanks(rc);
-					TeamComms.updateTanks(rc, old + 1);
-				case ARCHON:
-					break;
-				case GARDENER:
-					break;
+	// NOTE: TOO MANY CODEBYTES //
+	// Returns TreeInfo for closest tree in sight, Null if no trees in sight 
+	public TreeInfo findClosestTree() {
+		TreeInfo closest; 
+		TreeInfo[] inSight; 
+		float closestDistance; 
+		
+		inSight = findTreesInSight(); 
+		closest = inSight[0];
+		
+		if (closest == null) {
+			return null; 
+		}
+				
+		closestDistance = Util.findDistance(rc.getLocation(), inSight[0].location);
+		
+		for (int i = 1; i < inSight.length; i++) {
+			float distance = Util.findDistance(rc.getLocation(), inSight[i].location);
+			if (distance < closestDistance) {
+				closest = inSight[i];
+				closestDistance = distance; 
 			}
+			
 		}
-		catch (Exception e)
-		{
-			System.out.println("Error Incrementing Counts");
-		}
+		
+		return closest; 
+		
 	}
 }

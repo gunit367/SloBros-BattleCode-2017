@@ -72,4 +72,41 @@ public strictfp class RobotPlayer {
     	Lumberjack l = new Lumberjack(rc);
     	l.run();
     }
+    
+	void incrementCount(RobotType type)
+	{
+		int old;
+		try
+		{
+			switch (type)
+			{
+				case SOLDIER:
+					old = TeamComms.getSoldiers(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case LUMBERJACK:
+					old = TeamComms.getLumberjacks(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case SCOUT:
+					old = TeamComms.getScouts(rc);
+					TeamComms.updateScouts(rc, old + 1);
+					break;
+				case TANK:
+					old = TeamComms.getTanks(rc);
+					TeamComms.updateTanks(rc, old + 1);
+				case ARCHON:
+					break;
+				case GARDENER:
+					old = TeamComms.getGardeners(rc);
+					TeamComms.updateGardeners(rc, old + 1);
+					break;
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error Incrementing Counts");
+		}
+	}
+    
 }

@@ -1,7 +1,7 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class Archon {
+public class Archon extends RobotPlayer {
 
 	RobotController rc;
 	ArchonMemory mem;
@@ -107,23 +107,8 @@ public class Archon {
 		if (rc.canHireGardener(dir))
 		{
 			rc.hireGardener(dir);
-		
-		
-		// Increment the gardener count
-			try {
-				incrementGardenerCount();
-			} catch (GameActionException e) {
-				// ERROR: incrementGardenerCount in deployGardener
-				System.out.println("ERROR: incrementGardenerCount in deployGardener");
-				e.printStackTrace();
-			}
+			incrementCount(RobotType.GARDENER);
 		}
-	}
-	
-	void incrementGardenerCount() throws GameActionException
-	{
-		int old = TeamComms.getGardeners(rc);
-		TeamComms.updateGardeners(rc, old + 1);
 	}
 	
 	void updateAreaOfInterest() throws GameActionException

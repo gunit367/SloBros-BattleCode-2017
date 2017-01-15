@@ -1,7 +1,7 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class Scout {
+public class Scout extends RobotPlayer {
 
 	RobotController rc;
 	ScoutMemory mem;

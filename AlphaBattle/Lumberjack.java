@@ -3,7 +3,7 @@ package AlphaBattle;
 import battlecode.common.*;
 
 
-public class Lumberjack {
+public class Lumberjack extends RobotPlayer {
 
 	RobotController rc; 
 	LumberjackMemory mem;
