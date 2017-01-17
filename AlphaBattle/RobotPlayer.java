@@ -43,33 +43,123 @@ public strictfp class RobotPlayer {
 
     static void runTank() throws GameActionException
     {
-    	Tank t = new Tank(rc);
-    	t.run();
+    	try
+    	{
+    		Tank t = new Tank(rc);
+    		t.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+
+    	
     }
     
     static void runScout() throws GameActionException
     {
-    	Scout scout = new Scout(rc);
-    	scout.run();
+    	try
+    	{
+    		Scout scout = new Scout(rc);
+    		scout.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+    	
     }
     
-    static void runArchon() throws GameActionException {
-    	Archon archon = new Archon(rc);
-    	archon.run();
+    static void runArchon() throws GameActionException
+    {
+    	try
+    	{
+    		Archon archon = new Archon(rc);
+    		archon.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+    	
     }
 
-	static void runGardener() throws GameActionException {
-       Gardener gardener = new Gardener(rc);
-       gardener.run();
+	static void runGardener() throws GameActionException 
+	{
+		try
+    	{
+    		Gardener gardener = new Gardener(rc);
+    		gardener.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+       
     }
 
-    static void runSoldier() throws GameActionException {
-        Soldier soldier = new Soldier(rc);
-        soldier.run();
+    static void runSoldier() throws GameActionException 
+    {
+    	try
+    	{
+    		Soldier soldier = new Soldier(rc);
+    		soldier.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+        
     }
 
-    static void runLumberjack() throws GameActionException {
-    	Lumberjack l = new Lumberjack(rc);
-    	l.run();
+    static void runLumberjack() throws GameActionException
+    {
+    	try
+    	{
+    		Lumberjack l = new Lumberjack(rc);
+    		l.run();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Error Running Tank Object");
+    	}
+    	
     }
+    
+	void incrementCount(RobotType type)
+	{
+		int old;
+		try
+		{
+			switch (type)
+			{
+				case SOLDIER:
+					old = TeamComms.getSoldiers(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case LUMBERJACK:
+					old = TeamComms.getLumberjacks(rc);
+					TeamComms.updateSoldiers(rc, old + 1);
+					break;
+				case SCOUT:
+					old = TeamComms.getScouts(rc);
+					TeamComms.updateScouts(rc, old + 1);
+					break;
+				case TANK:
+					old = TeamComms.getTanks(rc);
+					TeamComms.updateTanks(rc, old + 1);
+				case ARCHON:
+					break;
+				case GARDENER:
+					old = TeamComms.getGardeners(rc);
+					TeamComms.updateGardeners(rc, old + 1);
+					break;
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error Incrementing Counts");
+		}
+	}
+    
 }
