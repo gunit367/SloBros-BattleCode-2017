@@ -14,8 +14,6 @@ public class Scout {
 	
 	public void run()
 	{
-		//int scoutNum;
-		Team enemy = rc.getTeam().opponent();
 		initScout();
 		
 		
@@ -23,25 +21,18 @@ public class Scout {
     	{
     		try
     		{
-    			// Look around and Record Important Information
-    			RobotInfo[] enemies = rc.senseNearbyRobots(-1, enemy);
+    			// Update Robots Memory with Information it can sense
+    			mem.updateMemory();
     			
     			// Attack If Need Be
-    			if(enemies.length > 0)
+    			if(enemiesNearby())
     			{
-    				if (rc.canFireSingleShot()) {
-                        // ...Then fire a bullet in the direction of the enemy.
-                        rc.fireSingleShot(rc.getLocation().directionTo(enemies[0].location));
-                    }
-    				if (!rc.hasAttacked())
-    				{
-    					Util.tryMove(rc, followEnemy(enemies[0]));
-    				}
+    				fireAtFirstEnemy();
     			}
     			else
     			{
 
-        			// Move Phase
+        			// Explore instead
         			Util.tryMove(rc, Util.randomDirection());
     			}
     			
@@ -69,6 +60,33 @@ public class Scout {
 			return -1;
 		}
 		
+	}
+	
+	boolean enemiesNearby()
+	{
+		return mem.recentEnemies.length > 0;
+	}
+	
+	// Attempts to fire at the first enemy seen this turn, 
+	void fireAtFirstEnemy()
+	{
+		try
+		{
+			if (rc.canFireSingleShot()) {
+	            // ...Then fire a bullet in the direction of the enemy.
+	            rc.fireSingleShot(rc.getLocation().directionTo(mem.recentEnemies[0].location));
+	        }
+			if (!rc.hasAttacked())
+			{
+				// Try to follow the enemy if attacking couldn't happen
+				Util.tryMove(rc, followEnemy(mem.recentEnemies[0]));
+			}
+		} 
+		catch (Exception e)
+		{
+			System.out.println("Scout Raised Exception while Firing");
+			e.printStackTrace();
+		}
 	}
 	
 	Direction followEnemy(RobotInfo enemy)

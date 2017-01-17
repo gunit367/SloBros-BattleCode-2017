@@ -9,4 +9,14 @@ public class LumberjackMemory implements RobotMemory
 	{
 		this.rc = rc;
 	}
+	
+	public void updateMemory()
+	{
+		
+	}
+	
+	public MapLocation getImportantLoc()
+	{
+		return null;
+	}
 }

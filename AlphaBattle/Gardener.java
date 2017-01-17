@@ -30,18 +30,18 @@ public class Gardener {
 	            	Direction dir = Util.randomDirection();
 	            	
 	                // Listen for home archon's location
-	                MapLocation archonLoc = TeamComms.getArchonLoc(rc);
+	                //MapLocation archonLoc = TeamComms.getArchonLoc(rc);
 
 	             	             
 	                
-	                int soldierCount = TeamComms.getSoldiers(rc);
-	                if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
-	                	rc.buildRobot(RobotType.SOLDIER, dir);
-	                	TeamComms.updateSoldiers(rc, soldierCount + 1);
+	                int scoutCount = TeamComms.getSoldiers(rc);
+	                if (rc.canBuildRobot(RobotType.SCOUT, dir) && scoutCount < 25) {
+	                	rc.buildRobot(RobotType.SCOUT, dir);
+	                	TeamComms.updateScouts(rc, scoutCount + 1);
 	                }
 	                
 	                // Move away from archon
-	                Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));
+	                Util.tryMove(rc, dir);
 
 	                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
 	                Clock.yield();
