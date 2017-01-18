@@ -24,12 +24,14 @@ public class Scout extends RobotPlayer {
     			// Update Robots Memory with Information it can sense
     			mem.updateMemory();
     			
+    			MilitaryUtil.dodge();
+    			
     			// Attack If Need Be
     			if(enemiesNearby())
     			{
     				fireAtFirstEnemy();
     			}
-    			else
+    			else if(!rc.hasMoved())
     			{
 
         			// Explore instead

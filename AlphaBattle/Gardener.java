@@ -19,7 +19,7 @@ public class Gardener extends RobotPlayer {
 	public void run() throws GameActionException {
 	        while (true) {
 	            try {
-	            	logic(0);
+	            	logic(1);
 	            	Clock.yield();
 	            } catch (Exception e) {
 	                System.out.println("Gardener Exception");
@@ -33,7 +33,7 @@ public class Gardener extends RobotPlayer {
 		switch (strat) {
 		case 0:
 			wallStrat(); 
-			break; 
+			break;
 		case 1: 
 			normalStrat(); 
 		}
@@ -56,17 +56,18 @@ public class Gardener extends RobotPlayer {
 	}
 	
 	// The normal strategy
-	public void normalStrat() throws GameActionException {
+	public void normalStrat() throws GameActionException 
+	{
 		// Get Random Direction
     	Direction dir = Util.randomDirection();
     	
         // Listen for home archon's location
         MapLocation archonLoc = TeamComms.getArchonLoc(rc); 	             
         
-        int soldierCount = TeamComms.getSoldiers(rc);
-        if (rc.canBuildRobot(RobotType.SOLDIER, dir) && soldierCount < 25) {
-        	rc.buildRobot(RobotType.SOLDIER, dir);
-        	TeamComms.updateSoldiers(rc, soldierCount + 1);
+        int count = TeamComms.getScouts(rc);
+        if (rc.canBuildRobot(RobotType.SCOUT, dir) && count < 25) {
+        	rc.buildRobot(RobotType.SCOUT, dir);
+        	TeamComms.updateScouts(rc, count + 1);
         }
         
         // Move away from archon

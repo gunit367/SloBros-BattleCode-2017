@@ -47,4 +47,67 @@ public class MilitaryUtil {
 		}
 		return false;
 	}
+	
+	static boolean willHitMe(BulletInfo b)
+	{
+		MapLocation myLocation = RobotPlayer.rc.getLocation();
+		
+		// Calculate bullet relations to this robot
+		Direction directionToRobot = b.location.directionTo(myLocation);
+		float distToRobot = b.location.distanceTo(myLocation);
+		float theta = b.dir.radiansBetween(directionToRobot);
+		
+		// If theta > 90 degrees, then the bullet is traveling away from us and we can break early
+		if (Math.abs(theta) > Math.PI / 2)
+		{
+		    return false;
+		}
+		
+		// distToRobot is our hypotenuse, theta is our angle, and we want to know this length of the opposite leg.
+		// This is the distance of a line that goes from myLocation and intersects perpendicularly with propagationDirection.
+		// This corresponds to the smallest radius circle centered at our location that would intersect with the
+		// line that is the path of the bullet.
+		float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta));
+
+        return (perpendicularDist <= RobotPlayer.rc.getType().bodyRadius);
+	}
+	
+	static void trySidestep(BulletInfo b)
+	{
+		try 
+		{
+			MapLocation myLoc = RobotPlayer.rc.getLocation();
+			Direction bulletToRobot = b.location.directionTo(myLoc);
+			float theta = b.dir.radiansBetween(bulletToRobot);
+			if(theta < 0)
+			{
+				// Bullet on My Left
+				Direction moveDir = myLoc.directionTo(b.location).rotateRightDegrees(90);
+				Util.tryMove(RobotPlayer.rc, moveDir);
+			} 
+			else
+			{
+				// Bullet on My Right
+				Direction moveDir = myLoc.directionTo(b.location).rotateLeftDegrees(90);
+				Util.tryMove(RobotPlayer.rc, moveDir);
+			}
+		} 
+		catch (GameActionException e) 
+		{
+			System.out.println("Sidestep Attempt Failed!");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void dodge()
+	{
+		BulletInfo[] bullets = RobotPlayer.rc.senseNearbyBullets();
+		for(int i = 0; i < bullets.length; i++)
+		{
+			if(willHitMe(bullets[i]))
+			{
+				trySidestep(bullets[i]);
+			}
+		}
+	}
 }
