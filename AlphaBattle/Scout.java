@@ -90,11 +90,4 @@ public class Scout extends RobotPlayer {
 			e.printStackTrace();
 		}
 	}
-	
-	Direction followEnemy(RobotInfo enemy)
-	{
-		Direction dir = enemy.location.directionTo(rc.getLocation());
-		MapLocation toLoc = enemy.location.add(dir, 8.5f);
-		return rc.getLocation().directionTo(toLoc);
-	}
 }

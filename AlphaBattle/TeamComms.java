@@ -17,6 +17,8 @@ public class TeamComms {
 	public static final int numScouts = 5;
 	public static final int numTanks = 6;
 	
+	// DonationCount 
+	public static final int donationCount = 50; 
 	
 	// Enemy Team Information: Starting at Channel 500
 	public static final int oppArchonX = 500;
@@ -101,6 +103,15 @@ public class TeamComms {
 	public static void updateTanks(RobotController rc, int n) throws GameActionException
 	{
 		rc.broadcast(numTanks, n);
+	}
+		
+	// Return the donation count 
+	public static int getDonationCount(RobotController rc) throws GameActionException {
+		return rc.readBroadcast(donationCount);
+	}
+	
+	public static void broadcastDonationCount(RobotController rc, int toAdd) throws GameActionException {
+		rc.broadcast(donationCount, getDonationCount(rc) + toAdd);
 	}
 	
 	

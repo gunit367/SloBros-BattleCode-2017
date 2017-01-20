@@ -126,6 +126,25 @@ public strictfp class RobotPlayer {
     	
     }
     
+    static boolean isNearArchon() {
+    	return false; 
+    }
+    
+    static boolean isNearSoldier() {
+    	return false; 
+    } 
+    
+    static boolean isNearTank() {
+    	return false; 
+    }
+    
+    Direction followEnemy(RobotInfo enemy)
+	{
+		Direction dir = enemy.location.directionTo(rc.getLocation());
+		MapLocation toLoc = enemy.location.add(dir, 8.5f);
+		return rc.getLocation().directionTo(toLoc);
+	}
+    
 	void incrementCount(RobotType type)
 	{
 		int old;

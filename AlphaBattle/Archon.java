@@ -12,63 +12,50 @@ public class Archon extends RobotPlayer {
 		mem = new ArchonMemory(rc);
 	}
 	
-	public void run()
-	{
-		// Variable Declarations
-		Team enemy = rc.getTeam().opponent();
-		int donationCount = 0; 
-		
-		try
-		{
-			initArchon(rc);
-		} catch (Exception e)
-		{
-			System.out.println("Archon Init Exception");
-			e.printStackTrace();
-		}
-		
+	public void run() throws GameActionException {				
+		initArchon(rc);
 
-        // The code you want your robot to perform every round should be in this loop
-        while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
+		while (true) {
             try {
-
-                // Generate a random direction
-                Direction dir = Util.randomDirection();
-                
-                updateAreaOfInterest();
-
-                // Attempt to deploy with a max number of gardeners
-                if (TeamComms.getGardeners(rc) < 2) 
-                {
-                	// This function builds a gardener if possible, and increments the unit count
-                	deployGardener(dir);
-                }
-                else if (rc.getTeamBullets() >= 500 && donationCount < 200)
-                {
-                	rc.donate(50);
-                	donationCount += 50;
-                }
-                
-                // Look for enemies and move away from them
-                RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
-                if (robots.length > 0)
-                {
-                	Util.tryMove(rc, (rc.getLocation().directionTo(robots[0].location)).opposite());
-                }
-
-                // Broadcast archon's location for other robots on the team to know
-                TeamComms.broadcastArchonLoc(rc);
-                
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
+     
+            	logic(); 
+            	Clock.yield();
 
             } catch (Exception e) {
                 System.out.println("Archon Exception");
                 e.printStackTrace();
             }
         }
+	}
+	
+	public void logic() throws GameActionException {
+		// Generate a random direction
+        Direction dir = Util.randomDirection();
+        RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+        
+        updateAreaOfInterest();
+
+        // Attempt to deploy with a max number of gardeners
+        if (TeamComms.getGardeners(rc) < 2) 
+        {
+        	// This function builds a gardener if possible, and increments the unit count
+        	deployGardener(dir);
+        }
+        else if (rc.getTeamBullets() >= 500 && TeamComms.getDonationCount(rc) < 200)
+        {
+        	rc.donate(50);
+        	TeamComms.broadcastDonationCount(rc, 50);
+        	
+        }
+        
+        // Look for enemies and move away from them
+        if (enemies.length > 0)
+        {
+        	Util.tryMove(rc, (rc.getLocation().directionTo(enemies[0].location)).opposite());
+        }
+
+        // Broadcast archon's location for other robots on the team to know
+        TeamComms.broadcastArchonLoc(rc);
 	}
 	
 	void initArchon(RobotController rc) throws GameActionException

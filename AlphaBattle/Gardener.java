@@ -36,6 +36,7 @@ public class Gardener extends RobotPlayer {
 			break;
 		case 1: 
 			normalStrat(); 
+			break;
 		}
 	}
 	
@@ -56,22 +57,13 @@ public class Gardener extends RobotPlayer {
 	}
 	
 	// The normal strategy
-	public void normalStrat() throws GameActionException 
-	{
-		// Get Random Direction
-    	Direction dir = Util.randomDirection();
-    	
-        // Listen for home archon's location
-        MapLocation archonLoc = TeamComms.getArchonLoc(rc); 	             
-        
-        int count = TeamComms.getScouts(rc);
-        if (rc.canBuildRobot(RobotType.SCOUT, dir) && count < 25) {
-        	rc.buildRobot(RobotType.SCOUT, dir);
-        	TeamComms.updateScouts(rc, count + 1);
-        }
-        
-        // Move away from archon
-        Util.tryMove(rc, archonLoc.directionTo(rc.getLocation()));		
+	public void normalStrat() throws GameActionException {
+		if (TeamComms.getSoldiers(rc) < 5) {
+			deployRobot(RobotType.SOLDIER);
+		} else if (TeamComms.getTanks(rc) < 3) {
+			deployRobot(RobotType.TANK);
+		}
+		
 	}
 	
 	// Returns an array of trees in robots sight. 

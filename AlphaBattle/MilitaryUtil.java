@@ -7,18 +7,27 @@ public class MilitaryUtil {
 	// Shoots the enemy with the given id with the type 0 - single shot; type 1 - triad shot; type 2 - pentad shot
 	public static void shootEnemy(RobotController rc, int type, int id) throws GameActionException {
 		RobotInfo enemy = rc.senseRobot(id);
+		Direction dir = rc.getLocation().directionTo(enemy.getLocation());
 		
 		switch (type) {
 			case 0:  
-				trySingleShot(rc, rc.getLocation().directionTo(enemy.getLocation())); 
+				trySingleShot(rc, dir); 
 				break;
 			case 1: 
-				tryTriadShot(rc, rc.getLocation().directionTo(enemy.getLocation()));
+				tryTriadShot(rc, dir);
 				break;
 			case 2: 
-				tryPentadShot(rc, rc.getLocation().directionTo(enemy.getLocation())); 
+				tryPentadShot(rc, dir); 
 				break;
-		}	
+			case 3: 
+				if (tryPentadShot(rc, dir)) {
+					
+				} else if (tryTriadShot(rc, dir)) {
+
+				} else {
+					trySingleShot(rc, dir);
+				}
+ 		}	
 	}
 		
 	// Try to fire a single shot

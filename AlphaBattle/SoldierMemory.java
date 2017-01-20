@@ -4,6 +4,8 @@ import battlecode.common.*;
 public class SoldierMemory implements RobotMemory
 {
 	RobotController rc;
+    RobotInfo enemyArchon[]; 
+    MapLocation EnemyArchonLoc;
 	
 	public SoldierMemory(RobotController rc)
 	{
@@ -18,5 +20,13 @@ public class SoldierMemory implements RobotMemory
 	public MapLocation getImportantLoc()
 	{
 		return null;
+	}
+	
+	public MapLocation getEnemyLocation() {
+		if (enemyArchon != null) {
+			//if ()
+			
+		} 
+		return null; 
 	}
 }
