@@ -117,6 +117,17 @@ public class MilitaryUtil {
 		}
 	}
 	
+	public static boolean noFriendlyFire(RobotController rc, Direction dir) {
+		RobotInfo[] friendly = rc.senseNearbyRobots(-1, rc.getTeam());
+		
+		for (int i = 0; i < friendly.length; i++) {
+			if (rc.getLocation().directionTo(friendly[i].location).degreesBetween(dir) < 20) {
+				return false; 
+			}
+		}
+		return true;	
+	}
+	
 	public static void dodge()
 	{
 		BulletInfo[] bullets = RobotPlayer.rc.senseNearbyBullets();

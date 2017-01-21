@@ -20,6 +20,11 @@ public class TeamComms {
 	// DonationCount 
 	public static final int donationCount = 50; 
 	
+	// Military Informatin: Starting at Channel 100
+	public static final int areaOfInterestMilitaryX = 100; 	
+	public static final int areaOfInterestMilitaryY = 101; 
+
+	
 	// Enemy Team Information: Starting at Channel 500
 	public static final int oppArchonX = 500;
 	public static final int oppArchonY = 501;
@@ -145,10 +150,24 @@ public class TeamComms {
 		}
 	}
 	
+
 	public static MapLocation getAreaOfInterest(RobotController rc) throws GameActionException
 	{
 		int x = rc.readBroadcast(areaOfInterestX);
 		int y = rc.readBroadcast(areaOfInterestY);
 		return new MapLocation(x,y);
+	}
+	
+	public static void setAreaOfMilitaryInterest(RobotController rc, MapLocation l) throws GameActionException 
+	{
+		rc.broadcast(areaOfInterestMilitaryX, (int) l.x);
+		rc.broadcast(areaOfInterestMilitaryY, (int) l.y);
+	}
+	
+	public static MapLocation getAreaOfMilitaryInterest(RobotController rc) throws GameActionException 
+	{
+		int x = rc.readBroadcast(areaOfInterestMilitaryX);
+		int y = rc.readBroadcast(areaOfInterestMilitaryY);
+		return x != 0 && y != 0? new MapLocation(x,y) : null;
 	}
 }
