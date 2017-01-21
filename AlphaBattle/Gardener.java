@@ -37,6 +37,8 @@ public class Gardener extends RobotPlayer {
 		case 1: 
 			normalStrat(); 
 			break;
+		case 2: 
+			tryPlantFarm(); 
 		}
 	}
 	
@@ -58,11 +60,29 @@ public class Gardener extends RobotPlayer {
 	
 	// The normal strategy
 	public void normalStrat() throws GameActionException {
+		TreeInfo[] trees = rc.senseNearbyTrees();
+		
+		// Look to see how many trees are around you. if none plant one and continue shaking and watering without moving. 
+		if (trees.length > 0) {
+			System.out.println("Trees > 0");
+			shakeTree(trees[0]); 
+			if (!waterTree(trees[0])) {
+				if (!Util.tryMove(rc, rc.getLocation().directionTo(trees[0].location))) {
+					//plantTree(Util.randomDirection());
+					Util.tryMove(rc, Util.randomDirection());
+				}
+			}
+		} else if (!plantTree(TeamComms.getArchonLoc(rc).directionTo(TeamComms.getOppArchonLoc(rc)))){
+			Util.tryMove(rc, Util.randomDirection());
+		}
+		
+		System.out.println("Bout to deploy");
+		// Deploy military units if possible 
 		if (TeamComms.getSoldiers(rc) < 5) {
 			deployRobot(RobotType.SOLDIER);
 		} else if (TeamComms.getTanks(rc) < 3) {
 			deployRobot(RobotType.TANK);
-		}
+		} 
 		
 	}
 	
@@ -72,54 +92,82 @@ public class Gardener extends RobotPlayer {
 	}
 	
 	// Water given tree
-	public void waterTree(TreeInfo tree) {
-		if (rc.canWater() && rc.canWater(tree.ID))
-		{
-			try {
-				// Attempt to water given tree
+	public boolean waterTree(TreeInfo tree) throws GameActionException {
+		// Attemp to water tree
+		if (rc.canWater(tree.ID)) {
 				rc.water(tree.ID);
-			} catch (GameActionException e) {
-				// ERROR: watering failed
-			   System.out.println("ERROR: watering tree failed!");
-			   e.printStackTrace();
-			}
-		}
-		else
-		{
-			// Cannot water the tree OR tree has already been watered
-			//System.out.println("I cannot water this tree! - Gardener");
+				System.out.println("Watered tree");
+				return true;
+		} else {
+			return false;
 		}
 	}
 	
 	// Plants a tree behind the robot
-	public void plantTree(Direction dir) throws GameActionException {
+	public boolean plantTree(Direction dir) throws GameActionException {
 		if (rc.canPlantTree(dir)) {
 			rc.plantTree(dir);
+			return true; 
 		}
 		else
 		{
-			// Cannot plant tree
-			//System.out.println("I cannot plant this tree! - Gardener");
+			System.out.println("could not plant tree");
+			return false; 
 		}
 	}
 	
-	// Shakes the given tree
-	public void shakeTree(TreeInfo tree) {
-		if (rc.canShake(tree.ID) && tree.containedBullets > SHAKE_AMT)
+	public boolean planTreeOnBullet() throws GameActionException {
+		BulletInfo[] bullets = RobotPlayer.rc.senseNearbyBullets();
+		for(int i = 0; i < bullets.length; i++) 
 		{
-			try {
-				// Attempt to shake given tree
-				rc.shake(tree.ID);
-			} catch (GameActionException e) {
-				// ERROR: shaking failed
-				System.out.println("ERROR: shaking tree failed!");
-				e.printStackTrace();
+			if(MilitaryUtil.willHitMe(bullets[i])) 
+			{
+				plantTree(rc.getLocation().directionTo(bullets[i].location));
+				return true;
 			}
 		}
-		else 
-		{
-			// Robot cannot shake OR bullets < SHAKE_AMT
-			//System.out.println("I cannot shake this tree! - Gardener");
+		return false; 
+	}
+	
+	public void tryPlantFarm() throws GameActionException {
+		int num = 0; 
+		Direction dir = Util.randomDirection();
+		
+		if (foundLand(5)) {
+			while (num < 4) {
+				if (plantTree(dir)) {
+					System.out.println(num + ". Planted Tree");
+					num++;
+				} else {
+					waterTree(findTreeToWater());
+				}
+				
+				dir.rotateLeftDegrees(90);
+
+				Clock.yield();
+			}
+		}
+	}
+	
+	public boolean foundLand(int radius) throws GameActionException {
+		if (rc.senseNearbyRobots(radius).length == 0 && rc.senseNearbyTrees(radius).length == 0 && !Util.isWithinDistanceToSide(rc, radius)) {
+			return true;
+		} 
+			
+		Util.tryMove(rc, Util.randomDirection());
+		return false; 
+		
+	}
+	
+	// Shakes the given tree
+	public boolean shakeTree(TreeInfo tree) throws GameActionException {
+		// Attempt to shake given tree
+		if (rc.canShake(tree.ID)) {
+				rc.shake(tree.ID);
+				System.out.println("Shook tree");
+				return true; 
+		} else {
+			return false; 
 		}
 	}
 	
@@ -265,7 +313,7 @@ public class Gardener extends RobotPlayer {
 	
 	// Deploys a robot given 
 	public void deployRobot(RobotType type) {
-		Direction dir = new Direction(NORTH);
+		Direction dir = Util.randomDirection();
 		if (rc.canBuildRobot(type, dir))
 		{
 			try {

@@ -36,7 +36,7 @@ public class Archon extends RobotPlayer {
         updateAreaOfInterest();
 
         // Attempt to deploy with a max number of gardeners
-        if (TeamComms.getGardeners(rc) < 2) 
+        if (TeamComms.getGardeners(rc) < 1) 
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);

@@ -116,5 +116,9 @@ public class Util {
         return (perpendicularDist <= rc.getType().bodyRadius);
     }
     
+    public static boolean isWithinDistanceToSide(RobotController rc, int distance) throws GameActionException{
+    	return !(rc.canMove(Direction.getWest(), distance) && rc.canMove(Direction.getSouth(), distance) && rc.canMove(Direction.getNorth(), distance) && rc.canMove(Direction.getEast(), distance));    	
+    }
+    
     
 }

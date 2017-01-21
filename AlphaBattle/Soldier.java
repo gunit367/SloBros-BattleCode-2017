@@ -36,16 +36,20 @@ public class Soldier extends RobotPlayer {
 
 	public void offense() throws GameActionException {
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-
+		
 		// Fetch Current Area of Interest
 		MapLocation aoi = TeamComms.getAreaOfInterest(rc);
 		Direction dir = rc.getLocation().directionTo(aoi);
+		
+		MilitaryUtil.dodge();
 
 		if (robots.length > 0) {
 			MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
 			followEnemy(robots[0]);
 		} else {
-			Util.tryMove(rc, dir);
+			if (!Util.tryMove(rc, dir) && rc.canFireSingleShot()) {
+				rc.fireSingleShot(dir);
+			}
 		}
 	}
 

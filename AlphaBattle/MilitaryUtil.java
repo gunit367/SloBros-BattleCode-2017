@@ -6,8 +6,17 @@ public class MilitaryUtil {
 
 	// Shoots the enemy with the given id with the type 0 - single shot; type 1 - triad shot; type 2 - pentad shot
 	public static void shootEnemy(RobotController rc, int type, int id) throws GameActionException {
-		RobotInfo enemy = rc.senseRobot(id);
-		Direction dir = rc.getLocation().directionTo(enemy.getLocation());
+		RobotInfo enemy;
+		Direction dir; 
+		
+		if (rc.canSenseRobot(id)) {
+			enemy = rc.senseRobot(id);
+		} else {
+			return;
+		}
+		
+		dir = rc.getLocation().directionTo(enemy.getLocation());
+
 		
 		switch (type) {
 			case 0:  
