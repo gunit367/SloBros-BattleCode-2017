@@ -140,7 +140,7 @@ public strictfp class RobotPlayer {
     
     Direction followEnemy(RobotInfo enemy)
 	{
-		Direction dir = enemy.location.directionTo(rc.getLocation());
+		Direction dir = enemy.location.directionTo(rc.getLocation()).rotateRightDegrees(20);
 		MapLocation toLoc = enemy.location.add(dir, 8.5f);
 		return rc.getLocation().directionTo(toLoc);
 	}

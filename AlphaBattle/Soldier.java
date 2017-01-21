@@ -43,13 +43,15 @@ public class Soldier extends RobotPlayer {
 		
 		MilitaryUtil.dodge();
 
-		if (robots.length > 0) {
-			MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
+		if (robots.length > 0)
+		{
+			if(Util.pathClearTo(robots[0].location))
+				MilitaryUtil.shootEnemy(rc, 0, robots[0].getID());
 			followEnemy(robots[0]);
-		} else {
-			if (!Util.tryMove(rc, dir) && rc.canFireSingleShot()) {
-				rc.fireSingleShot(dir);
-			}
+		}
+		else
+		{
+			Util.tryMove(rc, dir);
 		}
 	}
 
