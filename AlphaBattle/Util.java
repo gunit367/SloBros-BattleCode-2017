@@ -120,5 +120,60 @@ public class Util {
     	return !(rc.canMove(Direction.getWest(), distance) && rc.canMove(Direction.getSouth(), distance) && rc.canMove(Direction.getNorth(), distance) && rc.canMove(Direction.getEast(), distance));    	
     }
     
+    public static boolean pathClearTo(MapLocation loc)
+    {
+    	RobotInfo[] allies = RobotPlayer.rc.senseNearbyRobots(-1, RobotPlayer.rc.getTeam());
+    	TreeInfo[] trees = RobotPlayer.rc.senseNearbyTrees();
+    	MapLocation myLoc = RobotPlayer.rc.getLocation();
+    	
+    	// Check for allies in the way
+    	for(int i = 0; i < allies.length; i++)
+    	{
+    		if(bulletWouldHit(allies[i], myLoc, loc))
+    			return false;
+    	}
+    	
+    	// Check for trees in the way
+    	for(int i = 0; i < trees.length; i++)
+    	{
+    		if(bulletWouldHit(trees[i], myLoc, loc))
+    			return false;
+    	}
+    	return true;
+    }
     
+    
+    static boolean bulletWouldHit(RobotInfo r, MapLocation from, MapLocation to)
+    {
+    	Direction dirToRobot = from.directionTo(r.location);
+    	Direction dirToTarget = from.directionTo(to);
+    	float distToRobot = from.distanceTo(r.location);
+    	float theta = dirToTarget.radiansBetween(dirToRobot);
+    	
+    	
+    	// Check if bullet is moving towards robot
+    	if(Math.abs(theta) >= Math.PI / 2)
+    		return false;
+    	
+    	float perpendicularDistance = (float) Math.abs(distToRobot * Math.sin(theta));
+    	
+    	return (perpendicularDistance <= r.getType().bodyRadius);
+    }
+    
+    static boolean bulletWouldHit(TreeInfo t, MapLocation from, MapLocation to)
+    {
+    	Direction dirToTree = from.directionTo(t.location);
+    	Direction dirToTarget = from.directionTo(to);
+    	float distToTree = from.distanceTo(t.location);
+    	float theta = dirToTarget.radiansBetween(dirToTree);
+    	
+    	
+    	// Check if bullet is moving towards robot
+    	if(Math.abs(theta) >= Math.PI / 2)
+    		return false;
+    	
+    	float perpendicularDistance = (float) Math.abs(distToTree * Math.sin(theta));
+    	
+    	return (perpendicularDistance <= t.radius);
+    }
 }
