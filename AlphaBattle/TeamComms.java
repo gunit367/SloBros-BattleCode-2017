@@ -137,7 +137,7 @@ public class TeamComms {
 	{
 		int x = rc.readBroadcast(oppArchonX);
 		int y = rc.readBroadcast(oppArchonY);
-		return new MapLocation(x,y);
+		return x != 0 && y != 0? new MapLocation(x,y) : null;
 	}
 	
 	public static void setAreaOfInterest(RobotController rc, MapLocation l) throws GameActionException
@@ -168,6 +168,7 @@ public class TeamComms {
 	{
 		int x = rc.readBroadcast(areaOfInterestMilitaryX);
 		int y = rc.readBroadcast(areaOfInterestMilitaryY);
+		System.out.println("x: " + x + " y: " + y);
 		return x != 0 && y != 0? new MapLocation(x,y) : null;
 	}
 }

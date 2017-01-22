@@ -39,8 +39,6 @@ public class Soldier extends RobotPlayer {
 		
 		// Fetch Current Area of Interest
 		MapLocation aoi = TeamComms.getAreaOfMilitaryInterest(rc);
-		MapLocation enemyArchon = TeamComms.getOppArchonLoc(rc);
-		Direction dirToEnemyArchon = rc.getLocation().directionTo(enemyArchon);
 		Direction dirToAOI = rc.getLocation().directionTo(aoi);
 		Direction random = Util.randomDirection();
 		
@@ -51,14 +49,16 @@ public class Soldier extends RobotPlayer {
 			followEnemy(robots[0]);
 			TeamComms.setAreaOfMilitaryInterest(rc, robots[0].location);
 		} else if (aoi != null && rc.canMove(aoi)) {
+			System.out.println("aoi is not null");
 			Util.tryMove(rc, dirToAOI);
-		} else if (rc.canMove(dirToEnemyArchon)) {
-			Util.tryMove(rc, dirToEnemyArchon);
+		} else if (moveTowardsEnemyArchon()) {
+			
 		} else if (rc.canMove(random)) {
 			Util.tryMove(rc, random);
-		} else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon)) {
-			rc.fireSingleShot(dirToEnemyArchon);
-		}
+		} 
+		
+		updateAreaOfInterest();
+		
 	}
 
 	//public void defense() {
@@ -75,4 +75,42 @@ public class Soldier extends RobotPlayer {
 		}*/
 
 	//}
+	
+	public boolean moveTowardsEnemyArchon() throws GameActionException {
+		MapLocation enemyArchon = TeamComms.getOppArchonLoc(rc);
+		
+		if (enemyArchon == null) {
+			System.out.println("EnemyArchon == null");
+			return false; 
+		}
+		
+		Direction dirToEnemyArchon = rc.getLocation().directionTo(enemyArchon);
+		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon)) {
+			return true; 
+		} else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon)) {
+			rc.fireSingleShot(dirToEnemyArchon);
+		}
+		
+		return false; 
+	}
+	
+	public void updateAreaOfInterest() throws GameActionException{
+		if (TeamComms.getOppArchonLoc(rc) != null) {
+			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc(rc)) < 4 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
+				System.out.println("-------------- Archon");
+				TeamComms.broadcastOppArchon(rc, new MapLocation(0, 0));
+			}
+		}
+		
+		if (TeamComms.getAreaOfMilitaryInterest(rc) != null) {
+			System.out.println("Area of interest is null");
+			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest(rc)) < 4 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
+				System.out.println("-------------- Military");
+				TeamComms.setAreaOfMilitaryInterest(rc, new MapLocation(0,0));
+			}
+		}
+		
+	
+
+	}
 }

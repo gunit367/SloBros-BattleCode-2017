@@ -24,31 +24,7 @@ public class Lumberjack extends RobotPlayer {
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
 
-                // See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-                RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
-                TreeInfo[] trees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS);
-                
-                if(robots.length > 0 && !rc.hasAttacked()) {
-                    // Use strike() to hit all nearby robots!
-                    rc.strike();
-                } else if(trees.length > 0) {
-                	rc.strike();
-                }else {
-                    // No close robots or trees, so search for robots within sight radius
-                    robots = rc.senseNearbyRobots(-1,enemy);
-
-                    // If there is a robot, move towards it
-                    if(robots.length > 0) {
-                        MapLocation myLocation = rc.getLocation();
-                        MapLocation enemyLocation = robots[0].getLocation();
-                        Direction toEnemy = myLocation.directionTo(enemyLocation);
-
-                        Util.tryMove(rc, toEnemy);
-                    } else {
-                        // Move Randomly
-                        Util.tryMove(rc, Util.randomDirection());
-                    }
-                }
+                logic();
 
                 // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
@@ -59,4 +35,25 @@ public class Lumberjack extends RobotPlayer {
             }
         }
 	}
+	
+	public void logic() throws GameActionException {
+        Team enemy = rc.getTeam().opponent();
+
+		// See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
+        RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
+        TreeInfo[] trees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS);
+        MapLocation archonLoc = TeamComms.getOppArchonLoc(rc);
+        
+        if(robots.length > 0 && !rc.hasAttacked()) {
+            // Use strike() to hit all nearby robots!
+            rc.strike();
+        } else if (trees.length > 0 && rc.canChop(trees[0].ID) && trees[0].getTeam() != rc.getTeam()) {
+        	rc.chop(trees[0].ID);
+        } else if (archonLoc != null) {
+            Util.tryMove(rc, rc.getLocation().directionTo(archonLoc));
+        } else {
+        	Util.tryMove(rc, Util.randomDirection());
+        }
+	}
+	
 }

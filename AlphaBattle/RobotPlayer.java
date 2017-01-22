@@ -158,7 +158,7 @@ public strictfp class RobotPlayer {
 					break;
 				case LUMBERJACK:
 					old = TeamComms.getLumberjacks(rc);
-					TeamComms.updateSoldiers(rc, old + 1);
+					TeamComms.updateLumberjacks(rc, old + 1);
 					break;
 				case SCOUT:
 					old = TeamComms.getScouts(rc);

@@ -61,6 +61,7 @@ public class Gardener extends RobotPlayer {
 	// The normal strategy
 	public void normalStrat() throws GameActionException {
 		TreeInfo[] trees = rc.senseNearbyTrees();
+		RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 		
 		// Look to see how many trees are around you. if none plant one and continue shaking and watering without moving. 
 		if (trees.length > 0) {
@@ -76,9 +77,13 @@ public class Gardener extends RobotPlayer {
 			Util.tryMove(rc, Util.randomDirection());
 		}
 		
-		System.out.println("Bout to deploy");
+		System.out.println("Bout to deploy: " + enemyRobots.length);
 		// Deploy military units if possible 
-		if (TeamComms.getSoldiers(rc) < 5) {
+		if (enemyRobots.length > 0) {
+			deployRobot(RobotType.SOLDIER);
+		} else if (TeamComms.getLumberjacks(rc) < 1) {
+			deployRobot(RobotType.LUMBERJACK);
+		} else if (TeamComms.getSoldiers(rc) < 10) {
 			deployRobot(RobotType.SOLDIER);
 		} else if (TeamComms.getTanks(rc) < 3) {
 			deployRobot(RobotType.TANK);
@@ -330,7 +335,7 @@ public class Gardener extends RobotPlayer {
 		else 
 		{
 		   // Robot cannot build this robot
-		   //System.out.println("I cannot deploy this robot! - Gardener");
+		   System.out.println("I cannot deploy this robot! - Gardener");
 		}
 	}
 	
