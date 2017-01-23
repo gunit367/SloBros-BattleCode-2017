@@ -106,8 +106,10 @@ public class Archon extends RobotPlayer {
 	}
 	
 	void checkDonation() throws GameActionException {
-		if (rc.getTeamBullets() > 10000) {
+		double cost = 7.5 + (rc.getRoundNum())*12.5 / 3000;
+		if (rc.getTeamBullets() / cost > 1000) {
 			rc.donate(rc.getTeamBullets());
+			
 		}
 	}
 	
