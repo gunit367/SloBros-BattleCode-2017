@@ -5,6 +5,7 @@ public class GardenerMemory implements RobotMemory
 {
 	RobotController rc;
 	Direction dir; 
+	int strat = 0; 
 	
 	public GardenerMemory(RobotController rc)
 	{
@@ -27,5 +28,13 @@ public class GardenerMemory implements RobotMemory
 	
 	public Direction getDirectionToDeploy() {
 		return dir; 
+	}
+	
+	public int getStrat() {
+		return this.strat;
+	}
+	
+	public void setStrat(int strat) {
+		this.strat = strat; 
 	}
 }

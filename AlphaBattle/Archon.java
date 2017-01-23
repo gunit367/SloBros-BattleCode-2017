@@ -31,7 +31,8 @@ public class Archon extends RobotPlayer {
 	public void logic() throws GameActionException {
 		// Generate a random direction
         RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-        Direction dir = rc.getLocation().directionTo(TeamComms.getOppArchonLoc(rc));
+        //Direction dir = rc.getLocation().directionTo(TeamComms.getOppArchonLoc(rc));
+        Direction dir = Util.randomDirection();
         
         checkDonation();
         
@@ -39,7 +40,7 @@ public class Archon extends RobotPlayer {
         System.out.println("NUM GARDENERS " + TeamComms.getGardeners(rc));
 
         // Attempt to deploy with a max number of gardeners
-        if (TeamComms.getGardeners(rc) < 3) 
+        if (TeamComms.getGardeners(rc) < 2 || rc.getTeamBullets() > 500)
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);

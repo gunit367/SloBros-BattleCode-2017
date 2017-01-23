@@ -13,23 +13,21 @@ public class Gardener extends RobotPlayer {
 	public Gardener(RobotController rc) {
 		this.rc = rc; 
 		mem = new GardenerMemory(rc);
+		mem.setStrat(3);
 	}
 	
 	// Gardener run method
 	public void run() throws GameActionException {
-		int strat = 2; 
-	        while (true) {
-	            try {
-	            	logic(strat);
-	            	System.out.println("Built farm");
-	            	strat = 1; 
-	            	
-	            	Clock.yield();
-	            } catch (Exception e) {
-	                System.out.println("Gardener Exception");
-	                e.printStackTrace();
-	            }
+		while (true) {
+            try {
+        		int strat = mem.getStrat();
+	           	logic(strat);
+	           	Clock.yield();
+            } catch (Exception e) {
+            	System.out.println("Gardener Exception");
+	            e.printStackTrace();
 	        }
+		}
 	}
 	
 	// The Logic for a given turn
@@ -43,6 +41,9 @@ public class Gardener extends RobotPlayer {
 			break;
 		case 2: 
 			tryPlantFarm();
+			break;
+		case 3: 
+			deployInitialLumberjack();
 			break;
 		}
 	}
@@ -87,9 +88,9 @@ public class Gardener extends RobotPlayer {
 		// Deploy military units if possible 
 		if (enemyRobots.length > 0) {
 			deployRobot(RobotType.SOLDIER);
-		} else if (TeamComms.getLumberjacks(rc) < 5) {
+		} else if (TeamComms.getLumberjacks(rc) < 10) {
 			deployRobot(RobotType.LUMBERJACK);
-		} else if (TeamComms.getSoldiers(rc) < 10) {
+		} else if (TeamComms.getSoldiers(rc) < 20) {
 			deployRobot(RobotType.SOLDIER);
 		} else if (TeamComms.getTanks(rc) < 3) {
 			deployRobot(RobotType.TANK);
@@ -179,6 +180,7 @@ public class Gardener extends RobotPlayer {
 		}
 		
 		mem.setDirectionToDeploy(dir);
+		mem.setStrat(1);
 	}
 	
 	public boolean foundLand(int radius) throws GameActionException {
@@ -370,6 +372,18 @@ public class Gardener extends RobotPlayer {
 		   System.out.println("I cannot deploy this robot! - Gardener");
 		}
 		
+		return false; 
+	}
+	
+	public boolean deployInitialLumberjack() throws GameActionException {
+		Direction dir = Util.randomDirection();
+		
+		if (rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
+			rc.buildRobot(RobotType.LUMBERJACK, dir);
+			incrementCount(RobotType.LUMBERJACK);
+			mem.setStrat(2);
+			return true; 
+		}
 		return false; 
 	}
 	
