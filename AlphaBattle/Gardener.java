@@ -17,9 +17,13 @@ public class Gardener extends RobotPlayer {
 	
 	// Gardener run method
 	public void run() throws GameActionException {
+		int strat = 2; 
 	        while (true) {
 	            try {
-	            	logic(1);
+	            	logic(strat);
+	            	System.out.println("Built farm");
+	            	strat = 1; 
+	            	
 	            	Clock.yield();
 	            } catch (Exception e) {
 	                System.out.println("Gardener Exception");
@@ -38,7 +42,8 @@ public class Gardener extends RobotPlayer {
 			normalStrat(); 
 			break;
 		case 2: 
-			tryPlantFarm(); 
+			tryPlantFarm();
+			break;
 		}
 	}
 	
@@ -62,12 +67,13 @@ public class Gardener extends RobotPlayer {
 	public void normalStrat() throws GameActionException {
 		TreeInfo[] trees = rc.senseNearbyTrees();
 		RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		boolean success = false; 
 		
 		// Look to see how many trees are around you. if none plant one and continue shaking and watering without moving. 
 		if (trees.length > 0) {
 			System.out.println("Trees > 0");
-			shakeTree(trees[0]); 
-			if (!waterTree(trees[0])) {
+			//shakeTree(trees[0]); 
+			if (!waterTree(findTreeToWater())) {
 				if (!Util.tryMove(rc, rc.getLocation().directionTo(trees[0].location))) {
 					//plantTree(Util.randomDirection());
 					Util.tryMove(rc, Util.randomDirection());
@@ -81,14 +87,13 @@ public class Gardener extends RobotPlayer {
 		// Deploy military units if possible 
 		if (enemyRobots.length > 0) {
 			deployRobot(RobotType.SOLDIER);
-		} else if (TeamComms.getLumberjacks(rc) < 1) {
+		} else if (TeamComms.getLumberjacks(rc) < 5) {
 			deployRobot(RobotType.LUMBERJACK);
 		} else if (TeamComms.getSoldiers(rc) < 10) {
 			deployRobot(RobotType.SOLDIER);
 		} else if (TeamComms.getTanks(rc) < 3) {
 			deployRobot(RobotType.TANK);
 		} 
-		
 	}
 	
 	// Returns an array of trees in robots sight. 
@@ -136,22 +141,44 @@ public class Gardener extends RobotPlayer {
 	
 	public void tryPlantFarm() throws GameActionException {
 		int num = 0; 
-		Direction dir = Util.randomDirection();
+		Direction dir = Direction.getNorth();
+		System.out.println("Here");
 		
-		if (foundLand(5)) {
+		if (foundLand(3)) {
 			while (num < 4) {
+				System.out.println(dir);
 				if (plantTree(dir)) {
 					System.out.println(num + ". Planted Tree");
 					num++;
 				} else {
-					waterTree(findTreeToWater());
+					TreeInfo tree = findTreeToWater();
+					if (tree != null) {
+						waterTree(findTreeToWater());
+					}
 				}
 				
-				dir.rotateLeftDegrees(90);
+				dir = dir.rotateRightDegrees(72);
+			
 
 				Clock.yield();
 			}
+		} else {
+			Clock.yield();
+			tryPlantFarm(); 
 		}
+		
+		System.out.println("Top");
+		for (int i = 0; i < 5; i++) {
+			if (rc.isLocationOccupiedByTree(rc.getLocation().add(dir, 2))) {
+				System.out.println("Occupied By tree");
+				dir = dir.rotateRightDegrees(72);
+			} else {
+				System.out.println("Not Occupied By tree");
+				break;
+			}
+		}
+		
+		mem.setDirectionToDeploy(dir);
 	}
 	
 	public boolean foundLand(int radius) throws GameActionException {
@@ -317,13 +344,18 @@ public class Gardener extends RobotPlayer {
 	}
 	
 	// Deploys a robot given 
-	public void deployRobot(RobotType type) {
-		Direction dir = Util.randomDirection();
+	public boolean deployRobot(RobotType type) {
+		Direction dir = mem.getDirectionToDeploy();
+		if (dir == null) {
+			dir = Util.randomDirection();
+		}
+		
 		if (rc.canBuildRobot(type, dir))
 		{
 			try {
 				rc.buildRobot(type, dir);
 				incrementCount(type);
+				return true; 
 			} 
 			catch (GameActionException e)
 			{
@@ -337,6 +369,8 @@ public class Gardener extends RobotPlayer {
 		   // Robot cannot build this robot
 		   System.out.println("I cannot deploy this robot! - Gardener");
 		}
+		
+		return false; 
 	}
 	
 	// NOTE: TOO MANY CODEBYTES //

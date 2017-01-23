@@ -47,11 +47,10 @@ public class Lumberjack extends RobotPlayer {
         if(robots.length > 0 && !rc.hasAttacked()) {
             // Use strike() to hit all nearby robots!
             rc.strike();
-        } else if (trees.length > 0 && rc.canChop(trees[0].ID) && trees[0].getTeam() != rc.getTeam()) {
+        } else if (trees.length > 0 && rc.canChop(trees[0].ID) && !trees[0].getTeam().equals(rc.getTeam())) {
+        	System.out.println("Chopping Tree..");
         	rc.chop(trees[0].ID);
-        } else if (archonLoc != null) {
-            Util.tryMove(rc, rc.getLocation().directionTo(archonLoc));
-        } else {
+        } else if (archonLoc != null && !Util.tryMove(rc, rc.getLocation().directionTo(archonLoc))) {
         	Util.tryMove(rc, Util.randomDirection());
         }
 	}

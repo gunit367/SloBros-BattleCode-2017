@@ -33,21 +33,16 @@ public class Archon extends RobotPlayer {
         RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         Direction dir = rc.getLocation().directionTo(TeamComms.getOppArchonLoc(rc));
         
-        //
+        checkDonation();
+        
         //updateAreaOfInterest();
         System.out.println("NUM GARDENERS " + TeamComms.getGardeners(rc));
 
         // Attempt to deploy with a max number of gardeners
-        if (TeamComms.getGardeners(rc) < 5) 
+        if (TeamComms.getGardeners(rc) < 3) 
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);
-        }
-        else if (rc.getTeamBullets() >= 500 && TeamComms.getDonationCount(rc) < 200)
-        {
-        	rc.donate(50);
-        	TeamComms.broadcastDonationCount(rc, 50);
-        	
         }
         
         // Look for enemies and move away from them
@@ -108,4 +103,11 @@ public class Archon extends RobotPlayer {
 			TeamComms.setAreaOfInterest(rc, l);
 		}
 	}
+	
+	void checkDonation() throws GameActionException {
+		if (rc.getTeamBullets() > 10000) {
+			rc.donate(rc.getTeamBullets());
+		}
+	}
+	
 }
