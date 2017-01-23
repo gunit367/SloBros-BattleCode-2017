@@ -36,6 +36,7 @@ public class Soldier extends RobotPlayer {
 
 	public void offense() throws GameActionException {
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, rc.getTeam().opponent());
 		
 		// Fetch Current Area of Interest
 		MapLocation aoi = TeamComms.getAreaOfMilitaryInterest(rc);
@@ -44,12 +45,16 @@ public class Soldier extends RobotPlayer {
 		
 		MilitaryUtil.dodge();
 
-		if (robots.length > 0)
-		{
+		if (robots.length > 0) {
+			System.out.println("Shooot: " + robots.length);
 			if(Util.pathClearTo(robots[0].location))
 				MilitaryUtil.shootEnemy(rc, 0, robots[0].getID());
 			followEnemy(robots[0]);
 			TeamComms.setAreaOfMilitaryInterest(rc, robots[0].location);
+		} else if (enemyTrees.length > 0) {
+			if (Util.pathClearTo(enemyTrees[0].location)) {
+				//MilitaryUtil.shootEnemy(rc, 0, enemyTrees[0].getID());
+			}
 		} else if (aoi != null && rc.canMove(aoi)) {
 			System.out.println("aoi is not null");
 			Util.tryMove(rc, dirToAOI);
@@ -90,7 +95,7 @@ public class Soldier extends RobotPlayer {
 		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon)) {
 			return true; 
 		} else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon)) {
-			rc.fireSingleShot(dirToEnemyArchon);
+			//rc.fireSingleShot(dirToEnemyArchon);
 		}
 		
 		return false; 

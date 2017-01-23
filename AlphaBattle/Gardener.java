@@ -93,7 +93,7 @@ public class Gardener extends RobotPlayer {
 		} else if (TeamComms.getSoldiers(rc) < 20) {
 			deployRobot(RobotType.SOLDIER);
 		} else if (TeamComms.getTanks(rc) < 3) {
-			deployRobot(RobotType.TANK);
+			//deployRobot(RobotType.TANK);
 		} 
 	}
 	
