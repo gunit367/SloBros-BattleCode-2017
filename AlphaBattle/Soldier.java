@@ -43,6 +43,7 @@ public class Soldier extends RobotPlayer {
 		Direction dirToAOI = rc.getLocation().directionTo(aoi);
 		Direction random = Util.randomDirection();
 		
+		// try and dodge if needed
 		MilitaryUtil.dodge();
 
 		if (robots.length > 0) {

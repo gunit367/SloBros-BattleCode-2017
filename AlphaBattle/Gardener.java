@@ -68,7 +68,7 @@ public class Gardener extends RobotPlayer {
 	public void normalStrat() throws GameActionException {
 		TreeInfo[] trees = rc.senseNearbyTrees();
 		RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-		boolean success = false; 
+		//boolean success = false; 
 		
 		// Look to see how many trees are around you. if none plant one and continue shaking and watering without moving. 
 		if (trees.length > 0) {

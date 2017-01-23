@@ -7,52 +7,98 @@ public class Lumberjack extends RobotPlayer {
 
 	RobotController rc; 
 	LumberjackMemory mem;
+	static float attackRange = RobotType.LUMBERJACK.bodyRadius + GameConstants.LUMBERJACK_STRIKE_RADIUS;
 	
 	public Lumberjack(RobotController rc) {
 		this.rc = rc;
 		mem = new LumberjackMemory(rc);
 	}
 	
-	public void run() {
-		System.out.println("I'm a lumberjack!");
-        Team enemy = rc.getTeam().opponent();
-        
-
-        // The code you want your robot to perform every round should be in this loop
-        while (true) {
-
-            // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
-            try {
+	public void run() 
+	{
+        while (true) 
+        {
+            try
+            {
 
                 logic();
 
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                 Clock.yield();
 
-            } catch (Exception e) {
+            } 
+            catch (Exception e)
+            {
                 System.out.println("Lumberjack Exception");
                 e.printStackTrace();
             }
         }
 	}
 	
-	public void logic() throws GameActionException {
-        Team enemy = rc.getTeam().opponent();
-
-		// See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-        RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
-        TreeInfo[] trees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS);
-        MapLocation archonLoc = TeamComms.getOppArchonLoc(rc);
+	public void logic() throws GameActionException
+	{
+        // Gather Information Phase
+        mem.updateMemory();
         
-        if(robots.length > 0 && !rc.hasAttacked() && rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius + GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy).length == 0) {
-            // Use strike() to hit all nearby robots!
-           // rc.strike();
-        } else if (trees.length > 0 && rc.canChop(trees[0].ID) && !trees[0].getTeam().equals(rc.getTeam())) {
-        	System.out.println("Chopping Tree..");
-        	rc.chop(trees[0].ID);
-        } else if (archonLoc != null && !Util.tryMove(rc, rc.getLocation().directionTo(archonLoc))) {
-        	Util.tryMove(rc, Util.randomDirection());
-        }
+        // Move Phase
+        executeMove();
+        
+        // Attack Phase
+        executeAttack();
+	}
+	
+	void executeMove()
+	{
+		try 
+		{
+			// Dodge Bullet if needed
+			MilitaryUtil.dodge();
+			
+			// Calculate where to move next
+			MapLocation archonLoc = TeamComms.getOppArchonLoc(rc);
+			Direction dir = rc.getLocation().directionTo(archonLoc);
+			
+			// Move there
+			if(archonLoc == null || !Util.tryMove(rc, dir))
+				Util.tryMove(rc, Util.randomDirection());
+		} 
+		catch (GameActionException e)
+		{
+			// TODO Auto-generated catch block
+			System.out.println("Lumberjack: Move Failed");
+			e.printStackTrace();
+		}
+	}
+	
+	void executeAttack()
+	{
+		try 
+		{
+			if (mem.shouldAttack() && rc.canStrike())
+				rc.strike();
+			else if (mem.shouldChop())
+				chopTree();
+		}
+		catch (GameActionException e) 
+		{
+			System.out.println("Lumberjack: executeAttack failed");
+			e.printStackTrace();
+		}
+	}
+	
+	void chopTree() 
+	{
+		TreeInfo tochop = mem.trees[0];
+		if(tochop == null)
+			return;
+		try
+		{
+			rc.chop(tochop.ID);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Lumberjack: Chop Failed");
+			e.printStackTrace();
+		}
 	}
 	
 }
