@@ -12,6 +12,7 @@ public abstract class RobotMemory {
 	public TreeInfo[] trees;
 	MapLocation archonLocation;
 	MapLocation[] areasOfInterest;
+	public  boolean canSeeOppArchon;
 	
 	public RobotMemory(RobotController rc)
 	{
@@ -48,12 +49,15 @@ public abstract class RobotMemory {
 		{
 			RobotInfo ally = alliesInView[i];
 			if(ally.getType().equals(RobotType.ARCHON))
+			{
 				archonLocation = ally.location;
+			}
 		}
 	}
 	
 	void analyzeEnemies()
 	{
+		boolean canSeeArchon = false;
 		try
 		{
 			for(int i = 0; i < enemiesInView.length; i++)
@@ -61,9 +65,11 @@ public abstract class RobotMemory {
 				RobotInfo enemy = enemiesInView[i];
 				if(enemy.getType().equals(RobotType.ARCHON))
 				{
+					canSeeArchon = true;
 					TeamComms.broadcastOppArchon(enemy.location);
 				}
 			}
+			this.canSeeOppArchon = canSeeArchon;
 		} 
 		catch (GameActionException e)
 		{

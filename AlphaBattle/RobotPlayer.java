@@ -4,6 +4,7 @@ import battlecode.common.*;
 
 public strictfp class RobotPlayer {
     public static RobotController rc;
+    public static RobotMemory mem;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -183,17 +184,19 @@ public strictfp class RobotPlayer {
 	
 	public void updateAreaOfInterest() throws GameActionException
 	{
-		if (TeamComms.getOppArchonLoc() != null) 
+		MapLocation archonLocation = TeamComms.getOppArchonLoc();
+		if (archonLocation != null) 
 		{
-			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc()) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+			if (Util.nearLocation(archonLocation) && !mem.canSeeOppArchon) 
 			{
 				TeamComms.broadcastOppArchon(new MapLocation(0, 0));
 			}
 		}
 		
-		if (TeamComms.getAreaOfMilitaryInterest() != null) 
+		MapLocation militaryAOI = TeamComms.getAreaOfMilitaryInterest();
+		if (militaryAOI != null) 
 		{
-			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest()) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+			if (Util.nearLocation(militaryAOI) && mem.enemiesInView.length == 0) 
 			{
 				TeamComms.setAreaOfMilitaryInterest(new MapLocation(0,0));
 			}
