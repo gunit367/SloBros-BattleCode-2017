@@ -23,21 +23,7 @@ public class Scout extends RobotPlayer {
     		{
     			// Update Robots Memory with Information it can sense
     			mem.updateMemory();
-    			
-    			MilitaryUtil.dodge();
-    			
-    			// Attack If Need Be
-    			if(enemiesNearby())
-    			{
-    				fireAtFirstEnemy();
-    			}
-    			else if(!rc.hasMoved())
-    			{
-
-        			// Explore instead
-        			Util.tryMove(rc, Util.randomDirection());
-    			}
-    			
+    			logic();
     		}
     		catch (Exception e)
     		{
@@ -46,6 +32,31 @@ public class Scout extends RobotPlayer {
     		}
     		Clock.yield();
     	}
+	}
+	
+	void logic() {
+		try {
+			mem.updateMemory();
+			executeMove(); 
+			executeAction(); 
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	void executeMove() throws GameActionException {
+		if (!Util.tryMove(rc, mem.getMyDirection())) {
+			mem.setDirection(mem.myDir.rotateLeftDegrees(72)); 
+			Util.tryMove(rc, mem.getMyDirection());
+		}
+	}
+	
+	void executeAction() throws GameActionException {
+		TreeInfo tree = mem.trees[0];
+		
+		if (rc.canShake(tree.ID)) {
+			rc.shake(tree.ID);
+		}
 	}
 	
 	int initScout()
@@ -67,6 +78,8 @@ public class Scout extends RobotPlayer {
 	{
 		return mem.enemiesInView.length > 0;
 	}
+	
+	
 	
 	// Attempts to fire at the first enemy seen this turn, 
 	void fireAtFirstEnemy()

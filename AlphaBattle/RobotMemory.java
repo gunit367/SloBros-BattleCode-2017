@@ -11,7 +11,7 @@ public abstract class RobotMemory {
 	public RobotInfo[] alliesInRange;
 	public TreeInfo[] trees;
 	MapLocation archonLocation;
-	
+
 	public RobotMemory(RobotController rc)
 	{
 		this.rc = rc;
