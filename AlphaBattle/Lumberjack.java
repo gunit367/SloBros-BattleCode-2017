@@ -50,8 +50,8 @@ public class Lumberjack extends RobotPlayer {
 		}
 		try {
 			// Calculate where to move next
-			MapLocation aoe = TeamComms.getAreaOfInterest(rc);
-			Direction dir = TeamComms.getDirectionToInitialArchonLoc(rc);
+			MapLocation aoe = TeamComms.getAreaOfInterest();
+			Direction dir = TeamComms.getDirectionToInitialArchonLoc();
 
 			// Move there
 			if (aoe == null || !Util.tryMove(rc, dir)) {
@@ -78,7 +78,7 @@ public class Lumberjack extends RobotPlayer {
 			}
 			else
 			{
-				Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getArchonLoc(rc)));
+				Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getArchonLoc()));
 			}
 			
 		} catch (GameActionException e) {

@@ -37,10 +37,10 @@ public class Archon extends RobotPlayer {
         checkDonation();
         
         //updateAreaOfInterest();
-        System.out.println("NUM GARDENERS " + TeamComms.getGardeners(rc));
+        System.out.println("NUM GARDENERS " + TeamComms.getGardeners());
 
         // Attempt to deploy with a max number of gardeners
-        if (TeamComms.getGardeners(rc) < 2 || rc.getTeamBullets() > 500)
+        if (TeamComms.getGardeners() < 2 || rc.getTeamBullets() > 500)
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);
@@ -53,18 +53,18 @@ public class Archon extends RobotPlayer {
         }
 
         // Broadcast archon's location for other robots on the team to know
-        TeamComms.broadcastArchonLoc(rc);
+        TeamComms.broadcastArchonLoc();
 	}
 	
 	void initArchon(RobotController rc) throws GameActionException
 	{
 		System.out.println("I'm an archonnn!");
-		TeamComms.broadcastArchonLoc(rc);
-		TeamComms.updateGardeners(rc, 0);
-		TeamComms.updateSoldiers(rc, 0);
-		TeamComms.updateLumberjacks(rc, 0);
-		TeamComms.updateScouts(rc, 0);
-		TeamComms.updateTanks(rc, 0);
+		TeamComms.broadcastArchonLoc();
+		TeamComms.updateGardeners(0);
+		TeamComms.updateSoldiers(0);
+		TeamComms.updateLumberjacks(0);
+		TeamComms.updateScouts(0);
+		TeamComms.updateTanks(0);
 		if (rc.getTeam() == Team.A) {
 			broadcastEnemyArchon(Team.B); 
 		} else { 
@@ -76,13 +76,13 @@ public class Archon extends RobotPlayer {
 		MapLocation[] areasOfInterest = rc.getInitialArchonLocations(rc.getTeam().opponent());
 		if(areasOfInterest.length > 0)
 		{
-			TeamComms.setAreaOfInterest(rc, areasOfInterest[0]);
+			TeamComms.setAreaOfInterest(areasOfInterest[0]);
 		}
 	}
 	
 	void broadcastEnemyArchon(Team enemy) throws GameActionException {
 		MapLocation enemyArchon = rc.getInitialArchonLocations(enemy)[0]; 
-		TeamComms.broadcastOppArchon(rc, enemyArchon);
+		TeamComms.broadcastOppArchon(enemyArchon);
 		System.out.println(enemyArchon.toString());
 	}
 	
@@ -98,10 +98,10 @@ public class Archon extends RobotPlayer {
 	
 	void updateTeamAreaOfInterest() throws GameActionException
 	{
-		if(rc.getRoundNum() - TeamComms.getLastArchonSighting(rc) < 5)
+		if(rc.getRoundNum() - TeamComms.getLastArchonSighting() < 5)
 		{
-			MapLocation l = TeamComms.getOppArchonLoc(rc);
-			TeamComms.setAreaOfInterest(rc, l);
+			MapLocation l = TeamComms.getOppArchonLoc();
+			TeamComms.setAreaOfInterest(l);
 		}
 	}
 	

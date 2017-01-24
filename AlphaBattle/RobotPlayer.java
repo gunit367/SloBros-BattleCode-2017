@@ -153,25 +153,25 @@ public strictfp class RobotPlayer {
 			switch (type)
 			{
 				case SOLDIER:
-					old = TeamComms.getSoldiers(rc);
-					TeamComms.updateSoldiers(rc, old + 1);
+					old = TeamComms.getSoldiers();
+					TeamComms.updateSoldiers(old + 1);
 					break;
 				case LUMBERJACK:
-					old = TeamComms.getLumberjacks(rc);
-					TeamComms.updateLumberjacks(rc, old + 1);
+					old = TeamComms.getLumberjacks();
+					TeamComms.updateLumberjacks(old + 1);
 					break;
 				case SCOUT:
-					old = TeamComms.getScouts(rc);
-					TeamComms.updateScouts(rc, old + 1);
+					old = TeamComms.getScouts();
+					TeamComms.updateScouts(old + 1);
 					break;
 				case TANK:
-					old = TeamComms.getTanks(rc);
-					TeamComms.updateTanks(rc, old + 1);
+					old = TeamComms.getTanks();
+					TeamComms.updateTanks(old + 1);
 				case ARCHON:
 					break;
 				case GARDENER:
-					old = TeamComms.getGardeners(rc);
-					TeamComms.updateGardeners(rc, old + 1);
+					old = TeamComms.getGardeners();
+					TeamComms.updateGardeners(old + 1);
 					break;
 			}
 		}
@@ -181,18 +181,21 @@ public strictfp class RobotPlayer {
 		}
 	}
 	
-	public void updateAreaOfInterest() throws GameActionException{
-		if (TeamComms.getOppArchonLoc(rc) != null) {
-			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc(rc)) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+	public void updateAreaOfInterest() throws GameActionException
+	{
+		if (TeamComms.getOppArchonLoc() != null) 
+		{
+			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc()) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
 			{
-				TeamComms.broadcastOppArchon(rc, new MapLocation(0, 0));
+				TeamComms.broadcastOppArchon(new MapLocation(0, 0));
 			}
 		}
 		
-		if (TeamComms.getAreaOfMilitaryInterest(rc) != null) {
-			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest(rc)) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+		if (TeamComms.getAreaOfMilitaryInterest() != null) 
+		{
+			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest()) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
 			{
-				TeamComms.setAreaOfMilitaryInterest(rc, new MapLocation(0,0));
+				TeamComms.setAreaOfMilitaryInterest(new MapLocation(0,0));
 			}
 		}
 	}

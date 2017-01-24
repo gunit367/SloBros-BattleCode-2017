@@ -15,18 +15,23 @@ public class Soldier extends RobotPlayer {
 	public void run() {
 		// helper functions: isEnemyClose(), getEnemyLocation(),
 		// shoot(location),
-		while (true) {
-			try {
+		while (true) 
+		{
+			try 
+			{
 				logic(1);
 				Clock.yield();
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 				System.out.println("Soldier Exception");
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void logic(int strat) throws GameActionException {
+	public void logic(int strat) throws GameActionException 
+	{
 		switch (strat) {
 		case 1:
 			offense();
@@ -35,34 +40,44 @@ public class Soldier extends RobotPlayer {
 		}
 	}
 
-	public void offense() throws GameActionException {
+	public void offense() throws GameActionException
+	{
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, rc.getTeam().opponent());
 		
 		// Fetch Current Area of Interest
-		MapLocation aoi = TeamComms.getAreaOfMilitaryInterest(rc);
+		MapLocation aoi = TeamComms.getAreaOfMilitaryInterest();
 		Direction dirToAOI = rc.getLocation().directionTo(aoi);
 		Direction random = Util.randomDirection();
 		
 		// try and dodge if needed
 		MilitaryUtil.dodge();
 
-		if (robots.length > 0) {
+		if (robots.length > 0)
+		{
 			System.out.println("Shooot: " + robots.length);
 			if(Util.pathClearTo(robots[0].location))
 				MilitaryUtil.shootEnemy(rc, 0, robots[0].getID());
 			followEnemy(robots[0], 2.5f);
-			TeamComms.setAreaOfMilitaryInterest(rc, robots[0].location);
-		} else if (enemyTrees.length > 0 && rc.canFireSingleShot()) {
+			TeamComms.setAreaOfMilitaryInterest(robots[0].location);
+		}
+		else if (enemyTrees.length > 0 && rc.canFireSingleShot()) 
+		{
 			//if (Util.pathClearTo(enemyTrees[0].location)) {
 				//MilitaryUtil.shootEnemy(rc, 0, enemyTrees[0].getID());
 			//}
 			rc.fireSingleShot(rc.getLocation().directionTo(enemyTrees[0].location));
-		} else if (aoi != null && rc.canMove(aoi)) {
+		}
+		else if (aoi != null && rc.canMove(aoi))
+		{
 			Util.tryMove(rc, dirToAOI);
-		} else if (moveTowardsEnemyArchon()) {
+		} 
+		else if (moveTowardsEnemyArchon())
+		{
 			
-		} else if (rc.canMove(random)) {
+		} 
+		else if (rc.canMove(random))
+		{
 			Util.tryMove(rc, random);
 		} 
 		
@@ -85,17 +100,22 @@ public class Soldier extends RobotPlayer {
 
 	//}
 	
-	public boolean moveTowardsEnemyArchon() throws GameActionException {
-		MapLocation enemyArchon = TeamComms.getOppArchonLoc(rc);
+	public boolean moveTowardsEnemyArchon() throws GameActionException
+	{
+		MapLocation enemyArchon = TeamComms.getOppArchonLoc();
 		
-		if (enemyArchon == null) {
+		if (enemyArchon == null)
+		{
 			return false; 
 		}
 		
 		Direction dirToEnemyArchon = rc.getLocation().directionTo(enemyArchon);
-		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon)) {
+		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon))
+		{
 			return true; 
-		} else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon)) {
+		} 
+		else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon))
+		{
 			//rc.fireSingleShot(dirToEnemyArchon);
 		}
 		

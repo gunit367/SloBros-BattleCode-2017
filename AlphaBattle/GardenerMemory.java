@@ -3,7 +3,6 @@ import battlecode.common.*;
 
 public class GardenerMemory extends RobotMemory
 {
-	RobotController rc;
 	Direction dir; 
 	int strat;
 	
@@ -16,6 +15,7 @@ public class GardenerMemory extends RobotMemory
 	public void updateMemory()
 	{
 		super.updateMemory();
+		
 	}
 	
 	public MapLocation getImportantLoc()

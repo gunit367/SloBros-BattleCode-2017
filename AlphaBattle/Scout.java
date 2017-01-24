@@ -52,8 +52,7 @@ public class Scout extends RobotPlayer {
 	{
 		try
 		{
-			int num = TeamComms.getScouts(rc);
-			System.out.println("I am Scout Number " + num);
+			int num = TeamComms.getScouts();
 			return num;
 		}
 		catch (Exception e)

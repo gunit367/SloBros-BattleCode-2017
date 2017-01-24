@@ -8,7 +8,6 @@ public class Gardener extends RobotPlayer {
 	GardenerMemory mem;
 	
 	public static final int SHAKE_AMT = 0;
-	public static final float NORTH = (float) 1.5708;
 
 	public Gardener(RobotController rc)
 	{
@@ -24,8 +23,7 @@ public class Gardener extends RobotPlayer {
 		{
             try
             {
-        		int strat = mem.getStrat();
-	           	logic(strat);
+	           	logic(mem.getStrat());
 	           	Clock.yield();
             } 
             catch (Exception e)
@@ -58,9 +56,9 @@ public class Gardener extends RobotPlayer {
 	// Depending on gardener count, gardeners make a wall in front of archon 
 	public void wallStrat() throws GameActionException
 	{
-		int numGardeners = TeamComms.getGardeners(rc);
-		MapLocation archonLoc = TeamComms.getArchonLoc(rc);
-		MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc(rc);
+		int numGardeners = TeamComms.getGardeners();
+		MapLocation archonLoc = TeamComms.getArchonLoc();
+		MapLocation enemyArchonLoc = TeamComms.getOppArchonLoc();
 		MapLocation wall = archonLoc.add(archonLoc.directionTo(enemyArchonLoc), 10); 
 		
 		if (numGardeners == 1) 
@@ -98,7 +96,7 @@ public class Gardener extends RobotPlayer {
 				}
 			}
 		}
-		else if (!plantTree(TeamComms.getArchonLoc(rc).directionTo(TeamComms.getOppArchonLoc(rc))))
+		else if (!plantTree(TeamComms.getArchonLoc().directionTo(TeamComms.getOppArchonLoc())))
 		{
 			Util.tryMove(rc, Util.randomDirection());
 		}
@@ -108,15 +106,15 @@ public class Gardener extends RobotPlayer {
 		{
 			deployRobot(RobotType.SOLDIER);
 		} 
-		else if (TeamComms.getLumberjacks(rc) < 10) 
+		else if (TeamComms.getLumberjacks() < 10) 
 		{
 			deployRobot(RobotType.LUMBERJACK);
 		}
-		else if (TeamComms.getSoldiers(rc) < 20)
+		else if (TeamComms.getSoldiers() < 20)
 		{
 			deployRobot(RobotType.SOLDIER);
 		}
-		else if (TeamComms.getTanks(rc) < 3)
+		else if (TeamComms.getTanks() < 3)
 		{
 			//deployRobot(RobotType.TANK);
 		} 
@@ -174,7 +172,7 @@ public class Gardener extends RobotPlayer {
 	public void tryPlantFarm() throws GameActionException 
 	{
 		int num = 0; 
-		Direction dir = TeamComms.getDirectionToInitialArchonLoc(rc).rotateRightDegrees(72);
+		Direction dir = TeamComms.getDirectionToInitialArchonLoc().rotateRightDegrees(72);
 		
 		if (foundLand(3))
 		{
@@ -232,7 +230,7 @@ public class Gardener extends RobotPlayer {
 			
 		if (rc.getRobotCount() % 10 == 0)
 		{
-			Util.tryMove(rc, TeamComms.getDirectionToInitialArchonLoc(rc));
+			Util.tryMove(rc, TeamComms.getDirectionToInitialArchonLoc());
 		} 
 		else
 		{
