@@ -27,11 +27,9 @@ public class LumberjackMemory extends RobotMemory
 	
 	public boolean shouldAttack()
 	{
-		if (alliesInRange.length > 0)
-			return false;
-		
-		
-		return enemiesInRange.length > 0;
+		if(alliesInRange.length == 0 && enemiesInRange.length > 0)
+			return true;
+		return false;
 	}
 	
 	public boolean shouldChop()

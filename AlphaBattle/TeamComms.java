@@ -17,13 +17,8 @@ public class TeamComms {
 	public static final int numScouts = 5;
 	public static final int numTanks = 6;
 	
-	// DonationCount 
-	public static final int donationCount = 50; 
-	
-	// Military Informatin: Starting at Channel 100
-	public static final int areaOfInterestMilitaryX = 100; 	
-	public static final int areaOfInterestMilitaryY = 101; 
-
+	// DonationCount: Channel 50
+	public static final int donationCount = 50;  
 	
 	// Enemy Team Information: Starting at Channel 500
 	public static final int oppArchonX = 500;
@@ -31,11 +26,19 @@ public class TeamComms {
 	public static final int archonSightingTimestamp = 502;
 	
 	// Prototype for marking Locations to Explore/Secure
-	public static final int areaOfInterestX = 503;
-	public static final int areaOfInterestY = 504;
+	// Note: in general, coords for aoe[i] are on channel (2000 + 2i) and (2000 + 2i + 1)
+	public static final int areaOfInterestCount = 1999;
+	public static final int areaOfInterestX = 2000;
+	public static final int areaOfInterestY = 2001;
+	
+	// Military Informatin: Starting at Channel 4000
+	public static final int areaofInterstMilCount = 3999;
+	public static final int areaOfInterestMilitaryX = 4000; 	
+	public static final int areaOfInterestMilitaryY = 4001;
 	
 	// Communication Functions
 	// Friendly Archon Location
+
 	public static MapLocation getArchonLoc() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
@@ -197,6 +200,9 @@ public class TeamComms {
 	public static Direction getDirectionToInitialArchonLoc() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
-		return rc.getLocation().directionTo(getOppArchonLoc());
+		MapLocation oppArchon = getOppArchonLoc();
+		if(oppArchon == null)
+			return null;
+		return rc.getLocation().directionTo(oppArchon);
 	}
 }

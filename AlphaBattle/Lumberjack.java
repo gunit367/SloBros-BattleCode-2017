@@ -44,18 +44,37 @@ public class Lumberjack extends RobotPlayer {
 		updateAreaOfInterest();
 	}
 
-	void executeMove() {
-		if (!mem.shouldMove()) {
+	void executeMove() 
+	{
+		if (!mem.shouldMove()) 
+		{
 			return;
 		}
-		try {
+		try
+		{
 			// Calculate where to move next
 			MapLocation aoe = TeamComms.getAreaOfInterest();
 			Direction dir = TeamComms.getDirectionToInitialArchonLoc();
+			if (aoe == null || dir == null)
+			{
+				if(mem.enemiesInView.length > 0)
+				{
+					dir = rc.getLocation().directionTo(mem.enemiesInView[0].location);
+				}
+				else if (mem.trees.length > 0)
+				{
+					dir = rc.getLocation().directionTo(mem.trees[0].location);
+				}
+				else
+				{
+					dir = Util.randomDirection();
+				}
+			}
 
 			// Move there 
 			// Null Pointer Exception at this if statement
-			if (aoe == null || !Util.tryMove(rc, dir)) {
+			if (aoe == null || !Util.tryMove(rc, dir))
+			{
 				if (!Util.tryMove(rc, dir.rotateLeftDegrees(90)))
 				{
 					
@@ -74,7 +93,9 @@ public class Lumberjack extends RobotPlayer {
 				}
 				else
 					Util.tryMove(rc, dir.rotateLeftDegrees(180));
-			} else if (mem.trees.length > 0 && mem.trees[0].getTeam() != rc.getTeam() && !Util.tryMove(rc, mem.trees[0].location, 1)) {
+			}
+			else if (mem.trees.length > 0 && mem.trees[0].getTeam() != rc.getTeam() && !Util.tryMove(rc, mem.trees[0].location, 1))
+			{
 				
 			}
 			else

@@ -11,6 +11,7 @@ public abstract class RobotMemory {
 	public RobotInfo[] alliesInRange;
 	public TreeInfo[] trees;
 	MapLocation archonLocation;
+	MapLocation[] areasOfInterest;
 	
 	public RobotMemory(RobotController rc)
 	{
@@ -73,6 +74,23 @@ public abstract class RobotMemory {
 	
 	float getAttackRange()
 	{
-		return 0;
+		RobotType type = rc.getType();
+		switch(type){
+		case ARCHON:
+			return 0;
+		case GARDENER:
+			return 0;
+		case SCOUT:
+			return type.sensorRadius;
+		case TANK:
+			return type.sensorRadius;
+		case SOLDIER:
+			return type.sensorRadius;
+		case LUMBERJACK:
+			return GameConstants.LUMBERJACK_STRIKE_RADIUS;
+		default:
+			return 0;
+			
+		}
 	}
 }

@@ -474,7 +474,7 @@ public class Gardener extends RobotPlayer {
 	
 	public boolean deployInitialLumberjack() throws GameActionException 
 	{
-		Direction dir = Util.randomDirection();
+		Direction dir = rc.getLocation().directionTo(mem.archonLocation).opposite();
 		
 		if (rc.canBuildRobot(RobotType.LUMBERJACK, dir)) 
 		{
