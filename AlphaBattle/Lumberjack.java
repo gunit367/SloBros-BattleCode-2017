@@ -53,7 +53,8 @@ public class Lumberjack extends RobotPlayer {
 			MapLocation aoe = TeamComms.getAreaOfInterest(rc);
 			Direction dir = TeamComms.getDirectionToInitialArchonLoc(rc);
 
-			// Move there
+			// Move there 
+			// Null Pointer Exception at this if statement
 			if (aoe == null || !Util.tryMove(rc, dir)) {
 				if (!Util.tryMove(rc, dir.rotateLeftDegrees(90)))
 				{
