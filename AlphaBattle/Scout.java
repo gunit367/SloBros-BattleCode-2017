@@ -102,4 +102,18 @@ public class Scout extends RobotPlayer {
 			e.printStackTrace();
 		}
 	}
+	
+	void tryShake()
+	{
+		// if on a tree, attempt to shake
+		if (rc.canInteractWithTree(rc.getLocation()) && rc.canShake(rc.getLocation()))
+		{
+			try {
+				rc.shake(rc.getLocation());
+			} catch (GameActionException e) {
+				System.out.println("Scout raised an exception while attmepting to shake tree!");;
+				e.printStackTrace();
+			}
+		}
+	}
 }
