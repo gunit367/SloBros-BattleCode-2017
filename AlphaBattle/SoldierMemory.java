@@ -1,7 +1,7 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class SoldierMemory implements RobotMemory
+public class SoldierMemory extends RobotMemory
 {
 	RobotController rc;
     RobotInfo enemyArchon[]; 
@@ -9,12 +9,12 @@ public class SoldierMemory implements RobotMemory
 	
 	public SoldierMemory(RobotController rc)
 	{
-		this.rc = rc;
+		super(rc);
 	}
 	
 	public void updateMemory()
 	{
-		
+		super.updateMemory();
 	}
 	
 	public MapLocation getImportantLoc()

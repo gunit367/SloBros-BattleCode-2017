@@ -1,18 +1,18 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class ArchonMemory implements RobotMemory
+public class ArchonMemory extends RobotMemory
 {
 	RobotController rc;
 	
 	public ArchonMemory(RobotController rc)
 	{
-		this.rc = rc;
+		super(rc);
 	}
 	
 	public void updateMemory()
 	{
-		
+		super.updateMemory();
 	}
 	
 	public MapLocation getImportantLoc()

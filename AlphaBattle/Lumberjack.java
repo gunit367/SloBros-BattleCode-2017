@@ -32,13 +32,16 @@ public class Lumberjack extends RobotPlayer {
 		// Gather Information Phase
 		mem.updateMemory();
 
-		MilitaryUtil.dodge();
+		//MilitaryUtil.dodge();
 
+		// Attack Phase
+		executeAttack();
+		
 		// Move Phase
 		executeMove();
 		
-		// Attack Phase
-		executeAttack();
+		// End of Turn Computations
+		updateAreaOfInterest();
 	}
 
 	void executeMove() {
@@ -47,18 +50,38 @@ public class Lumberjack extends RobotPlayer {
 		}
 		try {
 			// Calculate where to move next
-			MapLocation archonLoc = TeamComms.getOppArchonLoc(rc);
+			MapLocation aoe = TeamComms.getAreaOfInterest(rc);
 			Direction dir = TeamComms.getDirectionToInitialArchonLoc(rc);
 
 			// Move there
-			if (archonLoc == null && !Util.tryMove(rc, dir)) {
+			if (aoe == null || !Util.tryMove(rc, dir)) {
+				if (!Util.tryMove(rc, dir.rotateLeftDegrees(90)))
+				{
+					
+				}
+				else if (!Util.tryMove(rc, dir.rotateRightDegrees(90)))
+				{
+					
+				}
+				else if (!Util.tryMove(rc, dir.rotateLeftDegrees(120)))
+				{
+					
+				}
+				else if (!Util.tryMove(rc, dir.rotateRightDegrees(120)))
+				{
+					
+				}
+				else
+					Util.tryMove(rc, dir.rotateLeftDegrees(180));
+			} else if (mem.trees.length > 0 && mem.trees[0].getTeam() != rc.getTeam() && !Util.tryMove(rc, mem.trees[0].location, 1)) {
 				
-			} else if (mem.trees[0] != null && mem.trees[0].getTeam() != rc.getTeam() && !Util.tryMove(rc, mem.trees[0].location, 1)) {
-				Util.tryMove(rc, Util.randomDirection());
+			}
+			else
+			{
+				Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getArchonLoc(rc)));
 			}
 			
 		} catch (GameActionException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Lumberjack: Move Failed");
 			e.printStackTrace();
 		}
@@ -66,7 +89,7 @@ public class Lumberjack extends RobotPlayer {
 	
 	void executeAttack() {
 		try {
-			if (mem.shouldAttack() && rc.canStrike())
+			if (rc.canStrike())
 				rc.strike();
 			else if (mem.shouldChop())
 				chopTree();

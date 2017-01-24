@@ -180,5 +180,21 @@ public strictfp class RobotPlayer {
 			System.out.println("Error Incrementing Counts");
 		}
 	}
+	
+	public void updateAreaOfInterest() throws GameActionException{
+		if (TeamComms.getOppArchonLoc(rc) != null) {
+			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc(rc)) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+			{
+				TeamComms.broadcastOppArchon(rc, new MapLocation(0, 0));
+			}
+		}
+		
+		if (TeamComms.getAreaOfMilitaryInterest(rc) != null) {
+			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest(rc)) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+			{
+				TeamComms.setAreaOfMilitaryInterest(rc, new MapLocation(0,0));
+			}
+		}
+	}
     
 }

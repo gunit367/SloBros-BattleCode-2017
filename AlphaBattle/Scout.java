@@ -66,7 +66,7 @@ public class Scout extends RobotPlayer {
 	
 	boolean enemiesNearby()
 	{
-		return mem.recentEnemies.length > 0;
+		return mem.enemiesInView.length > 0;
 	}
 	
 	// Attempts to fire at the first enemy seen this turn, 
@@ -76,12 +76,12 @@ public class Scout extends RobotPlayer {
 		{
 			if (rc.canFireSingleShot()) {
 	            // ...Then fire a bullet in the direction of the enemy.
-	            rc.fireSingleShot(rc.getLocation().directionTo(mem.recentEnemies[0].location));
+	            rc.fireSingleShot(rc.getLocation().directionTo(mem.enemiesInView[0].location));
 	        }
 			if (!rc.hasAttacked())
 			{
 				// Try to follow the enemy if attacking couldn't happen
-				Util.tryMove(rc, followEnemy(mem.recentEnemies[0], 8.5f));
+				Util.tryMove(rc, followEnemy(mem.enemiesInView[0], 8.5f));
 			}
 		} 
 		catch (Exception e)

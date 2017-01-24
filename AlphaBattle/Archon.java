@@ -96,7 +96,7 @@ public class Archon extends RobotPlayer {
 		}
 	}
 	
-	void updateAreaOfInterest() throws GameActionException
+	void updateTeamAreaOfInterest() throws GameActionException
 	{
 		if(rc.getRoundNum() - TeamComms.getLastArchonSighting(rc) < 5)
 		{

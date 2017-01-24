@@ -1,22 +1,16 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class ScoutMemory implements RobotMemory
-{
-	public Team enemyTeam;
-	RobotController rc;
-	public RobotInfo[] recentEnemies;
-	
+public class ScoutMemory extends RobotMemory
+{	
 	public ScoutMemory(RobotController rc)
 	{
-		this.rc = rc;
-		enemyTeam = rc.getTeam().opponent();
-		this.recentEnemies = null;
+		super(rc);
 	}
 	
 	public void updateMemory()
 	{
-		recentEnemies = rc.senseNearbyRobots(-1, enemyTeam);
+		super.updateMemory();
 	}
 	
 	public MapLocation getImportantLoc()

@@ -51,7 +51,7 @@ public class Soldier extends RobotPlayer {
 			System.out.println("Shooot: " + robots.length);
 			if(Util.pathClearTo(robots[0].location))
 				MilitaryUtil.shootEnemy(rc, 0, robots[0].getID());
-			followEnemy(robots[0], 3f);
+			followEnemy(robots[0], 2.5f);
 			TeamComms.setAreaOfMilitaryInterest(rc, robots[0].location);
 		} else if (enemyTrees.length > 0 && rc.canFireSingleShot()) {
 			//if (Util.pathClearTo(enemyTrees[0].location)) {
@@ -59,7 +59,6 @@ public class Soldier extends RobotPlayer {
 			//}
 			rc.fireSingleShot(rc.getLocation().directionTo(enemyTrees[0].location));
 		} else if (aoi != null && rc.canMove(aoi)) {
-			System.out.println("aoi is not null");
 			Util.tryMove(rc, dirToAOI);
 		} else if (moveTowardsEnemyArchon()) {
 			
@@ -90,7 +89,6 @@ public class Soldier extends RobotPlayer {
 		MapLocation enemyArchon = TeamComms.getOppArchonLoc(rc);
 		
 		if (enemyArchon == null) {
-			System.out.println("EnemyArchon == null");
 			return false; 
 		}
 		
@@ -102,25 +100,5 @@ public class Soldier extends RobotPlayer {
 		}
 		
 		return false; 
-	}
-	
-	public void updateAreaOfInterest() throws GameActionException{
-		if (TeamComms.getOppArchonLoc(rc) != null) {
-			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc(rc)) < 4 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
-				System.out.println("-------------- Archon");
-				TeamComms.broadcastOppArchon(rc, new MapLocation(0, 0));
-			}
-		}
-		
-		if (TeamComms.getAreaOfMilitaryInterest(rc) != null) {
-			System.out.println("Area of interest is null");
-			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest(rc)) < 4 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
-				System.out.println("-------------- Military");
-				TeamComms.setAreaOfMilitaryInterest(rc, new MapLocation(0,0));
-			}
-		}
-		
-	
-
 	}
 }

@@ -1,18 +1,18 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class TankMemory implements RobotMemory
+public class TankMemory extends RobotMemory
 {
 	RobotController rc;
 	
 	public TankMemory (RobotController rc)
 	{
-		this.rc = rc;
+		super(rc);
 	}
 	
 	public void updateMemory()
 	{
-		
+		super.updateMemory();
 	}
 	
 	public MapLocation getImportantLoc()

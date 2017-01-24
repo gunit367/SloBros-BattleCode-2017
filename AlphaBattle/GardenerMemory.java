@@ -1,20 +1,21 @@
 package AlphaBattle;
 import battlecode.common.*;
 
-public class GardenerMemory implements RobotMemory
+public class GardenerMemory extends RobotMemory
 {
 	RobotController rc;
 	Direction dir; 
-	int strat = 0; 
+	int strat;
 	
 	public GardenerMemory(RobotController rc)
 	{
-		this.rc = rc;
+		super(rc);
+		strat = 0;
 	}
 	
 	public void updateMemory()
 	{
-		
+		super.updateMemory();
 	}
 	
 	public MapLocation getImportantLoc()
