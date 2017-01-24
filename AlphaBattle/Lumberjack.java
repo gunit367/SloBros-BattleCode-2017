@@ -40,13 +40,13 @@ public class Lumberjack extends RobotPlayer {
         Team enemy = rc.getTeam().opponent();
 
 		// See if there are any enemy robots within striking range (distance 1 from lumberjack's radius)
-        RobotInfo[] robots = rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
+        RobotInfo[] robots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy);
         TreeInfo[] trees = rc.senseNearbyTrees(RobotType.LUMBERJACK.bodyRadius+GameConstants.LUMBERJACK_STRIKE_RADIUS);
         MapLocation archonLoc = TeamComms.getOppArchonLoc(rc);
         
-        if(robots.length > 0 && !rc.hasAttacked() && rc.senseNearbyRobots(RobotType.LUMBERJACK.bodyRadius + GameConstants.LUMBERJACK_STRIKE_RADIUS, enemy).length == 0) {
+        if(robots.length > 0 && !rc.hasAttacked()) {
             // Use strike() to hit all nearby robots!
-           // rc.strike();
+            rc.strike();
         } else if (trees.length > 0 && rc.canChop(trees[0].ID) && !trees[0].getTeam().equals(rc.getTeam())) {
         	System.out.println("Chopping Tree..");
         	rc.chop(trees[0].ID);

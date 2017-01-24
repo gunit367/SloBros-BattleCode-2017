@@ -142,7 +142,7 @@ public class Gardener extends RobotPlayer {
 	
 	public void tryPlantFarm() throws GameActionException {
 		int num = 0; 
-		Direction dir = Direction.getNorth();
+		Direction dir = TeamComms.getDirectionToInitialArchonLoc(rc).rotateRightDegrees(72);
 		System.out.println("Here");
 		
 		if (foundLand(3)) {
@@ -188,7 +188,11 @@ public class Gardener extends RobotPlayer {
 			return true;
 		} 
 			
-		Util.tryMove(rc, Util.randomDirection());
+		if (rc.getRobotCount() % 10 == 0) {
+			Util.tryMove(rc, TeamComms.getDirectionToInitialArchonLoc(rc));
+		} else {
+			Util.tryMove(rc, Util.randomDirection());
+		}
 		return false; 
 		
 	}

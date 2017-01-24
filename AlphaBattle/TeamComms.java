@@ -171,4 +171,8 @@ public class TeamComms {
 		System.out.println("x: " + x + " y: " + y);
 		return x != 0 && y != 0? new MapLocation(x,y) : null;
 	}
+	
+	public static Direction getDirectionToInitialArchonLoc(RobotController rc) throws GameActionException {
+		return getArchonLoc(rc).directionTo(getOppArchonLoc(rc));
+	}
 }

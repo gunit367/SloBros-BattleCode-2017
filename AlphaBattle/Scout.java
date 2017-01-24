@@ -81,7 +81,7 @@ public class Scout extends RobotPlayer {
 			if (!rc.hasAttacked())
 			{
 				// Try to follow the enemy if attacking couldn't happen
-				Util.tryMove(rc, followEnemy(mem.recentEnemies[0]));
+				Util.tryMove(rc, followEnemy(mem.recentEnemies[0], 8.5f));
 			}
 		} 
 		catch (Exception e)

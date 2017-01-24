@@ -9,6 +9,7 @@ public class Soldier extends RobotPlayer {
 	public Soldier(RobotController rc) {
 		this.rc = rc;
 		mem = new SoldierMemory(rc);
+		
 	}
 
 	public void run() {
@@ -49,12 +50,13 @@ public class Soldier extends RobotPlayer {
 			System.out.println("Shooot: " + robots.length);
 			if(Util.pathClearTo(robots[0].location))
 				MilitaryUtil.shootEnemy(rc, 0, robots[0].getID());
-			followEnemy(robots[0]);
+			followEnemy(robots[0], 3f);
 			TeamComms.setAreaOfMilitaryInterest(rc, robots[0].location);
-		} else if (enemyTrees.length > 0) {
-			if (Util.pathClearTo(enemyTrees[0].location)) {
+		} else if (enemyTrees.length > 0 && rc.canFireSingleShot()) {
+			//if (Util.pathClearTo(enemyTrees[0].location)) {
 				//MilitaryUtil.shootEnemy(rc, 0, enemyTrees[0].getID());
-			}
+			//}
+			rc.fireSingleShot(rc.getLocation().directionTo(enemyTrees[0].location));
 		} else if (aoi != null && rc.canMove(aoi)) {
 			System.out.println("aoi is not null");
 			Util.tryMove(rc, dirToAOI);
