@@ -3,9 +3,17 @@ import battlecode.common.*;
 
 public class ScoutMemory extends RobotMemory
 {	
-	public ScoutMemory(RobotController rc)
+	Direction myDir; 
+	
+	public ScoutMemory(RobotController rc) 
 	{
 		super(rc);
+		
+		try {
+			myDir = rc.getLocation().directionTo(TeamComms.getArchonLoc());
+		} catch(Exception e) {
+			myDir = Util.randomDirection();
+		} 
 	}
 	
 	public void updateMemory()
@@ -17,4 +25,13 @@ public class ScoutMemory extends RobotMemory
 	{
 		return null;
 	}
+	
+	public Direction getMyDirection() {
+		return myDir; 
+	}
+	
+	public void setDirection(Direction dir) {
+		myDir = dir; 
+	}
+	
 }
