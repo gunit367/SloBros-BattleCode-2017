@@ -65,11 +65,13 @@ public class Archon extends RobotPlayer {
 		TeamComms.updateLumberjacks(0);
 		TeamComms.updateScouts(0);
 		TeamComms.updateTanks(0);
+		System.out.println("Right before!");
 		if (rc.getTeam() == Team.A) {
 			broadcastEnemyArchon(Team.B); 
 		} else { 
 			broadcastEnemyArchon(Team.A); 
 		}
+		TeamComms.broadcastNumArchons();
 		System.out.println("Afterewards");
 		
 		// Generate Initial Area of Interest to Explore
@@ -81,9 +83,14 @@ public class Archon extends RobotPlayer {
 	}
 	
 	void broadcastEnemyArchon(Team enemy) throws GameActionException {
-		MapLocation enemyArchon = rc.getInitialArchonLocations(enemy)[0]; 
-		TeamComms.broadcastOppArchon(enemyArchon);
-		System.out.println(enemyArchon.toString());
+		MapLocation[] enemyArchon = rc.getInitialArchonLocations(enemy);
+		
+		System.out.println("Broadcasting");
+		for (int i = 0; i < enemyArchon.length; i++) {
+			TeamComms.broadcastOppArchon(enemyArchon[i], -1 - i);
+		}
+		
+		System.out.println("After");
 	}
 	
 	void deployGardener(Direction dir) throws GameActionException

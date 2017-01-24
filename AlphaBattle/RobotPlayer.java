@@ -183,19 +183,37 @@ public strictfp class RobotPlayer {
 	
 	public void updateAreaOfInterest() throws GameActionException
 	{
-		if (TeamComms.getOppArchonLoc() != null) 
-		{
-			if (rc.getLocation().distanceTo(TeamComms.getOppArchonLoc()) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
-			{
-				TeamComms.broadcastOppArchon(new MapLocation(0, 0));
-			}
-		}
-		
+		updateEnemyArchon();
+		updateMilitaryAOI();
+	}
+	
+	public void updateMilitaryAOI() throws GameActionException {
 		if (TeamComms.getAreaOfMilitaryInterest() != null) 
 		{
 			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest()) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
 			{
-				TeamComms.setAreaOfMilitaryInterest(new MapLocation(0,0));
+				TeamComms.setAreaOfMilitaryInterest(new MapLocation(-1,-1));
+			}
+		}
+	}
+	
+	public void updateEnemyArchon() throws GameActionException {
+		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		int[] archonData = TeamComms.getClosestArchonLocationAndID();	
+		
+		System.out.println(archonData[0] + " : " + archonData[1]);
+		MapLocation enemyArchon = new MapLocation(archonData[0], archonData[1]); 
+		if (enemyArchon != null) 
+		{
+			if (rc.getLocation().distanceTo(enemyArchon) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+			{
+				TeamComms.broadcastOppArchon(new MapLocation(-1, -1), archonData[2]);
+			}
+		}
+		
+		for (int i = 0; i < robots.length; i++) {
+			if (robots[i].type == RobotType.ARCHON) {
+				TeamComms.broadcastOppArchon(robots[i].getLocation(), robots[i].ID);
 			}
 		}
 	}

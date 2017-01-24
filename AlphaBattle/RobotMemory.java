@@ -61,7 +61,7 @@ public abstract class RobotMemory {
 				RobotInfo enemy = enemiesInView[i];
 				if(enemy.getType().equals(RobotType.ARCHON))
 				{
-					TeamComms.broadcastOppArchon(enemy.location);
+					TeamComms.broadcastOppArchon(enemy.location, enemy.ID);
 				}
 			}
 		} 

@@ -39,6 +39,7 @@ public class Scout extends RobotPlayer {
 			mem.updateMemory();
 			executeMove(); 
 			executeAction(); 
+			updateAreaOfInterest();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
