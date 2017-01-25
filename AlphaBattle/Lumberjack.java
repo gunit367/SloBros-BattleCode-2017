@@ -94,6 +94,7 @@ public class Lumberjack extends RobotPlayer {
 		} 
 		
 		if(aoe != null) {
+			System.out.println(aoe);
 			return rc.getLocation().directionTo(aoe);
 		
 		}

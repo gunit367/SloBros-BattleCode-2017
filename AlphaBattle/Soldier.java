@@ -104,6 +104,7 @@ public class Soldier extends RobotPlayer {
 	public boolean moveTowardsEnemyArchon() throws GameActionException
 	{
 		MapLocation enemyArchon = TeamComms.getClosestArchonLocation();
+		System.out.println(enemyArchon);
 		
 		if (enemyArchon == null)
 		{

@@ -55,9 +55,9 @@ public class Scout extends RobotPlayer {
 	}
 	
 	void executeAction() throws GameActionException {
-		TreeInfo tree = mem.trees[0];
+		TreeInfo tree = mem.trees.length > 0? mem.trees[0] : null;
 		
-		if (rc.canShake(tree.ID)) {
+		if (tree != null && rc.canShake(tree.ID)) {
 			rc.shake(tree.ID);
 		}
 	}

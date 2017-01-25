@@ -7,31 +7,31 @@ public class TeamComms {
 
 	// Friendly Team Information
 	// Friendly Team Archon Location: Channels 0 and 1
-	public static final int archonX = 0;
-	public static final int archonY = 1;
+	private static final int archonX = 0;
+	private static final int archonY = 1;
 	
 	// Friendly Team Unit Counts: Channels 2 - 6
-	public static final int numGardeners = 2;
-	public static final int numSoldiers = 3;
-	public static final int numLumberjacks = 4;
-	public static final int numScouts = 5;
-	public static final int numTanks = 6;
+	private static final int numGardeners = 2;
+	private static final int numSoldiers = 3;
+	private static final int numLumberjacks = 4;
+	private static final int numScouts = 5;
+	private static final int numTanks = 6;
 	
 	// DonationCount: Channel 50
-	public static final int donationCount = 50;  
+	private static final int donationCount = 50;  
 	
 	// Enemy Team Information: Starting at Channel 500
-	public static final int numEnemyArchons = 500; 
-	public static final int archonID1 = 500; 
-	public static final int archonID2 = 501; 
-	public static final int archonID3 = 502; 
-	public static final int oppArchonX1 = 503;
-	public static final int oppArchonY1 = 504;
-	public static final int oppArchonX2 = 505;
-	public static final int oppArchonY2 = 506;
-	public static final int oppArchonX3 = 507;
-	public static final int oppArchonY3 = 508;
-	public static final int archonSightingTimestamp = 509;
+	private static final int numEnemyArchons = 500; 
+	private static final int archonID1 = 500; 
+	private static final int archonID2 = 501; 
+	private static final int archonID3 = 502; 
+	private static final int oppArchonX1 = 503;
+	private static final int oppArchonY1 = 504;
+	private static final int oppArchonX2 = 505;
+	private static final int oppArchonY2 = 506;
+	private static final int oppArchonX3 = 507;
+	private static final int oppArchonY3 = 508;
+	private static final int archonSightingTimestamp = 509;
 	
 	// Prototype for marking Locations to Explore/Secure
 	// Note: in general, coords for aoe[i] are on channel (2000 + 2i) and (2000 + 2i + 1)

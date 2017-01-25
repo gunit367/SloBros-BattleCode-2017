@@ -8,11 +8,15 @@ public class Gardener extends RobotPlayer {
 	GardenerMemory mem;
 	
 
-	public Gardener(RobotController rc)
+	public Gardener(RobotController rc) throws GameActionException
 	{
 		this.rc = rc; 
 		mem = new GardenerMemory(rc);
-		mem.setStrat(3);
+		if (TeamComms.getLumberjacks() < 3) {
+			mem.setStrat(3);
+		} else {
+			mem.setStrat(2);
+		}
 	}
 	
 	// Gardener run method
@@ -100,23 +104,32 @@ public class Gardener extends RobotPlayer {
 			Util.tryMove(rc, Util.randomDirection());
 		}
 		
+		int random = (int) (Math.random() * 10);
+		
 		// Deploy military units if possible 
 		if (enemyRobots.length > 0)
 		{
 			deployRobot(RobotType.SOLDIER);
 		} 
-		else if (TeamComms.getLumberjacks() < 10) 
-		{
-			deployRobot(RobotType.LUMBERJACK);
+		
+		else if (rc.getRobotCount() % 2 == 0){
+			
+			if (TeamComms.getScouts() < 10 && random < 5) {
+				deployRobot(RobotType.SCOUT);
+			}
+			else if (TeamComms.getLumberjacks() < 10) 
+			{
+				deployRobot(RobotType.LUMBERJACK);
+			}
+			else if (TeamComms.getSoldiers() < 20)
+			{
+				deployRobot(RobotType.SOLDIER);
+			}
+			else if (TeamComms.getTanks() < 3)
+			{
+				//deployRobot(RobotType.TANK);
+			} 
 		}
-		else if (TeamComms.getSoldiers() < 20)
-		{
-			deployRobot(RobotType.SOLDIER);
-		}
-		else if (TeamComms.getTanks() < 3)
-		{
-			//deployRobot(RobotType.TANK);
-		} 
 	}
 	
 	// Returns an array of trees in robots sight. 
@@ -170,31 +183,28 @@ public class Gardener extends RobotPlayer {
 	
 	public void tryPlantFarm() throws GameActionException 
 	{
+		Direction toEnemyArchon = TeamComms.getDirectionToInitialArchonLoc();
+		Direction dir = toEnemyArchon.rotateRightDegrees(72);
+		TreeInfo tree = findTreeToWater();
 		int num = 0; 
-		Direction dir = TeamComms.getDirectionToInitialArchonLoc().rotateRightDegrees(72);
 		
 		if (foundLand(3))
 		{
 			while (num < 4)
 			{
-				System.out.println(dir);
-				if (plantTree(dir))
-				{
-					num++;
-				}
-				else
-				{
-					TreeInfo tree = findTreeToWater();
-					if (tree != null)
-					{
-						waterTree(findTreeToWater());
+				if (!dir.equals(toEnemyArchon)) {
+					if (plantTree(dir)) {
+						num++;
+					} 
+					
+					if (tree != null) {
+						waterTree(tree);
 					}
-				}
 				
+		
+					Clock.yield();
+				}
 				dir = dir.rotateRightDegrees(72);
-			
-
-				Clock.yield();
 			}
 		} 
 		else 
