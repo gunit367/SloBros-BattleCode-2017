@@ -181,4 +181,12 @@ public class Util {
     {
     	return RobotPlayer.rc.getLocation().distanceTo(l) < RobotPlayer.rc.getType().sensorRadius - .5;
     }
+    
+    public static void printMapList(MapLocation[] locs) throws GameActionException {    	
+    	System.out.println("Printing Map Locations....");
+    	for (int i = 0; i < locs.length; i++) {
+    		System.out.println(locs[i].x + " " + locs[i].y);
+    	}
+    }
+    
 }

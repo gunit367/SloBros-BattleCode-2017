@@ -17,8 +17,9 @@ public class Archon extends RobotPlayer {
 
 		while (true) {
             try {
-     
+            	
             	logic(); 
+            	Util.printMapList(TeamComms.getArchonLocations());
             	Clock.yield();
 
             } catch (Exception e) {
@@ -27,6 +28,8 @@ public class Archon extends RobotPlayer {
             }
         }
 	}
+	
+	
 	
 	public void logic() throws GameActionException {
 		// Generate a random direction
@@ -65,12 +68,7 @@ public class Archon extends RobotPlayer {
 		TeamComms.updateLumberjacks(0);
 		TeamComms.updateScouts(0);
 		TeamComms.updateTanks(0);
-		System.out.println("Right before!");
-		if (rc.getTeam() == Team.A) {
-			broadcastEnemyArchon(Team.B); 
-		} else { 
-			broadcastEnemyArchon(Team.A); 
-		}
+		broadcastEnemyArchon(rc.getTeam().opponent());
 		TeamComms.broadcastNumArchons();
 		System.out.println("Afterewards");
 		
@@ -85,11 +83,13 @@ public class Archon extends RobotPlayer {
 	void broadcastEnemyArchon(Team enemy) throws GameActionException {
 		MapLocation[] enemyArchon = rc.getInitialArchonLocations(enemy);
 		
-		System.out.println("Broadcasting");
+		Util.printMapList(enemyArchon);
+		
+		System.out.println("Broadcasting : " + enemyArchon.length);
 		for (int i = 0; i < enemyArchon.length; i++) {
 			TeamComms.broadcastOppArchon(enemyArchon[i], -1 - i);
 		}
-		
+				
 		System.out.println("After");
 	}
 	

@@ -84,11 +84,20 @@ public class Lumberjack extends RobotPlayer {
 	
 	Direction calculateMoveDirection() throws GameActionException
 	{
-		MapLocation aoe = TeamComms.getAreaOfInterest();
-		if(aoe != null)
+		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		MapLocation aoe = TeamComms.getClosestArchonLocation();
+		Direction dir = TeamComms.getDirectionToInitialArchonLoc();
+
+		
+		if (robots.length > 0) {
+			return rc.getLocation().directionTo(robots[0].location);
+		} 
+		
+		if(aoe != null) {
 			return rc.getLocation().directionTo(aoe);
 		
-		Direction dir = TeamComms.getDirectionToInitialArchonLoc();
+		}
+		
 		if (dir == null)
 		{
 			if(mem.enemiesInView.length > 0)
@@ -110,7 +119,7 @@ public class Lumberjack extends RobotPlayer {
 	void executeAttack() {
 		try
 		{
-			if (rc.canStrike())
+			if (rc.canStrike() && mem.enemiesInRange.length > 0)
 				rc.strike();
 			else if (mem.shouldChop())
 				chopTree();

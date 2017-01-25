@@ -177,7 +177,9 @@ public class TeamComms {
 		int id1 = rc.readBroadcast(archonID1);
 		int id2 = rc.readBroadcast(archonID2);
 		int id3 = rc.readBroadcast(archonID3);
-		
+	
+		System.out.println(l);
+
 		if (id1 == 0) {
 			rc.broadcast(archonID1, -1);
 			id1 = -1;
@@ -189,15 +191,15 @@ public class TeamComms {
 			id3 = -3;
 		}
 		
-		if (id1 == id || id1 == -1) {
+		if (id1 == id || id == -1) {
 			rc.broadcast(oppArchonX1, (int) l.x);
 			rc.broadcast(oppArchonY1, (int) l.y);
 			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
-		} else if (id2 == id || id2 == -2) {
+		} else if (id2 == id || id == -2) {
 			rc.broadcast(oppArchonX2, (int) l.x);
 			rc.broadcast(oppArchonY2, (int) l.y);
 			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
-		} else if (id3 == id || id3 == -3) {
+		} else if (id3 == id || id == -3) {
 			rc.broadcast(oppArchonX3, (int) l.x);
 			rc.broadcast(oppArchonY3, (int) l.y);
 			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
@@ -213,12 +215,12 @@ public class TeamComms {
 			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
 			break;
 		case 2: 
-			locations = new MapLocation[1];
+			locations = new MapLocation[2];
 			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
 			locations[1] = new MapLocation(rc.readBroadcast(oppArchonX2), rc.readBroadcast(oppArchonY2)); 
 			break;
 		case 3: 
-			locations = new MapLocation[1];
+			locations = new MapLocation[3];
 			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
 			locations[1] = new MapLocation(rc.readBroadcast(oppArchonX2), rc.readBroadcast(oppArchonY2)); 
 			locations[2] = new MapLocation(rc.readBroadcast(oppArchonX3), rc.readBroadcast(oppArchonY3)); 
@@ -238,6 +240,8 @@ public class TeamComms {
 			return null; 
 		}
 		
+		System.out.println("Num Archons: " + locations.length);
+		
 		MapLocation closest = null;
 		float distance = Integer.MAX_VALUE;
 		
@@ -245,13 +249,17 @@ public class TeamComms {
 		for (int i = 0; i < locations.length; i++) {
 			if (locations[i].x != -1) {
 				float temp = rc.getLocation().distanceTo(locations[i]);
+				System.out.println("X: " + locations[i].x + " Distance: temp " + temp);
 				if (temp < distance) {
 					distance = temp; 
-					closest = locations[0];
+					closest = locations[i];
 				}
 			}
 		}
 		
+		if(closest != null) {
+			System.out.println("Closest " + closest.toString()); 
+		}
 		return closest; 
 	}
 	
@@ -273,7 +281,7 @@ public class TeamComms {
 			float temp = rc.getLocation().distanceTo(locations[i]);
 			if (temp < distance) {
 				distance = temp; 
-				closest = locations[0];
+				closest = locations[i];
 				position = i; 
 			}
 		}
@@ -336,7 +344,7 @@ public class TeamComms {
 	public static Direction getDirectionToInitialArchonLoc() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
-		MapLocation oppArchon = getOppArchonLoc();
+		MapLocation oppArchon = rc.getInitialArchonLocations(rc.getTeam().opponent())[0];
 		if(oppArchon == null)
 			return null;
 		return rc.getLocation().directionTo(oppArchon);
