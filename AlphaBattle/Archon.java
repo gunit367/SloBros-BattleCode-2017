@@ -19,7 +19,6 @@ public class Archon extends RobotPlayer {
             try {
             	
             	logic(); 
-            	Util.printMapList(TeamComms.getArchonLocations());
             	Clock.yield();
 
             } catch (Exception e) {
@@ -34,26 +33,29 @@ public class Archon extends RobotPlayer {
 	public void logic() throws GameActionException {
 		// Generate a random direction
         RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-        //Direction dir = rc.getLocation().directionTo(TeamComms.getOppArchonLoc(rc));
-        Direction dir = Util.randomDirection();
+        Direction dir = TeamComms.getDirectionToInitialArchonLoc();
+        Direction optionDir = Util.randomDirection();
+        boolean shouldBuild = (TeamComms.getLumberjacks() > 2 || TeamComms.getGardeners() < 2);
         
         checkDonation();
         
         //updateAreaOfInterest();
 
         // Attempt to deploy with a max number of gardeners
-        if (rc.getTeamBullets() > 200)
+        if (shouldBuild && rc.canBuildRobot(RobotType.GARDENER, dir))
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);
+        } else if (shouldBuild && rc.canBuildRobot(RobotType.GARDENER, optionDir)) {
+        	deployGardener(optionDir);
         }
         
         // Look for enemies and move away from them
         if (enemies.length > 0)
         {
         	Util.tryMove(rc, (rc.getLocation().directionTo(enemies[0].location)).opposite());
-        }
-
+        } else 
+        	
         // Broadcast archon's location for other robots on the team to know
         TeamComms.broadcastArchonLoc();
 	}
