@@ -35,17 +35,18 @@ public class Archon extends RobotPlayer {
         RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         Direction dir = TeamComms.getDirectionToInitialArchonLoc();
         Direction optionDir = Util.randomDirection();
+        boolean shouldBuild = (TeamComms.getLumberjacks() > 2 || TeamComms.getGardeners() < 2);
         
         checkDonation();
         
         //updateAreaOfInterest();
 
         // Attempt to deploy with a max number of gardeners
-        if (rc.canBuildRobot(RobotType.GARDENER, dir))
+        if (shouldBuild && rc.canBuildRobot(RobotType.GARDENER, dir))
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);
-        } else if (rc.canBuildRobot(RobotType.GARDENER, optionDir)) {
+        } else if (shouldBuild && rc.canBuildRobot(RobotType.GARDENER, optionDir)) {
         	deployGardener(optionDir);
         }
         
