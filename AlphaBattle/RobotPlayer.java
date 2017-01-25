@@ -39,8 +39,7 @@ public strictfp class RobotPlayer {
             	break;
         }
         
-        System.out.println("Here");	
-	}
+    }
 
     static void runTank() throws GameActionException
     {

@@ -40,10 +40,9 @@ public class Archon extends RobotPlayer {
         checkDonation();
         
         //updateAreaOfInterest();
-        System.out.println("NUM GARDENERS " + TeamComms.getGardeners());
 
         // Attempt to deploy with a max number of gardeners
-        if (TeamComms.getGardeners() < 2 || rc.getTeamBullets() > 500)
+        if (rc.getTeamBullets() > 200)
         {
         	// This function builds a gardener if possible, and increments the unit count
         	deployGardener(dir);
@@ -70,7 +69,6 @@ public class Archon extends RobotPlayer {
 		TeamComms.updateTanks(0);
 		broadcastEnemyArchon(rc.getTeam().opponent());
 		TeamComms.broadcastNumArchons();
-		System.out.println("Afterewards");
 		
 		// Generate Initial Area of Interest to Explore
 		MapLocation[] areasOfInterest = rc.getInitialArchonLocations(rc.getTeam().opponent());
@@ -85,12 +83,10 @@ public class Archon extends RobotPlayer {
 		
 		Util.printMapList(enemyArchon);
 		
-		System.out.println("Broadcasting : " + enemyArchon.length);
 		for (int i = 0; i < enemyArchon.length; i++) {
 			TeamComms.broadcastOppArchon(enemyArchon[i], -1 - i);
 		}
 				
-		System.out.println("After");
 	}
 	
 	void deployGardener(Direction dir) throws GameActionException

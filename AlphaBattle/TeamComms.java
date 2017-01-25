@@ -172,14 +172,11 @@ public class TeamComms {
 	// Last Known Enemy Archon Location
 	public static void broadcastOppArchon(MapLocation l, int id) throws GameActionException
 	{
-		System.out.println("BroadcastOpponenetArchon");
 		RobotController rc = RobotPlayer.rc;
 		int id1 = rc.readBroadcast(archonID1);
 		int id2 = rc.readBroadcast(archonID2);
 		int id3 = rc.readBroadcast(archonID3);
 	
-		System.out.println(l);
-
 		if (id1 == 0) {
 			rc.broadcast(archonID1, -1);
 			id1 = -1;
@@ -226,9 +223,7 @@ public class TeamComms {
 			locations[2] = new MapLocation(rc.readBroadcast(oppArchonX3), rc.readBroadcast(oppArchonY3)); 
 			break;
 		}
-		
-		System.out.println(locations[0]);
-		
+				
 		return locations; 
 	}
 	
@@ -239,9 +234,7 @@ public class TeamComms {
 		if (locations.length == 0) {
 			return null; 
 		}
-		
-		System.out.println("Num Archons: " + locations.length);
-		
+				
 		MapLocation closest = null;
 		float distance = Integer.MAX_VALUE;
 		
@@ -249,7 +242,6 @@ public class TeamComms {
 		for (int i = 0; i < locations.length; i++) {
 			if (locations[i].x != -1) {
 				float temp = rc.getLocation().distanceTo(locations[i]);
-				System.out.println("X: " + locations[i].x + " Distance: temp " + temp);
 				if (temp < distance) {
 					distance = temp; 
 					closest = locations[i];
@@ -257,9 +249,6 @@ public class TeamComms {
 			}
 		}
 		
-		if(closest != null) {
-			System.out.println("Closest " + closest.toString()); 
-		}
 		return closest; 
 	}
 	
