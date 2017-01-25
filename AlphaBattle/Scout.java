@@ -55,11 +55,8 @@ public class Scout extends RobotPlayer {
 	}
 	
 	void executeAction() throws GameActionException {
-		TreeInfo tree = mem.trees[0];
-		
-		if (rc.canShake(tree.ID)) {
-			rc.shake(tree.ID);
-		}
+		tryShake();
+		harassFromCover();
 	}
 	
 	int initScout()
@@ -80,6 +77,43 @@ public class Scout extends RobotPlayer {
 	boolean enemiesNearby()
 	{
 		return mem.enemiesInView.length > 0;
+	}
+	
+	void harassFromCover()
+	{
+		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		MapLocation tree_loc = null;
+		// If enemies nearby & on a tree, move toward enemy
+		try {
+			if (rc.isLocationOccupiedByTree(rc.getLocation()) && enemies.length > 0)
+			{
+				if (enemies[0].getType() == RobotType.GARDENER || enemies[0].getType() == RobotType.ARCHON)
+				{
+					tree_loc = rc.getLocation();
+					mem.setDirection(Util.getDirectionToLocation(rc, enemies[0].location).rotateRightDegrees(45));
+					while (enemies.length > 0)
+					{
+					   Util.tryMove(rc, mem.getMyDirection());
+					   MilitaryUtil.shootEnemy(rc, 0, enemies[0].ID);
+					   returnToCover(tree_loc);
+					   Clock.yield();
+					}
+				}
+			}
+		} catch (GameActionException e) {
+			System.out.println("Error in Scout harassFromCover!");
+			e.printStackTrace();
+		}
+	}
+	
+	void returnToCover(MapLocation tree_loc)
+	{
+		BulletInfo[] bullets = RobotPlayer.rc.senseNearbyBullets();
+		
+		if (bullets.length > 0)
+		{
+			mem.setDirection(Util.getDirectionToLocation(rc, tree_loc));
+		}
 	}
 	
 	void avoidFriendlyScout()
