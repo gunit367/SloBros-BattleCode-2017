@@ -7,7 +7,6 @@ public class Gardener extends RobotPlayer {
 	RobotController rc;
 	GardenerMemory mem;
 	
-	public static final int SHAKE_AMT = 0;
 
 	public Gardener(RobotController rc)
 	{

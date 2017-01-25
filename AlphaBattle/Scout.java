@@ -46,10 +46,12 @@ public class Scout extends RobotPlayer {
 	}
 	
 	void executeMove() throws GameActionException {
+		avoidFriendlyScout();
 		if (!Util.tryMove(rc, mem.getMyDirection())) {
-			mem.setDirection(mem.myDir.rotateLeftDegrees(72)); 
+			mem.setDirection(Util.randomDirection()); 
 			Util.tryMove(rc, mem.getMyDirection());
 		}
+		
 	}
 	
 	void executeAction() throws GameActionException {
@@ -80,7 +82,19 @@ public class Scout extends RobotPlayer {
 		return mem.enemiesInView.length > 0;
 	}
 	
-	
+	void avoidFriendlyScout()
+	{
+	   RobotInfo[] robots = rc.senseNearbyRobots(3, rc.getTeam()); 	
+	   
+	   for (int i=0; i<robots.length; i++)
+	   {
+		   // If scout comes in contact with a friendly scout, change path 45 degrees to left
+		   if (robots[i].type == RobotType.SCOUT)
+		   {
+			   mem.setDirection(Util.randomDirection());
+		   }
+	   }
+	}
 	
 	// Attempts to fire at the first enemy seen this turn, 
 	void fireAtFirstEnemy()
