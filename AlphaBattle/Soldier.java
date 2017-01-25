@@ -32,6 +32,7 @@ public class Soldier extends RobotPlayer {
 
 	public void logic(int strat) throws GameActionException 
 	{
+		mem.updateMemory();
 		switch (strat) {
 		case 1:
 			offense();

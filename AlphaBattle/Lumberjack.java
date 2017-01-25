@@ -53,87 +53,93 @@ public class Lumberjack extends RobotPlayer {
 		try
 		{
 			// Calculate where to move next
-			MapLocation aoe = TeamComms.getAreaOfInterest();
-			Direction dir = TeamComms.getDirectionToInitialArchonLoc();
-			if (aoe == null || dir == null)
-			{
-				if(mem.enemiesInView.length > 0)
-				{
-					dir = rc.getLocation().directionTo(mem.enemiesInView[0].location);
-				}
-				else if (mem.trees.length > 0)
-				{
-					dir = rc.getLocation().directionTo(mem.trees[0].location);
-				}
-				else
-				{
-					dir = Util.randomDirection();
-				}
-			}
+			Direction dir = calculateMoveDirection();
 
 			// Move there 
-			// Null Pointer Exception at this if statement
-			if (aoe == null || !Util.tryMove(rc, dir))
+			if (!Util.tryMove(rc, dir))
 			{
-				if (!Util.tryMove(rc, dir.rotateLeftDegrees(90)))
+				// try turning left first
+				for(int i = 1; i < 6; i++)
 				{
-					
+					if(Util.tryMove(rc, dir.rotateLeftDegrees(30 * i)))
+						return;
 				}
-				else if (!Util.tryMove(rc, dir.rotateRightDegrees(90)))
-				{
-					
-				}
-				else if (!Util.tryMove(rc, dir.rotateLeftDegrees(120)))
-				{
-					
-				}
-				else if (!Util.tryMove(rc, dir.rotateRightDegrees(120)))
-				{
-					
-				}
-				else
-					Util.tryMove(rc, dir.rotateLeftDegrees(180));
-			}
-			else if (mem.trees.length > 0 && mem.trees[0].getTeam() != rc.getTeam() && !Util.tryMove(rc, mem.trees[0].location, 1))
-			{
 				
+				// else try turning right
+				for(int i = 1; i < 6; i++)
+				{
+					if(Util.tryMove(rc, dir.rotateRightDegrees(30 * i)))
+						return;
+				}
+				
+				Util.tryMove(rc, dir.opposite());
 			}
-			else
-			{
-				Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getArchonLoc()));
-			}
-			
-		} catch (GameActionException e) {
+		} 
+		catch (GameActionException e) 
+		{
 			System.out.println("Lumberjack: Move Failed");
 			e.printStackTrace();
 		}
 	}
 	
+	Direction calculateMoveDirection() throws GameActionException
+	{
+		MapLocation aoe = TeamComms.getAreaOfInterest();
+		if(aoe != null)
+			return rc.getLocation().directionTo(aoe);
+		
+		Direction dir = TeamComms.getDirectionToInitialArchonLoc();
+		if (dir == null)
+		{
+			if(mem.enemiesInView.length > 0)
+			{
+				dir = rc.getLocation().directionTo(mem.enemiesInView[0].location);
+			}
+			else if (mem.trees.length > 0)
+			{
+				dir = rc.getLocation().directionTo(mem.trees[0].location);
+			}
+			else
+			{
+				dir = Util.randomDirection();
+			}
+		}
+		return dir;
+	}
+	
 	void executeAttack() {
-		try {
+		try
+		{
 			if (rc.canStrike())
 				rc.strike();
 			else if (mem.shouldChop())
 				chopTree();
-		} catch (GameActionException e) {
+		} 
+		catch (GameActionException e) 
+		{
 			System.out.println("Lumberjack: executeAttack failed");
 			e.printStackTrace();
 		}
 	}
 
-	void chopTree() {
+	void chopTree() 
+	{
 		TreeInfo tochop = mem.trees[0];
-		if (tochop == null || !rc.canChop(tochop.ID)) {
+		if (tochop == null || !rc.canChop(tochop.ID))
+		{
 			mem.isChopping = false;
 			return;
 		}
-		try {
+		try
+		{
 			if (rc.canChop(tochop.ID) && tochop.getTeam() != rc.getTeam()) {
 				rc.chop(tochop.ID);
 				mem.isChopping = true;
 			}
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			System.out.println("Lumberjack: Chop Failed");
 			e.printStackTrace();
 		}

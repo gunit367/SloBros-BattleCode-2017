@@ -176,4 +176,9 @@ public class Util {
     	
     	return (perpendicularDistance <= t.radius);
     }
+    
+    public static boolean nearLocation(MapLocation l)
+    {
+    	return RobotPlayer.rc.getLocation().distanceTo(l) < RobotPlayer.rc.getType().sensorRadius - .5;
+    }
 }

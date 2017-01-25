@@ -4,6 +4,7 @@ import battlecode.common.*;
 
 public strictfp class RobotPlayer {
     public static RobotController rc;
+    public static RobotMemory mem;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
@@ -188,26 +189,28 @@ public strictfp class RobotPlayer {
 	}
 	
 	public void updateMilitaryAOI() throws GameActionException {
-		if (TeamComms.getAreaOfMilitaryInterest() != null) 
-		{
-			if (rc.getLocation().distanceTo(TeamComms.getAreaOfMilitaryInterest()) < (rc.getType().sensorRadius) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
-			{
-				TeamComms.setAreaOfMilitaryInterest(new MapLocation(-1,-1));
+		MapLocation militaryAOI = TeamComms.getAreaOfMilitaryInterest();
+		
+		if (militaryAOI != null) {
+			if (Util.nearLocation(militaryAOI) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
+                TeamComms.setAreaOfMilitaryInterest(new MapLocation(-1,-1));
 			}
 		}
+	
 	}
 	
 	public void updateEnemyArchon() throws GameActionException {
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 		int[] archonData = TeamComms.getClosestArchonLocationAndID();	
 		
-		System.out.println(archonData[0] + " : " + archonData[1]);
-		MapLocation enemyArchon = new MapLocation(archonData[0], archonData[1]); 
-		if (enemyArchon != null) 
-		{
-			if (rc.getLocation().distanceTo(enemyArchon) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) 
+		if (archonData != null) {
+		
+			MapLocation enemyArchon = new MapLocation(archonData[0], archonData[1]); 
+			if (enemyArchon != null) 
 			{
-				TeamComms.broadcastOppArchon(new MapLocation(-1, -1), archonData[2]);
+				if (rc.getLocation().distanceTo(enemyArchon) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
+					TeamComms.broadcastOppArchon(new MapLocation(-1, -1), archonData[2]);
+				}
 			}
 		}
 		

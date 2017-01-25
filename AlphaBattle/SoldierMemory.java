@@ -15,6 +15,7 @@ public class SoldierMemory extends RobotMemory
 	public void updateMemory()
 	{
 		super.updateMemory();
+		
 	}
 	
 	public MapLocation getImportantLoc()
