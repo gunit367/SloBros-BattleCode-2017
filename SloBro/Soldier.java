@@ -1,4 +1,4 @@
-package AlphaBattle;
+package SloBro;
 
 import battlecode.common.*;
 
