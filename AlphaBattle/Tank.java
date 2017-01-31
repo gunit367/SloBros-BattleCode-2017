@@ -20,7 +20,7 @@ public class Tank extends RobotPlayer {
     	{
     		try
     		{
-    			MilitaryUtil.offense(rc);
+    			MilitaryUtil.offense();
     			
     		}
     		catch (Exception e)

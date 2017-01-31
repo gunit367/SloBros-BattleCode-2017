@@ -50,9 +50,9 @@ public class Scout extends RobotPlayer {
 		//avoidFriendlyScout();
 		//if (loc != null) {
 			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
-		if (!Util.tryMove(rc, mem.getMyDirection())) {
+		if (!Util.tryMove(mem.getMyDirection())) {
 			mem.setDirection(Util.randomDirection()); 
-			Util.tryMove(rc, mem.getMyDirection());
+			Util.tryMove(mem.getMyDirection());
 		}
 	}
 	
@@ -83,7 +83,7 @@ public class Scout extends RobotPlayer {
 	
 	void harassFromCover() throws GameActionException
 	{
-		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		RobotInfo[] enemies = mem.enemiesInView;
 		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
@@ -100,14 +100,56 @@ public class Scout extends RobotPlayer {
 					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
-					//No more enemies, continue to scout the map.
-					mem.setDirection(Util.randomDirection());
+					//No more enemies, move to next enemy tree. ***IMPLEMENT***
+					moveToNextEnemyTree();
 				}
 			}
 		} catch (GameActionException e) {
 			System.out.println("Error in Scout harassFromCover!");
 			e.printStackTrace();
 		}
+	}
+	
+	void moveToNextEnemyTree()
+	{
+		TreeInfo t = findNextEnemyTree();
+		
+		if (t == null)
+		{
+			return;
+		}
+		
+		mem.setDirection(rc.getLocation().directionTo(t.getLocation()));
+		try {
+			if (Util.tryMove(mem.getMyDirection()))
+			{
+			   	harassFromCover();
+			}
+			else
+			{
+				System.out.println("Error moving to tree in moveToNextEnemyTree!");
+			}
+		} catch (GameActionException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error moving to next enemy tree in scout!");
+			e.printStackTrace();
+		}
+	}
+	
+	TreeInfo findNextEnemyTree()
+	{
+		TreeInfo[] enemyTrees = rc.senseNearbyTrees(5, rc.getTeam().opponent());
+		int i=0;
+		
+		while (i<enemyTrees.length)
+		{
+			if (enemyTrees[i].getLocation() != rc.getLocation())
+			{
+				return enemyTrees[i];
+			}
+			i++;
+		}
+		return null;
 	}
 	
 	void returnToCover(MapLocation tree_loc)
@@ -146,7 +188,7 @@ public class Scout extends RobotPlayer {
 			if (!rc.hasAttacked())
 			{
 				// Try to follow the enemy if attacking couldn't happen
-				Util.tryMove(rc, followEnemy(mem.enemiesInView[0], 8.5f));
+				Util.tryMove(followEnemy(mem.enemiesInView[0], 8.5f));
 			}
 		} 
 		catch (Exception e)

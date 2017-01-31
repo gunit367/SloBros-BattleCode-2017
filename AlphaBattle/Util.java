@@ -6,6 +6,8 @@ public class Util {
      * Returns a random Direction
      * @return a random Direction
      */
+	public static int moveDir = 0; // 0 = no pref, 1 = Right pref, -1 = Left Pref
+	
     public static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
     }
@@ -22,75 +24,161 @@ public class Util {
 
     /**
      * Attempts to move in a given direction, while avoiding small obstacles directly in the path.
-     *
      * @param dir The intended direction of movement
+     *
      * @return true if a move was performed
      * @throws GameActionException
      */
-    public static boolean tryMove(RobotController rc, Direction dir) throws GameActionException {
-        return tryMove(rc, dir,20,3);
+    public static boolean tryMove(Direction dir) throws GameActionException 
+    {
+    	
+        if(!tryMove(dir, 10,5))
+        	return tryMove(dir.rotateLeftDegrees(90), 10, 5);
+        return true;
     }
 
     /**
      * Attempts to move in a given direction, while avoiding small obstacles direction in the path.
-     *
      * @param dir The intended direction of movement
      * @param degreeOffset Spacing between checked directions (degrees)
      * @param checksPerSide Number of extra directions checked on each side, if intended direction was unavailable
+     *
      * @return true if a move was performed
      * @throws GameActionException
      */
-    public static boolean tryMove(RobotController rc, Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
-
+    public static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException
+    {
+    	RobotController rc = RobotPlayer.rc;
         // First, try intended direction
     	if(rc.hasMoved())
     		return false;
     	
         if (rc.canMove(dir)) {
             rc.move(dir);
+            Util.moveDir = 0;
             return true;
         }
-
-        // Now try a bunch of similar angles
-        //boolean moved = false;
-        int currentCheck = 1;
+        
+        if(moveDir == -1)
+        {
+        	return tryLeftFirst(dir, degreeOffset, checksPerSide);
+        }
+        else if (moveDir == 1)
+        {
+        	return tryRightFirst(dir, degreeOffset, checksPerSide);
+        }
+        else
+        {
+        	return tryBothSides(dir, degreeOffset, checksPerSide);
+        }
+    }
+    
+    public static boolean tryMove(MapLocation location, float stride) throws GameActionException
+    {
+    	return tryMove(RobotPlayer.rc.getLocation().directionTo(location)); 
+    }
+    
+    static boolean tryLeftFirst(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException
+    {
+    	RobotController rc = RobotPlayer.rc;
+    	int currentCheck = 1;
+    	
+    	// Check Left First
+    	while(currentCheck <= checksPerSide)
+    	{
+    		Direction curDir = dir.rotateLeftDegrees(degreeOffset * currentCheck);
+    		if(rc.canMove(curDir))
+    		{
+                rc.move(curDir);
+                Util.moveDir = -1;
+                return true;
+            }
+    		currentCheck++;
+    	}
+    	
+    	// Then check Right Side
+    	currentCheck = 1;
+    	while (currentCheck <= checksPerSide)
+    	{
+    		Direction curDir = dir.rotateRightDegrees(degreeOffset * currentCheck);
+    		if(rc.canMove(curDir))
+    		{
+                rc.move(curDir);
+                Util.moveDir = -1;
+                return true;
+            }
+    		currentCheck++;
+    	}
+    	return false;
+    }
+    
+    static boolean tryRightFirst(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException
+    {
+    	RobotController rc = RobotPlayer.rc;
+    	int currentCheck = 1;
+    	
+    	// Check Right First
+    	while(currentCheck <= checksPerSide)
+    	{
+    		if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck)))
+    		{
+                rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
+                Util.moveDir = 1;
+                return true;
+            }
+    		currentCheck++;
+    	}
+    	
+    	// Then check Left Side
+    	currentCheck = 1;
+    	while (currentCheck <= checksPerSide)
+    	{
+    		if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck)))
+    		{
+                rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
+                Util.moveDir = -1;
+                return true;
+            }
+    		currentCheck++;
+    	}
+    	return false;
+    }
+    
+    static boolean tryBothSides(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException
+    {
+    	int currentCheck = 1;
+    	RobotController rc = RobotPlayer.rc;
 
         while(currentCheck<=checksPerSide) {
             // Try the offset of the left side
-            if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck))) {
+            if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck)))
+            {
                 rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
+                Util.moveDir = -1;
                 return true;
             }
             // Try the offset on the right side
-            if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck))) {
+            if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck)))
+            {
                 rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
+                Util.moveDir = 1;
                 return true;
             }
             // No move performed, try slightly further
             currentCheck++;
         }
-
-        // A move never happened, so return false.
         return false;
-    }
-    
-    public static boolean tryMove(RobotController rc, MapLocation location, float stride) throws GameActionException {
-    	if (location.distanceTo(rc.getLocation()) < stride) {
-    		rc.move(location);
-    	} else {
-    		return tryMove(rc, rc.getLocation().directionTo(location));
-    	}
-    	return true; 
     }
 
     /**
      * A slightly more complicated example function, this returns true if the given bullet is on a collision
      * course with the current robot. Doesn't take into account objects between the bullet and this robot.
-     *
      * @param bullet The bullet in question
+     *
      * @return True if the line of the bullet's path intersects with this robot's current position.
      */
-    public static boolean willCollideWithMe(RobotController rc, BulletInfo bullet) {
+    public static boolean willCollideWithMe(BulletInfo bullet) {
+    	RobotController rc = RobotPlayer.rc;
         MapLocation myLocation = rc.getLocation();
 
         // Get relevant bullet information
@@ -116,7 +204,9 @@ public class Util {
         return (perpendicularDist <= rc.getType().bodyRadius);
     }
     
-    public static boolean isWithinDistanceToSide(RobotController rc, int distance) throws GameActionException{
+    public static boolean isWithinDistanceToSide(int distance) throws GameActionException
+    {
+    	RobotController rc = RobotPlayer.rc;
     	return !(rc.canMove(Direction.getWest(), distance) && rc.canMove(Direction.getSouth(), distance) && rc.canMove(Direction.getNorth(), distance) && rc.canMove(Direction.getEast(), distance));    	
     }
     

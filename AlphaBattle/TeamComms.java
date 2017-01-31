@@ -23,15 +23,15 @@ public class TeamComms {
 	
 	// Enemy Team Information: Starting at Channel 500
 	private static final int numEnemyArchons = 500; 
-	private static final int archonID1 = 500; 
-	private static final int archonID2 = 501; 
-	private static final int archonID3 = 502; 
+	//private static final int archonID1 = 500; 
+	//private static final int archonID2 = 501; 
+	//private static final int archonID3 = 502; 
 	private static final int oppArchonX1 = 503;
 	private static final int oppArchonY1 = 504;
-	private static final int oppArchonX2 = 505;
-	private static final int oppArchonY2 = 506;
-	private static final int oppArchonX3 = 507;
-	private static final int oppArchonY3 = 508;
+	//private static final int oppArchonX2 = 505;
+	//private static final int oppArchonY2 = 506;
+	//private static final int oppArchonX3 = 507;
+	//private static final int oppArchonY3 = 508;
 	private static final int archonSightingTimestamp = 509;
 	
 	// Prototype for marking Locations to Explore/Secure
@@ -72,6 +72,26 @@ public class TeamComms {
 	
 	// Friendly Team Counts
 	// Gardener Counts
+	public static int getCount(RobotType t) throws GameActionException
+	{
+		switch (t)
+		{
+		case ARCHON:
+			return 1;
+		case GARDENER:
+			return getGardeners();
+		case LUMBERJACK:
+			return getLumberjacks();
+		case SOLDIER:
+			return getSoldiers();
+		case SCOUT:
+			return getScouts();
+		case TANK:
+			return getTanks();
+		}
+		return 0;
+	}
+	
 	public static int getGardeners() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
@@ -241,5 +261,20 @@ public class TeamComms {
 			return null;
 		
 		return rc.getLocation().directionTo(oppArchon);
+	}
+	
+	public static Direction recentArchonDirection() throws GameActionException
+	{
+		Direction toEnemyArchon;
+		MapLocation enemyArchon = getOppArchonLoc();
+		if(enemyArchon == null)
+		{
+			toEnemyArchon = RobotPlayer.rc.getLocation().directionTo(getInitialArchonLocation());
+		}
+		else
+		{
+			toEnemyArchon = RobotPlayer.rc.getLocation().directionTo(enemyArchon);
+		}
+		return toEnemyArchon;
 	}
 }
