@@ -134,14 +134,12 @@ public class Gardener extends RobotPlayer {
 			return true;
 		} 
 
-		if (turn % 5 == 0) {
+		if (turn % 10 == 0) {
 			if (!Util.tryMove(rc, TeamComms.getDirectionToInitialArchonLoc())) {
 				Util.tryMove(rc, Util.randomDirection());
 			}
 		}
-	
 		Util.tryMove(rc, Util.randomDirection());
-		
 		System.out.println("Have not found land");
 			
 		return false; 
