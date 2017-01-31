@@ -18,13 +18,17 @@ public class Archon extends RobotPlayer {
 		// Initialize TeamComms 
 		initArchon(rc);
 
-		while (true) {
-            try {
+		while (true) 
+		{
+            try
+            {
             	
             	logic(); 
             	Clock.yield();
 
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 System.out.println("Archon Exception");
                 e.printStackTrace();
             }
@@ -42,7 +46,7 @@ public class Archon extends RobotPlayer {
 	}
 
 	void executeMove() throws GameActionException {
-		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		RobotInfo[] enemies = mem.enemiesInView;
         
         // Look for enemies and move away from them
         if (enemies.length > 0)
@@ -87,15 +91,10 @@ public class Archon extends RobotPlayer {
 	}
 	
 	void deploy() throws GameActionException {
-		int turn = TeamComms.getTurnCount();
-		int numTrees = rc.senseNearbyTrees().length;
-		int numTeamAround = mem.alliesInView.length;
-				
-		if (numTrees > 10 && numTeamAround > 2) {
-			return; 
-		}
+		int turn = rc.getRoundNum();
 		
-		if ((turn < 500  && (turn / 40 < TeamComms.getGardeners())) || turn % 80 == 0) {
+		if ((turn < 500 && (turn - mem.lastSpawnTurn > 20) || turn % 80 == 0))
+		{
 			deployGardener();
 		}
 	}
@@ -135,10 +134,6 @@ public class Archon extends RobotPlayer {
         	}
         	
         }
-//        else if (rc.canBuildRobot(RobotType.GARDENER, random)) {
-//        	rc.hireGardener(random);
-//        	incrementCount(RobotType.GARDENER);
-//        }
 	}
 	
 	void updateTeamAreaOfInterest() throws GameActionException

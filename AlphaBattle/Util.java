@@ -7,6 +7,7 @@ public class Util {
      * @return a random Direction
      */
 	public static int moveDir = 0; // 0 = no pref, 1 = Right pref, -1 = Left Pref
+	public static Direction lastMove = null;
 	
     public static Direction randomDirection() {
         return new Direction((float)Math.random() * 2 * (float)Math.PI);
@@ -32,9 +33,7 @@ public class Util {
     public static boolean tryMove(Direction dir) throws GameActionException 
     {
     	
-        if(!tryMove(dir, 10,5))
-        	return tryMove(dir.rotateLeftDegrees(90), 10, 5);
-        return true;
+        return tryMove(dir, 10, 11);
     }
 
     /**
@@ -56,7 +55,13 @@ public class Util {
         if (rc.canMove(dir)) {
             rc.move(dir);
             Util.moveDir = 0;
+            Util.lastMove = null;
             return true;
+        }
+        else if (Util.lastMove != null && rc.canMove(Util.lastMove))
+        {
+        	rc.move(Util.lastMove);
+        	return true;
         }
         
         if(moveDir == -1)
@@ -90,6 +95,7 @@ public class Util {
     		if(rc.canMove(curDir))
     		{
                 rc.move(curDir);
+                Util.lastMove = curDir;
                 Util.moveDir = -1;
                 return true;
             }
@@ -104,7 +110,8 @@ public class Util {
     		if(rc.canMove(curDir))
     		{
                 rc.move(curDir);
-                Util.moveDir = -1;
+                Util.lastMove = curDir;
+                Util.moveDir = 1;
                 return true;
             }
     		currentCheck++;
@@ -120,9 +127,11 @@ public class Util {
     	// Check Right First
     	while(currentCheck <= checksPerSide)
     	{
-    		if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck)))
+    		Direction curDir = dir.rotateLeftDegrees(degreeOffset * currentCheck);
+    		if(rc.canMove(curDir))
     		{
-                rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
+                rc.move(curDir);
+                Util.lastMove = curDir;
                 Util.moveDir = 1;
                 return true;
             }
@@ -133,9 +142,11 @@ public class Util {
     	currentCheck = 1;
     	while (currentCheck <= checksPerSide)
     	{
-    		if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck)))
+    		Direction curDir = dir.rotateRightDegrees(degreeOffset * currentCheck);
+    		if(rc.canMove(curDir))
     		{
-                rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
+                rc.move(curDir);
+                Util.lastMove = curDir;
                 Util.moveDir = -1;
                 return true;
             }
@@ -149,18 +160,22 @@ public class Util {
     	int currentCheck = 1;
     	RobotController rc = RobotPlayer.rc;
 
-        while(currentCheck<=checksPerSide) {
+        while(currentCheck<=checksPerSide) 
+        {
+        	Direction curDir = dir.rotateLeftDegrees(degreeOffset * currentCheck);
             // Try the offset of the left side
-            if(rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck)))
+            if(rc.canMove(curDir))
             {
-                rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
+                rc.move(curDir);
+                Util.lastMove = curDir;
                 Util.moveDir = -1;
                 return true;
             }
             // Try the offset on the right side
-            if(rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck)))
+            if(rc.canMove(curDir))
             {
-                rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
+                rc.move(curDir);
+                Util.lastMove = curDir;
                 Util.moveDir = 1;
                 return true;
             }
