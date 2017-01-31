@@ -46,11 +46,11 @@ public class Scout extends RobotPlayer {
 	}
 	
 	void executeMove() throws GameActionException {
-		MapLocation loc = TeamComms.getOppArchonLoc();
-		avoidFriendlyScout();
-		if (loc != null) {
-			Util.tryMove(rc, rc.getLocation().directionTo(loc));
-		} else if (!Util.tryMove(rc, mem.getMyDirection())) {
+		//MapLocation loc = TeamComms.getOppArchonLoc();
+		//avoidFriendlyScout();
+		//if (loc != null) {
+			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
+		if (!Util.tryMove(rc, mem.getMyDirection())) {
 			mem.setDirection(Util.randomDirection()); 
 			Util.tryMove(rc, mem.getMyDirection());
 		}
@@ -81,28 +81,30 @@ public class Scout extends RobotPlayer {
 		return mem.enemiesInView.length > 0;
 	}
 	
-	void harassFromCover()
+	void harassFromCover() throws GameActionException
 	{
 		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
-			if (rc.isLocationOccupiedByTree(rc.getLocation()) && enemies.length > 0)
+			if (tree != null && tree.getTeam() == rc.getTeam().opponent() && enemies.length > 0)
 			{
 				if (enemies[0].getType() == RobotType.GARDENER || enemies[0].getType() == RobotType.ARCHON)
 				{
 					//Move to the middle of tree
 					mem.setDirection(Util.getDirectionToLocation(rc, rc.getLocation()));
-					Util.tryMove(rc, mem.getMyDirection());
+					//Util.tryMove(rc, mem.getMyDirection());
 					//While there are still enemies and the path is clear, shoot at them from cover!
-					while (enemies.length > 0 && MilitaryUtil.noFriendlyFire(rc, Util.getDirectionToLocation(rc, enemies[0].getLocation())))
+					while (enemies.length > 0)
 					{
-					   MilitaryUtil.shootEnemy(rc, 0, enemies[0].ID);
+						System.out.println("Shoot enemy scout");
+					   MilitaryUtil.shootEnemy(rc, 3, enemies[0].ID);
 					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
 					//No more enemies, continue to scout the map.
 					mem.setDirection(Util.randomDirection());
-					Util.tryMove(rc, mem.getMyDirection());
+					//Util.tryMove(rc, mem.getMyDirection());
 				}
 			}
 		} catch (GameActionException e) {
