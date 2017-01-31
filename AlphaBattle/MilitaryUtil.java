@@ -38,6 +38,84 @@ public class MilitaryUtil {
 				}
  		}	
 	}
+	
+	public static void offense(RobotController rc) throws GameActionException
+	{
+		Team enemy = rc.getTeam().opponent();
+		RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
+		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, enemy);
+		
+		// Fetch Current Area of Interest
+		MapLocation aoi = TeamComms.getAreaOfMilitaryInterest();
+		Direction random = Util.randomDirection();
+		
+		// try and dodge if needed
+		MilitaryUtil.dodge();
+
+		if (robots.length > 0)
+		{
+			if(Util.pathClearTo(robots[0].location)) {
+				MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
+			} else if (Util.tryMove(rc, followEnemy(rc, robots[0], 3f))) {
+		
+			}
+			//followEnemy(robots[0], 2.5f);
+			TeamComms.setAreaOfMilitaryInterest(robots[0].location);
+			rc.setIndicatorLine(rc.getLocation(), robots[0].location, 100, 222, 55);
+		}
+		else if (enemyTrees.length > 0 && rc.canFireSingleShot()) 
+		{
+			if (Util.pathClearTo(enemyTrees[0].location)) {
+				rc.fireSingleShot(rc.getLocation().directionTo(enemyTrees[0].location));	
+			}
+			rc.setIndicatorLine(rc.getLocation(), robots[0].location, 22, 23, 155);
+		}
+		else if (aoi != null && rc.canMove(aoi))
+		{
+			Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getAreaOfMilitaryInterest()));
+			rc.setIndicatorLine(rc.getLocation(), aoi, 220, 155, 0);
+		} 
+		else if (moveTowardsEnemyArchon(rc))
+		{
+			
+		} 
+		else if (rc.canMove(random))
+		{
+			Util.tryMove(rc, random);
+		} 
+		
+	}
+	
+    public static Direction followEnemy(RobotController rc, RobotInfo enemy, float distance)
+	{
+		Direction dir = enemy.location.directionTo(rc.getLocation()).rotateRightDegrees(20);
+		MapLocation toLoc = enemy.location.add(dir, distance);
+		return rc.getLocation().directionTo(toLoc);
+	}
+	
+	public static boolean moveTowardsEnemyArchon(RobotController rc) throws GameActionException
+	{
+		MapLocation enemyArchon = TeamComms.getAreaOfMilitaryInterest();
+		
+		if (enemyArchon == null)
+		{
+			return false; 
+		}
+		
+		rc.setIndicatorDot(enemyArchon, 100, 55, 55);
+
+		Direction dirToEnemyArchon = rc.getLocation().directionTo(enemyArchon);
+		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon))
+		{
+			return true; 
+		} 
+		else if (rc.canFireSingleShot() && MilitaryUtil.noFriendlyFire(rc, dirToEnemyArchon))
+		{
+			//rc.fireSingleShot(dirToEnemyArchon);
+		}
+		
+		return false; 
+	}
 		
 	// Try to fire a single shot
 	public static boolean trySingleShot(RobotController rc, Direction dir) throws GameActionException {

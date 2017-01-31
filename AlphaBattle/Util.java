@@ -123,7 +123,6 @@ public class Util {
     public static boolean pathClearTo(MapLocation loc)
     {
     	RobotInfo[] allies = RobotPlayer.rc.senseNearbyRobots(-1, RobotPlayer.rc.getTeam());
-    	TreeInfo[] trees = RobotPlayer.rc.senseNearbyTrees();
     	MapLocation myLoc = RobotPlayer.rc.getLocation();
     	
     	// Check for allies in the way
@@ -133,12 +132,6 @@ public class Util {
     			return false;
     	}
     	
-    	// Check for trees in the way
-    	for(int i = 0; i < trees.length; i++)
-    	{
-    		if(bulletWouldHit(trees[i], myLoc, loc))
-    			return false;
-    	}
     	return true;
     }
     
