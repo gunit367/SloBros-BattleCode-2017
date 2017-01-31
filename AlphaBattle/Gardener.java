@@ -66,7 +66,7 @@ public class Gardener extends RobotPlayer {
 			deployRobot(RobotType.SOLDIER);
 		} else {
 			int random = (int) (Math.random() * 11);
-			System.out.println("Random: " + random);
+			
 			if (random < 3) {
 				deployRobot(RobotType.SOLDIER);
 			} else if (random < 7) {
@@ -75,27 +75,6 @@ public class Gardener extends RobotPlayer {
 				deployRobot(RobotType.LUMBERJACK);
 			}
 		}
-		
-		
-		
-		/*
-		
-		// Deploy military units if possible
-		if (mem.enemiesInView.length > 0) {
-			deployRobot(RobotType.SOLDIER);
-		}
-				
-		if (TeamComms.getScouts() < 10 && mem.birthCount % 10 == 0) {
-			deployRobot(RobotType.SCOUT);
-		} else if (TeamComms.getLumberjacks() < 10 && mem.birthCount % 5 == 0) {
-			deployRobot(RobotType.LUMBERJACK);
-		} else if (TeamComms.getSoldiers() < 20) {
-			deployRobot(RobotType.SOLDIER);
-		} else if (TeamComms.getTanks() < 3) {
-			// deployRobot(RobotType.TANK);
-		}
-		
-		*/
 	}
 		
 	public void tryPlantFarm() throws GameActionException 
