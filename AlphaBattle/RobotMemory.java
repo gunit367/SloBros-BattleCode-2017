@@ -13,12 +13,14 @@ public abstract class RobotMemory {
 	MapLocation archonLocation;
 	MapLocation[] areasOfInterest;
 	public  boolean canSeeOppArchon;
+	public int birthCount;
 	
 	public RobotMemory(RobotController rc)
 	{
 		this.rc = rc;
 		enemy = rc.getTeam().opponent();
 		updateMemory();
+		birthCount = 0;
 	}
 	
 	void updateMemory()
@@ -41,6 +43,7 @@ public abstract class RobotMemory {
 		{
 			analyzeEnemies();
 		}
+		birthCount++;
 	}
 	
 	void analyzeAllies()
@@ -65,7 +68,7 @@ public abstract class RobotMemory {
 				RobotInfo enemy = enemiesInView[i];
 				if(enemy.getType().equals(RobotType.ARCHON))
 				{
-					TeamComms.broadcastOppArchon(enemy.location, enemy.ID);
+					TeamComms.broadcastOppArchonLoc(enemy.location);
 					canSeeArchon = true;
 				}
 			}

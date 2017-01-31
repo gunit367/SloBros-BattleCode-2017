@@ -4,14 +4,16 @@ import battlecode.common.*;
 public class GardenerMemory extends RobotMemory
 {
 	Direction dir; 
-	int strat;
 	TreeInfo tree; 
-	
+	int strat;
+	int count;
+
 	public GardenerMemory(RobotController rc)
 	{
 		super(rc);
 		strat = 0;
 		tree = null; 
+		count = 0;
 	}
 	
 	public void updateMemory()

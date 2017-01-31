@@ -5,7 +5,7 @@ import battlecode.common.*;
 public strictfp class RobotPlayer {
     public static RobotController rc;
     public static RobotMemory mem;
-
+   
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
      * If this method returns, the robot dies!
@@ -34,6 +34,10 @@ public strictfp class RobotPlayer {
             	break;
         }
         
+    }
+    
+    public void logic() throws GameActionException {
+    	tryShake();
     }
 
     static void runTank() throws GameActionException
@@ -184,10 +188,18 @@ public strictfp class RobotPlayer {
 	
 	public void updateMilitaryAOI() throws GameActionException {
 		MapLocation militaryAOI = TeamComms.getAreaOfMilitaryInterest();
-		
+		MapLocation archonLoc = TeamComms.getOppArchonLoc();
+		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+				
 		if (militaryAOI != null) {
 			if (Util.nearLocation(militaryAOI) && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
-                TeamComms.setAreaOfMilitaryInterest(new MapLocation(-1,-1));
+                TeamComms.setAreaOfMilitaryInterest(new MapLocation(0, 0));
+			}
+		} else if (archonLoc != null) {
+			TeamComms.setAreaOfMilitaryInterest(archonLoc);
+		} else {
+			if (robots.length > 0) {
+				TeamComms.setAreaOfMilitaryInterest(robots[0].location);
 			}
 		}
 	
@@ -195,24 +207,46 @@ public strictfp class RobotPlayer {
 	
 	public void updateEnemyArchon() throws GameActionException {
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-		int[] archonData = TeamComms.getClosestArchonLocationAndID();	
+		MapLocation archonLoc = TeamComms.getOppArchonLoc();	
 		
-		if (archonData != null) {
-		
-			MapLocation enemyArchon = new MapLocation(archonData[0], archonData[1]); 
-			if (enemyArchon != null) 
-			{
-				if (rc.getLocation().distanceTo(enemyArchon) < (rc.getType().sensorRadius) - .5 && rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length == 0) {
-					TeamComms.broadcastOppArchon(new MapLocation(-1, -1), archonData[2]);
+		if (archonLoc != null) {
+			if (rc.getLocation().distanceTo(archonLoc) < (rc.getType().sensorRadius) - .5 && robots.length == 0) {
+					TeamComms.broadcastOppArchonLoc(new MapLocation(0, 0));
+			}
+		} else if (robots.length > 0) {
+			for (int i = 0; i < robots.length; i++) {
+				if (robots[i].type.equals(RobotType.ARCHON)) {
+					TeamComms.broadcastOppArchonLoc(robots[i].location);
+					return;
 				}
 			}
 		}
 		
-		for (int i = 0; i < robots.length; i++) {
-			if (robots[i].type == RobotType.ARCHON) {
-				System.out.println("Saw Archon and now updating location " + robots[i].ID);
-				TeamComms.broadcastOppArchon(robots[i].getLocation(), robots[i].ID);
-			}
+	}
+	
+	public boolean foundLand(int radius) throws GameActionException
+	{
+		RobotInfo[] team = rc.senseNearbyRobots(radius, rc.getTeam());
+		TreeInfo[] trees = rc.senseNearbyTrees();
+		
+		if (team.length == 0 && trees.length == 0)
+		{
+			return true;
+		} 
+			
+		
+		Util.tryMove(rc, Util.randomDirection());
+		
+		
+		return false; 
+		
+	}
+	
+	public void tryShake() throws GameActionException {
+		TreeInfo[] trees = rc.senseNearbyTrees();
+		
+		if (trees.length > 0 && rc.canShake(trees[0].ID)) {
+			rc.shake(trees[0].ID);
 		}
 	}
     

@@ -18,7 +18,8 @@ public class TeamComms {
 	private static final int numTanks = 6;
 	
 	// DonationCount: Channel 50
-	private static final int donationCount = 50;  
+	private static final int donationCount = 50; 
+	private static final int turnCount = 51; 
 	
 	// Enemy Team Information: Starting at Channel 500
 	private static final int numEnemyArchons = 500; 
@@ -43,6 +44,8 @@ public class TeamComms {
 	public static final int areaofInterstMilCount = 3999;
 	public static final int areaOfInterestMilitaryX = 4000; 	
 	public static final int areaOfInterestMilitaryY = 4001;
+	
+	private static int count = 0; 
 	
 	// Communication Functions
 	// Friendly Archon Location
@@ -133,10 +136,25 @@ public class TeamComms {
 		rc.broadcast(numTanks, n);
 	}
 	
+	public static void updateTurnCount() throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		rc.broadcast(turnCount, ++count);
+	}
+	
+	public static int getTurnCount() throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		return rc.readBroadcast(turnCount) / rc.readBroadcast(numEnemyArchons);
+	}
+	
 	public static void broadcastNumArchons() throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
 		int num = rc.getInitialArchonLocations(rc.getTeam().opponent()).length;
 		rc.broadcast(numEnemyArchons, num);
+	}
+	
+	public static int getNumArchon() throws GameActionException {
+		RobotController rc = RobotPlayer.rc;
+		return rc.readBroadcast(numEnemyArchons);
 	}
 		
 	// Return the donation count 
@@ -150,137 +168,15 @@ public class TeamComms {
 	{
 		RobotController rc = RobotPlayer.rc;
 		rc.broadcast(donationCount, getDonationCount() + toAdd);
-	}
-	
-	public static void setArchonIDs(int first, int second, int third) throws GameActionException {
+	}	
+
+	public static MapLocation getInitialArchonLocation() throws GameActionException {
 		RobotController rc = RobotPlayer.rc;
-		if (first != -1) {
-			rc.broadcast(archonID1, first);
-		}
+		MapLocation[] locations = rc.getInitialArchonLocations(rc.getTeam().opponent()); 
 		
-		if (second != -1) {
-			rc.broadcast(archonID2, second);
-		}
-		
-		if (third != -1) {
-			rc.broadcast(archonID3, third);
-		}
-		
+		return locations[0]; 
 	}
 	
-	
-	// Last Known Enemy Archon Location
-	public static void broadcastOppArchon(MapLocation l, int id) throws GameActionException
-	{
-		RobotController rc = RobotPlayer.rc;
-		int id1 = rc.readBroadcast(archonID1);
-		int id2 = rc.readBroadcast(archonID2);
-		int id3 = rc.readBroadcast(archonID3);
-	
-		if (id1 == 0) {
-			rc.broadcast(archonID1, -1);
-			id1 = -1;
-		} else if (id2 == 0) {
-			rc.broadcast(archonID2, -2);
-			id2 = -2; 
-		} else if (id3 == 0) {
-			rc.broadcast(archonID3, -3);
-			id3 = -3;
-		}
-		
-		if (id1 == id || id == -1) {
-			rc.broadcast(oppArchonX1, (int) l.x);
-			rc.broadcast(oppArchonY1, (int) l.y);
-			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
-		} else if (id2 == id || id == -2) {
-			rc.broadcast(oppArchonX2, (int) l.x);
-			rc.broadcast(oppArchonY2, (int) l.y);
-			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
-		} else if (id3 == id || id == -3) {
-			rc.broadcast(oppArchonX3, (int) l.x);
-			rc.broadcast(oppArchonY3, (int) l.y);
-			rc.broadcast(archonSightingTimestamp, rc.getRoundNum());
-		} 
-	}
-	
-	public static MapLocation[] getArchonLocations() throws GameActionException {
-		RobotController rc = RobotPlayer.rc;
-		MapLocation[] locations = new MapLocation[0];
-		switch (rc.readBroadcast(numEnemyArchons)) {
-		case 1: 
-			locations = new MapLocation[1];
-			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
-			break;
-		case 2: 
-			locations = new MapLocation[2];
-			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
-			locations[1] = new MapLocation(rc.readBroadcast(oppArchonX2), rc.readBroadcast(oppArchonY2)); 
-			break;
-		case 3: 
-			locations = new MapLocation[3];
-			locations[0] = new MapLocation(rc.readBroadcast(oppArchonX1), rc.readBroadcast(oppArchonY1)); 
-			locations[1] = new MapLocation(rc.readBroadcast(oppArchonX2), rc.readBroadcast(oppArchonY2)); 
-			locations[2] = new MapLocation(rc.readBroadcast(oppArchonX3), rc.readBroadcast(oppArchonY3)); 
-			break;
-		}
-				
-		return locations; 
-	}
-	
-	public static MapLocation getClosestArchonLocation() throws GameActionException {
-		RobotController rc = RobotPlayer.rc;
-		MapLocation[] locations = getArchonLocations(); 
-		
-		if (locations.length == 0) {
-			return null; 
-		}
-				
-		MapLocation closest = null;
-		float distance = Integer.MAX_VALUE;
-		
-		
-		for (int i = 0; i < locations.length; i++) {
-			if (locations[i].x != -1) {
-				float temp = rc.getLocation().distanceTo(locations[i]);
-				if (temp < distance) {
-					distance = temp; 
-					closest = locations[i];
-				}
-			}
-		}
-		
-		return closest; 
-	}
-	
-	public static int[] getClosestArchonLocationAndID() throws GameActionException {
-		RobotController rc = RobotPlayer.rc;
-		MapLocation[] locations = getArchonLocations(); 
-		int[] locationAndId = new int[3];
-		int position = 0; 
-		
-		if (locations.length == 0) {
-			return null; 
-		}
-		
-		MapLocation closest = locations[0];
-		float distance = rc.getLocation().distanceTo(closest);
-		
-		
-		for (int i = 1; i < locations.length; i++) {
-			float temp = rc.getLocation().distanceTo(locations[i]);
-			if (temp < distance) {
-				distance = temp; 
-				closest = locations[i];
-				position = i; 
-			}
-		}
-		
-		locationAndId[0] = (int) closest.x;
-		locationAndId[1] = (int) closest.y;
-		locationAndId[2] = position == 0? rc.readBroadcast(archonID1) : position == 1? rc.readBroadcast(archonID2) : rc.readBroadcast(archonID3);
-		
-		return locationAndId[0] != -1? locationAndId : null; 
-	}
 	public static int getLastArchonSighting() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
@@ -292,7 +188,14 @@ public class TeamComms {
 		RobotController rc = RobotPlayer.rc;
 		int x = rc.readBroadcast(oppArchonX1);
 		int y = rc.readBroadcast(oppArchonY1);
-		return x != -1 && y != -1? new MapLocation(x,y) : null;
+		return x != 0 && y != 0? new MapLocation(x,y) : null;
+	}
+	
+	public static void broadcastOppArchonLoc(MapLocation loc) throws GameActionException
+	{
+		RobotController rc = RobotPlayer.rc;
+		rc.broadcast(oppArchonX1, (int) loc.x);
+		rc.broadcast(oppArchonY1, (int) loc.y);
 	}
 	
 	public static void setAreaOfInterest(MapLocation l) throws GameActionException
@@ -327,15 +230,16 @@ public class TeamComms {
 		RobotController rc = RobotPlayer.rc;
 		int x = rc.readBroadcast(areaOfInterestMilitaryX);
 		int y = rc.readBroadcast(areaOfInterestMilitaryY);
-		return x != -1 && y != -1? new MapLocation(x,y) : null;
+		return x != 0 && y != 0? new MapLocation(x,y) : null;
 	}
 	
 	public static Direction getDirectionToInitialArchonLoc() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;
-		MapLocation oppArchon = rc.getInitialArchonLocations(rc.getTeam().opponent())[0];
+		MapLocation oppArchon = getInitialArchonLocation();
 		if(oppArchon == null)
 			return null;
+		
 		return rc.getLocation().directionTo(oppArchon);
 	}
 }

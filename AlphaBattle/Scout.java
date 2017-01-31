@@ -34,7 +34,7 @@ public class Scout extends RobotPlayer {
     	}
 	}
 	
-	void logic() {
+	public void logic() throws GameActionException {
 		try {
 			mem.updateMemory();
 			executeMove(); 
@@ -46,12 +46,14 @@ public class Scout extends RobotPlayer {
 	}
 	
 	void executeMove() throws GameActionException {
+		MapLocation loc = TeamComms.getOppArchonLoc();
 		avoidFriendlyScout();
-		if (!Util.tryMove(rc, mem.getMyDirection())) {
+		if (loc != null) {
+			Util.tryMove(rc, rc.getLocation().directionTo(loc));
+		} else if (!Util.tryMove(rc, mem.getMyDirection())) {
 			mem.setDirection(Util.randomDirection()); 
 			Util.tryMove(rc, mem.getMyDirection());
 		}
-		
 	}
 	
 	void executeAction() throws GameActionException {
@@ -155,20 +157,6 @@ public class Scout extends RobotPlayer {
 		{
 			System.out.println("Scout Raised Exception while Firing");
 			e.printStackTrace();
-		}
-	}
-	
-	void tryShake()
-	{
-		// if on a tree, attempt to shake
-		if (rc.canInteractWithTree(rc.getLocation()) && rc.canShake(rc.getLocation()))
-		{
-			try {
-				rc.shake(rc.getLocation());
-			} catch (GameActionException e) {
-				System.out.println("Scout raised an exception while attmepting to shake tree!");;
-				e.printStackTrace();
-			}
 		}
 	}
 }
