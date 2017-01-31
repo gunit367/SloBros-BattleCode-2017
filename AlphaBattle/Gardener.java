@@ -77,7 +77,7 @@ public class Gardener extends RobotPlayer {
 		{
 			deployRobot(RobotType.SOLDIER);
 		} else {
-			int random = (int) (Math.random() * 12);
+			int random = (int) (Math.random() * 14);
 			
 			if (random < 4)
 			{

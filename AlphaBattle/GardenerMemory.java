@@ -148,7 +148,7 @@ public class GardenerMemory extends RobotMemory
 		// Populate Directions of Trees on farm.
 		for(int i = 0; i < 5; i++)
 		{
-			Direction curDir = dir.rotateLeftDegrees((360 / 5) * i);
+			Direction curDir = dir.rotateLeftDegrees((360 / 5) * i).opposite();
 			farmDirections[i] = curDir;
 		}
 		
