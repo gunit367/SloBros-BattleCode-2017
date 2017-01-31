@@ -61,7 +61,7 @@ public class Gardener extends RobotPlayer {
 	
 	public void deployRobotLogic() throws GameActionException 
 	{
-		if (rc.senseNearbyTrees(mem.FARM_RADIUS + 1, Team.NEUTRAL).length > 10)
+		if (rc.senseNearbyTrees(-1, Team.NEUTRAL).length > 20 || rc.senseNearbyTrees(mem.FARM_RADIUS, Team.NEUTRAL).length > 0)
 		{
 			deployRobot(RobotType.LUMBERJACK);
 		} 
@@ -278,7 +278,6 @@ public class Gardener extends RobotPlayer {
 		// Attempt to water tree
 		if (tree != null && rc.canWater(tree.ID)) 
 		{
-			System.out.println("Watered");
 				rc.water(tree.ID);
 				return true;
 		}
@@ -362,6 +361,17 @@ public class Gardener extends RobotPlayer {
 		
 	}
 	
+	boolean attemptDeploy(Direction d, RobotType t) throws GameActionException
+	{
+		if(rc.canBuildRobot(t, d))
+		{
+			rc.buildRobot(t, d);
+			incrementCount(t);
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean deployInitialLumberjack() throws GameActionException 
 	{
 		// Calculate Move - away from archon
@@ -376,24 +386,18 @@ public class Gardener extends RobotPlayer {
 		
 		// Try to Spawn
 		Direction randDir = Util.randomDirection();
-		if(rc.canBuildRobot(RobotType.LUMBERJACK, moveDir))
+		if(attemptDeploy(moveDir, RobotType.LUMBERJACK))
 		{
-			rc.buildRobot(RobotType.LUMBERJACK, moveDir);
-			incrementCount(RobotType.LUMBERJACK);
 			mem.setStrat(2);
 			return true;
 		}
-		else if (rc.canBuildRobot(RobotType.LUMBERJACK, moveDir.opposite()))
+		else if (attemptDeploy(moveDir.opposite(), RobotType.LUMBERJACK))
 		{
-			rc.buildRobot(RobotType.LUMBERJACK, moveDir.opposite());
-			incrementCount(RobotType.LUMBERJACK);
 			mem.setStrat(2);
 			return true;
 		}
-		else if (rc.canBuildRobot(RobotType.LUMBERJACK, randDir))
+		else if (attemptDeploy(randDir, RobotType.LUMBERJACK))
 		{
-			rc.buildRobot(RobotType.LUMBERJACK, randDir);
-			incrementCount(RobotType.LUMBERJACK);
 			mem.setStrat(2);
 			return true;
 		}
@@ -427,26 +431,15 @@ public class Gardener extends RobotPlayer {
 			dir = Util.randomDirection();
 		}
 		
-		if (rc.canBuildRobot(type, dir))
+		try
 		{
-			try
-			{
-				rc.buildRobot(type, dir);
-				incrementCount(type);
-				return true; 
-			} 
-			catch (GameActionException e)
-			{
-				// ERROR: deployment failed
-				System.out.println("ERROR: buildRobot failed!");
-				e.printStackTrace();
-			}
+			return attemptDeploy(dir, type);
 		}
-		else 
+		catch (GameActionException e)
 		{
-		   // Robot cannot build this robot
+			System.out.println("Error Deploying");
+			e.printStackTrace();
 		}
-		
-		return false; 
+		return false;
 	}
 }

@@ -54,9 +54,15 @@ public class MilitaryUtil {
 
 		if (robots.length > 0)
 		{
-			if(Util.pathClearTo(robots[0].location)) {
-				MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
-			} else if (Util.tryMove(followEnemy(rc, robots[0], 3f))) {
+			if(Util.pathClearTo(robots[0].location)) 
+			{
+				if (robots.length >= 2)
+					MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
+				else
+					shootEnemy(rc, 0, robots[0].getID());
+			}
+			else if (Util.tryMove(followEnemy(rc, robots[0], 3f)))
+			{
 		
 			}
 			//followEnemy(robots[0], 2.5f);
