@@ -54,26 +54,31 @@ public class Gardener extends RobotPlayer {
 	// The normal strategy
 	public void maintainFarm() throws GameActionException
 	{	
-		// TODO: Check to plant more trees!
+		fillFarm();
 		waterTree();
 		deployRobotLogic();
 	}
 	
-	public void deployRobotLogic() throws GameActionException {
-		if (rc.senseNearbyTrees(-1, Team.NEUTRAL).length > 10) {
+	public void deployRobotLogic() throws GameActionException 
+	{
+		if (rc.senseNearbyTrees(mem.FARM_RADIUS + 1, Team.NEUTRAL).length > 10)
+		{
 			deployRobot(RobotType.LUMBERJACK);
-		} else if (mem.enemiesInView.length > 0) {
+		} 
+		else if (mem.enemiesInView.length > 0) 
+		{
 			deployRobot(RobotType.SOLDIER);
 		} else {
 			int random = (int) (Math.random() * 11);
 			
-			if (random < 3) {
+			if (random < 6)
+			{
 				deployRobot(RobotType.SOLDIER);
-			} else if (random < 7) {
+			} 
+			else
+			{
 				deployRobot(RobotType.SCOUT);
-			} else {
-				deployRobot(RobotType.LUMBERJACK);
-			}
+			} 
 		}
 	}
 		
@@ -95,28 +100,69 @@ public class Gardener extends RobotPlayer {
 		for(int i = 0; i < mem.farmDirections.length - 1; i++)
 		{
 			Direction treeDir = mem.farmDirections[i];
-			if(mem.farm[i] == null)
+			// if there's no tree in this direction, try and plant one!
+			if(plantTree(treeDir))
 			{
-				// if there's no tree in this direction, try and plant one!
-				if(plantTree(treeDir))
+				mem.farm[i] = getTreeInfo(treeDir);
+				if(mem.farm[i] != null)
 				{
-					mem.farm[i] = getTreeInfo(treeDir);
-					if(mem.farm[i] != null)
-					{
-						System.out.println("Found my tree!");
-						mem.treeCount += 1;
-					}
+					System.out.println("Found my tree!");
+					mem.treeCount += 1;
 				}
 			}
+		}
+	}
+
+	Direction awayFromEdge()
+	{
+		MapLocation loc = rc.getLocation();
+		if (loc.x - mem.mapMinX < 1)
+		{
+			mem.explorationLocation = rc.getLocation().add(Direction.getEast());
+			return Direction.getEast();
+		}
+		else if (loc.y - mem.mapMinY < 1)
+		{
+			mem.explorationLocation = rc.getLocation().add(Direction.getNorth());
+			return Direction.getNorth();
+		}
+		else if (mem.mapMaxX - loc.x < 1)
+		{
+			mem.explorationLocation = rc.getLocation().add(Direction.getWest());
+			return Direction.getWest();
+		}
+		else
+		{
+			mem.explorationLocation = rc.getLocation().add(Direction.getSouth());
+			return Direction.getSouth();
 		}
 	}
 	
 	Direction getExploreDirection() throws GameActionException
 	{
+		// Try to move away from edges of the map.
+		for(int i = 0; i < 4; i++)
+		{
+			if(!(rc.onTheMap(rc.getLocation().add(Direction.getNorth().rotateLeftDegrees(90 * i)))))
+			{
+				return Direction.getSouth().rotateLeftDegrees(90 * i);
+			}
+		}
+		
 		Direction toExplorationLocation = rc.getLocation().directionTo(mem.explorationLocation);
 		if(mem.canSeeAlly(RobotType.GARDENER))
 		{
-			// move away from nearby gardener
+			RobotInfo gard = mem.findInView(RobotType.GARDENER);
+			if(rc.senseNearbyTrees(gard.location, 1.5f, rc.getTeam()).length > 0)
+			{
+				// If that gardener has a farm, try to expand past it.
+				Direction tmp = mem.archonLocation.directionTo(gard.location);
+				MapLocation newLoc = gard.location.add(tmp, 2);
+				mem.explorationLocation = newLoc;
+				return rc.getLocation().directionTo(gard.location).rotateLeftDegrees(90);
+			}
+			
+			// move past its farm from nearby gardener
 			Direction dir = mem.findInView(RobotType.GARDENER).location.directionTo(rc.getLocation());
 			float degrees = dir.degreesBetween(toExplorationLocation);
 			return dir.rotateRightDegrees(degrees / 2);
@@ -144,7 +190,7 @@ public class Gardener extends RobotPlayer {
 	{
 		// Expand Outward to find better land
 		// Calculate Move
-		Util.tryMove(rc, getExploreDirection());
+		Util.tryMove(getExploreDirection());
 		
 		// Update to see it this place is chill
 		mem.foundFarmland = foundLand((float)mem.FARM_RADIUS);
@@ -161,7 +207,7 @@ public class Gardener extends RobotPlayer {
 		
 		mem.setDirectionToDeploy(toEnemyArchon);
 		
-		rc.setIndicatorLine(rc.getLocation(), rc.getLocation().add(toEnemyArchon), 222, 0, 0);
+		rc.setIndicatorLine(rc.getLocation(), rc.getLocation().add(toEnemyArchon, 4), 222, 0, 0);
 		
 		// Check to see if we've found suitable farm land
 		if(mem.foundFarmland)
@@ -320,8 +366,13 @@ public class Gardener extends RobotPlayer {
 	{
 		// Calculate Move - away from archon
 		Direction moveDir = TeamComms.getArchonLoc().directionTo(rc.getLocation());
-		Util.tryMove(rc, moveDir);
-		
+		Util.tryMove(moveDir);
+		if(!(rc.getTeamBullets() > RobotType.LUMBERJACK.bulletCost))
+		{
+			// We've already spawned the first lumberjack, skipping is ok
+			mem.setStrat(2);
+			return true;
+		}
 		
 		// Try to Spawn
 		Direction randDir = Util.randomDirection();
@@ -370,7 +421,7 @@ public class Gardener extends RobotPlayer {
 	// Deploys a robot given 
 	public boolean deployRobot(RobotType type)
 	{
-		Direction dir = mem.getDirectionToDeploy();
+		Direction dir = mem.farmDirections[mem.farmDirections.length - 1];
 		if (dir == null)
 		{
 			dir = Util.randomDirection();

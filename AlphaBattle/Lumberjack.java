@@ -52,13 +52,13 @@ public class Lumberjack extends RobotPlayer {
 		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 		
 		if (enemies.length > 0) {
-			Util.tryMove(rc, enemies[0].location, 2);
+			Util.tryMove(enemies[0].location, 2);
 		} else {
 			Direction dir = rc.getLocation().directionTo(TeamComms.getOppArchonLoc());
 			if (dir != null) {
-				Util.tryMove(rc, dir);	
+				Util.tryMove(dir);	
 			} else {
-				Util.tryMove(rc, Util.randomDirection());
+				Util.tryMove(Util.randomDirection());
 			}
 		}
 	}
@@ -76,23 +76,23 @@ public class Lumberjack extends RobotPlayer {
 			Direction dir = calculateMoveDirection();
 
 			// Move there 
-			if (!Util.tryMove(rc, dir))
+			if (!Util.tryMove(dir))
 			{
 				// try turning left first
 				for(int i = 1; i < 6; i++)
 				{
-					if(Util.tryMove(rc, dir.rotateLeftDegrees(30 * i)))
+					if(Util.tryMove(dir.rotateLeftDegrees(30 * i)))
 						return;
 				}
 				
 				// else try turning right
 				for(int i = 1; i < 6; i++)
 				{
-					if(Util.tryMove(rc, dir.rotateRightDegrees(30 * i)))
+					if(Util.tryMove(dir.rotateRightDegrees(30 * i)))
 						return;
 				}
 				
-				Util.tryMove(rc, dir.opposite());
+				Util.tryMove(dir.opposite());
 			}
 		} 
 		catch (GameActionException e) 
@@ -167,7 +167,7 @@ public class Lumberjack extends RobotPlayer {
 				rc.chop(tree.ID);
 			} else {
 				Direction dir = rc.getLocation().directionTo(tree.location);
-				Util.tryMove(rc, dir);
+				Util.tryMove(dir);
 				System.out.println("Moving to tree");
 			}
 			
@@ -182,7 +182,7 @@ public class Lumberjack extends RobotPlayer {
 				rc.chop(tree.ID);
 			} else {
 				Direction dir = rc.getLocation().directionTo(tree.location);
-				Util.tryMove(rc, dir);
+				Util.tryMove(dir);
 			}
 			
 		}

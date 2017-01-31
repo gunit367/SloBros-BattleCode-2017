@@ -236,7 +236,7 @@ public strictfp class RobotPlayer {
 		} 
 			
 		
-		Util.tryMove(rc, Util.randomDirection());
+		Util.tryMove(Util.randomDirection());
 		
 		
 		return false; 

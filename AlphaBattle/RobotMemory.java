@@ -28,10 +28,10 @@ public abstract class RobotMemory {
 		birthCount = 0;
 		
 		MapLocation loc = rc.getLocation();
-		mapMinX = loc.x;
-		mapMaxX = loc.x;
-		mapMinY = loc.y;
-		mapMaxY = loc.y;
+		mapMinX = loc.x - rc.getType().sensorRadius;
+		mapMaxX = loc.x + rc.getType().sensorRadius;
+		mapMinY = loc.y - rc.getType().sensorRadius;
+		mapMaxY = loc.y + rc.getType().sensorRadius;
 	}
 	
 	boolean inCurrentMapBounds(MapLocation l)

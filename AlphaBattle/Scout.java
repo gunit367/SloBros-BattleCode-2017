@@ -50,9 +50,9 @@ public class Scout extends RobotPlayer {
 		//avoidFriendlyScout();
 		//if (loc != null) {
 			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
-		if (!Util.tryMove(rc, mem.getMyDirection())) {
+		if (!Util.tryMove(mem.getMyDirection())) {
 			mem.setDirection(Util.randomDirection()); 
-			Util.tryMove(rc, mem.getMyDirection());
+			Util.tryMove(mem.getMyDirection());
 		}
 	}
 	
@@ -83,7 +83,7 @@ public class Scout extends RobotPlayer {
 	
 	void harassFromCover() throws GameActionException
 	{
-		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		RobotInfo[] enemies = mem.enemiesInView;
 		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
@@ -121,7 +121,7 @@ public class Scout extends RobotPlayer {
 		
 		mem.setDirection(rc.getLocation().directionTo(t.getLocation()));
 		try {
-			if (Util.tryMove(rc, mem.getMyDirection()))
+			if (Util.tryMove(mem.getMyDirection()))
 			{
 			   	harassFromCover();
 			}
@@ -188,7 +188,7 @@ public class Scout extends RobotPlayer {
 			if (!rc.hasAttacked())
 			{
 				// Try to follow the enemy if attacking couldn't happen
-				Util.tryMove(rc, followEnemy(mem.enemiesInView[0], 8.5f));
+				Util.tryMove(followEnemy(mem.enemiesInView[0], 8.5f));
 			}
 		} 
 		catch (Exception e)

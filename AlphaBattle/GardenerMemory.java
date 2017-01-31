@@ -4,7 +4,7 @@ import battlecode.common.*;
 public class GardenerMemory extends RobotMemory
 {
 	//final double FARM_RADIUS = (GameConstants.BULLET_TREE_RADIUS * 2) + RobotType.GARDENER.bodyRadius + 0.3;
-	final float FARM_RADIUS = 1.5f;
+	final float FARM_RADIUS = 1.0f;
 	Direction dir; 
 	TreeInfo tree; 
 	int strat;
@@ -36,6 +36,14 @@ public class GardenerMemory extends RobotMemory
 		}
 	}
 	
+	void updateExplorationLocation()
+	{
+		// Spiral Out From Archon
+		float dist = (float)(archonLocation.distanceTo(explorationLocation) + .5);
+		Direction dir = archonLocation.directionTo(explorationLocation).rotateLeftDegrees(15);
+		explorationLocation = archonLocation.add(dir, dist);
+	}
+	
 	public void updateMemory()
 	{
 		super.updateMemory();
@@ -43,10 +51,7 @@ public class GardenerMemory extends RobotMemory
 			return;
 		if(!foundFarmland && rc.getLocation().distanceTo(explorationLocation) < .2)
 		{
-			// Spiral Out From Archon
-			float dist = (float)(archonLocation.distanceTo(explorationLocation) + .3);
-			Direction dir = archonLocation.directionTo(explorationLocation).rotateLeftDegrees(15);
-			explorationLocation = archonLocation.add(dir, dist);
+			updateExplorationLocation();
 		}
 	}
 	
@@ -107,7 +112,7 @@ public class GardenerMemory extends RobotMemory
 		
 		for(int i = 0; i < 5; i++)
 		{
-			Direction curDir = dir.rotateLeftDegrees((360 / 5) * i);
+			Direction curDir = dir.rotateLeftDegrees((360 / 5) * (i + 1));
 			// Find number of open spots
 			if(rc.canBuildRobot(RobotType.SOLDIER, curDir) || rc.canPlantTree(curDir))
 			{
@@ -121,20 +126,15 @@ public class GardenerMemory extends RobotMemory
 			return;
 		}
 		
-		farmDirections = new Direction[openSpots];
-		farm = new TreeInfo[openSpots - 1];
+		farmDirections = new Direction[5];
+		farm = new TreeInfo[4];
 		
 		openSpots = 0;
 		// Populate Directions of Trees on farm.
 		for(int i = 0; i < 5; i++)
 		{
 			Direction curDir = dir.rotateLeftDegrees((360 / 5) * i);
-			// Find number of open spots
-			if(rc.canBuildRobot(RobotType.SOLDIER, curDir) || rc.canPlantTree(curDir))
-			{
-				farmDirections[openSpots] = curDir;
-				openSpots++;
-			}
+			farmDirections[i] = curDir;
 		}
 		
 	}

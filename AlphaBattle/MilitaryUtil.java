@@ -56,7 +56,7 @@ public class MilitaryUtil {
 		{
 			if(Util.pathClearTo(robots[0].location)) {
 				MilitaryUtil.shootEnemy(rc, 3, robots[0].getID());
-			} else if (Util.tryMove(rc, followEnemy(rc, robots[0], 3f))) {
+			} else if (Util.tryMove(followEnemy(rc, robots[0], 3f))) {
 		
 			}
 			//followEnemy(robots[0], 2.5f);
@@ -72,7 +72,7 @@ public class MilitaryUtil {
 		}
 		else if (aoi != null && rc.canMove(aoi))
 		{
-			Util.tryMove(rc, rc.getLocation().directionTo(TeamComms.getAreaOfMilitaryInterest()));
+			Util.tryMove(rc.getLocation().directionTo(TeamComms.getAreaOfMilitaryInterest()));
 			rc.setIndicatorLine(rc.getLocation(), aoi, 220, 155, 0);
 		} 
 		else if (moveTowardsEnemyArchon(rc))
@@ -81,7 +81,7 @@ public class MilitaryUtil {
 		} 
 		else if (rc.canMove(random))
 		{
-			Util.tryMove(rc, random);
+			Util.tryMove(random);
 		} 
 		
 	}
@@ -105,7 +105,7 @@ public class MilitaryUtil {
 		rc.setIndicatorDot(enemyArchon, 100, 55, 55);
 
 		Direction dirToEnemyArchon = rc.getLocation().directionTo(enemyArchon);
-		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(rc, dirToEnemyArchon))
+		if (rc.canMove(dirToEnemyArchon) && Util.tryMove(dirToEnemyArchon))
 		{
 			return true; 
 		} 
@@ -179,13 +179,13 @@ public class MilitaryUtil {
 			{
 				// Bullet on My Left
 				Direction moveDir = myLoc.directionTo(b.location).rotateRightDegrees(90);
-				Util.tryMove(RobotPlayer.rc, moveDir);
+				Util.tryMove(moveDir);
 			} 
 			else
 			{
 				// Bullet on My Right
 				Direction moveDir = myLoc.directionTo(b.location).rotateLeftDegrees(90);
-				Util.tryMove(RobotPlayer.rc, moveDir);
+				Util.tryMove(moveDir);
 			}
 		} 
 		catch (GameActionException e) 

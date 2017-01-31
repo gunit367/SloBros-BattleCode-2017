@@ -35,7 +35,7 @@ public class Archon extends RobotPlayer {
 	
 	public void logic() throws GameActionException {
 		super.logic();
-
+		mem.updateMemory();
 		executeMove();
 		executeAction();
         	
@@ -47,16 +47,16 @@ public class Archon extends RobotPlayer {
         // Look for enemies and move away from them
         if (enemies.length > 0)
         {
-        	if(Util.tryMove(rc, (rc.getLocation().directionTo(enemies[0].location)).opposite()))
+        	if(Util.tryMove((rc.getLocation().directionTo(enemies[0].location)).opposite()))
         		return;
         }
         
         if (mem.canSeeAlly(RobotType.GARDENER))
         {
-        	if(Util.tryMove(rc, rc.getLocation().directionTo(mem.alliesInView[0].location).opposite()))
+        	if(Util.tryMove(rc.getLocation().directionTo(mem.alliesInView[0].location).opposite()))
         		return;
         }
-        Util.tryMove(rc, Util.randomDirection());
+        Util.tryMove(Util.randomDirection());
 	}
 	
 	void executeAction() throws GameActionException {    
@@ -89,9 +89,9 @@ public class Archon extends RobotPlayer {
 	void deploy() throws GameActionException {
 		int turn = TeamComms.getTurnCount();
 		int numTrees = rc.senseNearbyTrees().length;
-		int numTeamAround = rc.senseNearbyRobots(-1, rc.getTeam()).length;
+		int numTeamAround = mem.alliesInView.length;
 				
-		if (numTrees > 10 && numTeamAround > 3) {
+		if (numTrees > 10 && numTeamAround > 2) {
 			return; 
 		}
 		

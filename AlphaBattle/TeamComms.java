@@ -23,15 +23,15 @@ public class TeamComms {
 	
 	// Enemy Team Information: Starting at Channel 500
 	private static final int numEnemyArchons = 500; 
-	private static final int archonID1 = 500; 
-	private static final int archonID2 = 501; 
-	private static final int archonID3 = 502; 
+	//private static final int archonID1 = 500; 
+	//private static final int archonID2 = 501; 
+	//private static final int archonID3 = 502; 
 	private static final int oppArchonX1 = 503;
 	private static final int oppArchonY1 = 504;
-	private static final int oppArchonX2 = 505;
-	private static final int oppArchonY2 = 506;
-	private static final int oppArchonX3 = 507;
-	private static final int oppArchonY3 = 508;
+	//private static final int oppArchonX2 = 505;
+	//private static final int oppArchonY2 = 506;
+	//private static final int oppArchonX3 = 507;
+	//private static final int oppArchonY3 = 508;
 	private static final int archonSightingTimestamp = 509;
 	
 	// Prototype for marking Locations to Explore/Secure
