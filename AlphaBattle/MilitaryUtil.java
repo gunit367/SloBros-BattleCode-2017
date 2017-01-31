@@ -39,8 +39,9 @@ public class MilitaryUtil {
  		}	
 	}
 	
-	public static void offense(RobotController rc) throws GameActionException
+	public static void offense() throws GameActionException
 	{
+		RobotController rc = RobotPlayer.rc;
 		Team enemy = rc.getTeam().opponent();
 		RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
 		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, enemy);
@@ -61,7 +62,7 @@ public class MilitaryUtil {
 				else
 					shootEnemy(rc, 0, robots[0].getID());
 			}
-			else if (Util.tryMove(followEnemy(rc, robots[0], 3f)))
+			else if (Util.tryMove(followEnemy(robots[0], 3f)))
 			{
 		
 			}
@@ -69,18 +70,18 @@ public class MilitaryUtil {
 			TeamComms.setAreaOfMilitaryInterest(robots[0].location);
 			rc.setIndicatorLine(rc.getLocation(), robots[0].location, 100, 222, 55);
 		}
+		else if (aoi != null)
+		{
+			Util.tryMove(rc.getLocation().directionTo(aoi));
+			rc.setIndicatorLine(rc.getLocation(), aoi, 220, 155, 0);
+		} 
 		else if (enemyTrees.length > 0 && rc.canFireSingleShot()) 
 		{
 			if (Util.pathClearTo(enemyTrees[0].location)) {
 				rc.fireSingleShot(rc.getLocation().directionTo(enemyTrees[0].location));	
 			}
-			rc.setIndicatorLine(rc.getLocation(), robots[0].location, 22, 23, 155);
+			rc.setIndicatorLine(rc.getLocation(), enemyTrees[0].location, 22, 23, 155);
 		}
-		else if (aoi != null && rc.canMove(aoi))
-		{
-			Util.tryMove(rc.getLocation().directionTo(TeamComms.getAreaOfMilitaryInterest()));
-			rc.setIndicatorLine(rc.getLocation(), aoi, 220, 155, 0);
-		} 
 		else if (moveTowardsEnemyArchon(rc))
 		{
 			
@@ -92,8 +93,9 @@ public class MilitaryUtil {
 		
 	}
 	
-    public static Direction followEnemy(RobotController rc, RobotInfo enemy, float distance)
+    public static Direction followEnemy(RobotInfo enemy, float distance)
 	{
+    	RobotController rc = RobotPlayer.rc;
 		Direction dir = enemy.location.directionTo(rc.getLocation()).rotateRightDegrees(20);
 		MapLocation toLoc = enemy.location.add(dir, distance);
 		return rc.getLocation().directionTo(toLoc);

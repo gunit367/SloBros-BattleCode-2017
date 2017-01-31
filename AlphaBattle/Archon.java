@@ -95,7 +95,7 @@ public class Archon extends RobotPlayer {
 			return; 
 		}
 		
-		if ((turn < 500  && turn % 20 == 0)|| turn % 50 == 0) {
+		if ((turn < 500  && (turn / 40 < TeamComms.getGardeners())) || turn % 80 == 0) {
 			deployGardener();
 		}
 	}

@@ -36,7 +36,7 @@ public class Soldier extends RobotPlayer {
 		updateAreaOfInterest();
 		switch (strat) {
 		case 1:
-			MilitaryUtil.offense(rc);
+			MilitaryUtil.offense();
 		case 2:
 			//defense();
 		}

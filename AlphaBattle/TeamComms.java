@@ -72,6 +72,26 @@ public class TeamComms {
 	
 	// Friendly Team Counts
 	// Gardener Counts
+	public static int getCount(RobotType t) throws GameActionException
+	{
+		switch (t)
+		{
+		case ARCHON:
+			return 1;
+		case GARDENER:
+			return getGardeners();
+		case LUMBERJACK:
+			return getLumberjacks();
+		case SOLDIER:
+			return getSoldiers();
+		case SCOUT:
+			return getScouts();
+		case TANK:
+			return getTanks();
+		}
+		return 0;
+	}
+	
 	public static int getGardeners() throws GameActionException
 	{
 		RobotController rc = RobotPlayer.rc;

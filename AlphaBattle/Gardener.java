@@ -45,8 +45,15 @@ public class Gardener extends RobotPlayer {
 		case 2: 
 			tryPlantFarm();
 			break;
-		case 3: 
-			deployInitialLumberjack();
+		case 3:
+			if (mem.trees.length > 5)
+			{
+				deployInitialUnit(RobotType.LUMBERJACK);
+			}
+			else
+			{
+				deployInitialUnit(RobotType.SOLDIER);
+			}
 			break;
 		}
 	}
@@ -71,14 +78,18 @@ public class Gardener extends RobotPlayer {
 		} else {
 			int random = (int) (Math.random() * 11);
 			
-			if (random < 6)
+			if (random < 5)
 			{
 				deployRobot(RobotType.SOLDIER);
 			} 
-			else
+			else if (random < 8)
 			{
 				deployRobot(RobotType.SCOUT);
 			} 
+			else
+			{
+				deployRobot(RobotType.LUMBERJACK);
+			}
 		}
 	}
 		
@@ -149,11 +160,18 @@ public class Gardener extends RobotPlayer {
 			}
 		}
 		
+		RobotInfo lumberjack = mem.findInView(RobotType.LUMBERJACK);
+		if(lumberjack != null && Util.pathClearTo(lumberjack.location))
+		{
+			// try to follow a nearby lumberjack first.
+			return MilitaryUtil.followEnemy(lumberjack, 0.5f);
+		}
+		
 		Direction toExplorationLocation = rc.getLocation().directionTo(mem.explorationLocation);
 		if(mem.canSeeAlly(RobotType.GARDENER))
-		{
+		{	
 			RobotInfo gard = mem.findInView(RobotType.GARDENER);
-			if(rc.senseNearbyTrees(gard.location, 1.5f, rc.getTeam()).length > 0)
+			if(gard != null && rc.senseNearbyTrees(gard.location, 1.5f, rc.getTeam()).length > 0)
 			{
 				// If that gardener has a farm, try to expand past it.
 				Direction tmp = mem.archonLocation.directionTo(gard.location);
@@ -260,7 +278,7 @@ public class Gardener extends RobotPlayer {
 	{
 		TreeInfo[] trees = rc.senseNearbyTrees(radius, rc.getTeam());
 		
-		if (trees.length < 2 && !mem.canSeeAllyArchon(mem.FARM_RADIUS) && rc.onTheMap(rc.getLocation(), radius))
+		if (trees.length == 0 && !(mem.canSeeAllyArchon(mem.FARM_RADIUS)) && rc.onTheMap(rc.getLocation(), radius))
 		{
 			return true;
 		}
@@ -372,12 +390,12 @@ public class Gardener extends RobotPlayer {
 		return false;
 	}
 	
-	public boolean deployInitialLumberjack() throws GameActionException 
+	public boolean deployInitialUnit(RobotType t) throws GameActionException 
 	{
 		// Calculate Move - away from archon
 		Direction moveDir = TeamComms.getArchonLoc().directionTo(rc.getLocation());
 		Util.tryMove(moveDir);
-		if(!(rc.getTeamBullets() > RobotType.LUMBERJACK.bulletCost))
+		if((!(rc.getTeamBullets() > t.bulletCost) && TeamComms.getCount(t) != 0) || rc.getRoundNum() > 30)
 		{
 			// We've already spawned the first lumberjack, skipping is ok
 			mem.setStrat(2);
@@ -386,17 +404,17 @@ public class Gardener extends RobotPlayer {
 		
 		// Try to Spawn
 		Direction randDir = Util.randomDirection();
-		if(attemptDeploy(moveDir, RobotType.LUMBERJACK))
+		if(attemptDeploy(moveDir, t))
 		{
 			mem.setStrat(2);
 			return true;
 		}
-		else if (attemptDeploy(moveDir.opposite(), RobotType.LUMBERJACK))
+		else if (attemptDeploy(moveDir.opposite(), t))
 		{
 			mem.setStrat(2);
 			return true;
 		}
-		else if (attemptDeploy(randDir, RobotType.LUMBERJACK))
+		else if (attemptDeploy(randDir, t))
 		{
 			mem.setStrat(2);
 			return true;
