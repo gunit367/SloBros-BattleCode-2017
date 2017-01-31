@@ -84,22 +84,25 @@ public class Scout extends RobotPlayer {
 	void harassFromCover()
 	{
 		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-		MapLocation tree_loc = null;
 		// If enemies nearby & on a tree, move toward enemy
 		try {
 			if (rc.isLocationOccupiedByTree(rc.getLocation()) && enemies.length > 0)
 			{
 				if (enemies[0].getType() == RobotType.GARDENER || enemies[0].getType() == RobotType.ARCHON)
 				{
-					tree_loc = rc.getLocation();
-					mem.setDirection(Util.getDirectionToLocation(rc, enemies[0].location).rotateRightDegrees(45));
-					while (enemies.length > 0)
+					//Move to the middle of tree
+					mem.setDirection(Util.getDirectionToLocation(rc, rc.getLocation()));
+					Util.tryMove(rc, mem.getMyDirection());
+					//While there are still enemies and the path is clear, shoot at them from cover!
+					while (enemies.length > 0 && MilitaryUtil.noFriendlyFire(rc, Util.getDirectionToLocation(rc, enemies[0].getLocation())))
 					{
-					   Util.tryMove(rc, mem.getMyDirection());
 					   MilitaryUtil.shootEnemy(rc, 0, enemies[0].ID);
-					   returnToCover(tree_loc);
+					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
+					//No more enemies, continue to scout the map.
+					mem.setDirection(Util.randomDirection());
+					Util.tryMove(rc, mem.getMyDirection());
 				}
 			}
 		} catch (GameActionException e) {
@@ -124,7 +127,7 @@ public class Scout extends RobotPlayer {
 	   
 	   for (int i=0; i<robots.length; i++)
 	   {
-		   // If scout comes in contact with a friendly scout, change path 45 degrees to left
+		   // If scout comes in contact with a friendly scout, choose a new random direction
 		   if (robots[i].type == RobotType.SCOUT)
 		   {
 			   mem.setDirection(Util.randomDirection());
