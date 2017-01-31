@@ -5,11 +5,13 @@ public class ArchonMemory extends RobotMemory
 {
 	RobotController rc;
 	Direction myDir; 
+	int lastSpawnTurn;
 	
 	public ArchonMemory(RobotController rc)
 	{
 		super(rc);
 		myDir = Util.randomDirection();
+		lastSpawnTurn = -100;
 	}
 	
 	public void updateMemory()

@@ -70,14 +70,7 @@ public class Lumberjack extends RobotPlayer {
 			Direction dir = calculateMoveDirection();
 
 			// Move there 
-			if (!Util.tryMove(dir))
-			{
-				// try turning left first
-				Util.tryMove(dir.rotateLeftDegrees(90));
-				
-				// try right next
-				Util.tryMove(dir.rotateRightDegrees(90));
-			}
+			Util.tryMove(dir);
 		} 
 		catch (GameActionException e) 
 		{
@@ -111,7 +104,7 @@ public class Lumberjack extends RobotPlayer {
 		{
 			if (rc.canStrike() && mem.enemiesInRange.length > 0)
 				rc.strike();
-			if (mem.shouldChop())
+			else if (mem.shouldChop())
 				chopTree();
 		} 
 		catch (GameActionException e) 
@@ -123,21 +116,35 @@ public class Lumberjack extends RobotPlayer {
 
 	void chopTree() throws GameActionException
 	{
-		TreeInfo[] trees = rc.senseNearbyTrees(-1, rc.getTeam());
-		if(mem.bestTree == null)
+		if(mem.bestTree == null || !rc.canChop(mem.bestTree.ID))
 		{
-			if (trees.length == 0)
-			{
-				return;
-			}
-			mem.bestTree = trees[0];
+			TreeInfo[] neutral = rc.senseNearbyTrees(-1, Team.NEUTRAL);
+			mem.bestTree = findClosestTree(neutral);
+			return;
 		}
-		
-		if (rc.canChop(mem.bestTree.ID))
+		else if(rc.canChop(mem.bestTree.ID))
 		{
 			mem.isChopping = true;
 			rc.chop(mem.bestTree.ID);
 		}
 	}
-
+	
+	TreeInfo findClosestTree(TreeInfo[] list)
+	{
+		if (list.length == 0)
+			return null;
+		
+		TreeInfo closest = list[0];
+		float dist = rc.getLocation().distanceTo(closest.location);
+		for(int i = 0; i < list.length; i++)
+		{
+			float tmp = rc.getLocation().distanceTo(list[i].location);
+			if(tmp < dist)
+			{
+				dist = tmp;
+				closest = list[i];
+			}
+		}
+		return closest;
+	}
 }
