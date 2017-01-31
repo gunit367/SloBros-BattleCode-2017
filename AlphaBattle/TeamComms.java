@@ -242,4 +242,19 @@ public class TeamComms {
 		
 		return rc.getLocation().directionTo(oppArchon);
 	}
+	
+	public static Direction recentArchonDirection() throws GameActionException
+	{
+		Direction toEnemyArchon;
+		MapLocation enemyArchon = getOppArchonLoc();
+		if(enemyArchon == null)
+		{
+			toEnemyArchon = RobotPlayer.rc.getLocation().directionTo(getInitialArchonLocation());
+		}
+		else
+		{
+			toEnemyArchon = RobotPlayer.rc.getLocation().directionTo(enemyArchon);
+		}
+		return toEnemyArchon;
+	}
 }

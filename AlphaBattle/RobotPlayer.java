@@ -64,7 +64,7 @@ public strictfp class RobotPlayer {
     	}
     	catch (Exception e)
     	{
-    		System.out.println("Error Running Tank Object");
+    		System.out.println("Error Running Scout Object");
     	}
     	
     }
@@ -78,7 +78,7 @@ public strictfp class RobotPlayer {
     	}
     	catch (Exception e)
     	{
-    		System.out.println("Error Running Tank Object");
+    		System.out.println("Error Running Archon Object");
     	}
     	
     }
@@ -92,7 +92,8 @@ public strictfp class RobotPlayer {
     	}
     	catch (Exception e)
     	{
-    		System.out.println("Error Running Tank Object");
+    		e.printStackTrace();
+    		System.out.println("Error Running Gardener Object");
     	}
        
     }

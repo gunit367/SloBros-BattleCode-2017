@@ -47,8 +47,16 @@ public class Archon extends RobotPlayer {
         // Look for enemies and move away from them
         if (enemies.length > 0)
         {
-        	Util.tryMove(rc, (rc.getLocation().directionTo(enemies[0].location)).opposite());
+        	if(Util.tryMove(rc, (rc.getLocation().directionTo(enemies[0].location)).opposite()))
+        		return;
         }
+        
+        if (mem.canSeeAlly(RobotType.GARDENER))
+        {
+        	if(Util.tryMove(rc, rc.getLocation().directionTo(mem.alliesInView[0].location).opposite()))
+        		return;
+        }
+        Util.tryMove(rc, Util.randomDirection());
 	}
 	
 	void executeAction() throws GameActionException {    
@@ -87,26 +95,50 @@ public class Archon extends RobotPlayer {
 			return; 
 		}
 		
-		if ((turn < 500  && turn % 10 == 0)|| turn % 25 == 0) {
+		if ((turn < 500  && turn % 20 == 0)|| turn % 50 == 0) {
 			deployGardener();
 		}
 	}
 	
 	void deployGardener() throws GameActionException
 	{		
-        Direction dirToEnemy = TeamComms.getDirectionToInitialArchonLoc();
-        Direction random = Util.randomDirection();
+        Direction dirToEnemy = TeamComms.recentArchonDirection();
 		boolean canBuild = rc.canBuildRobot(RobotType.GARDENER, dirToEnemy);
 		
-        if (canBuild)
+        if (canBuild && mem.alliesInView.length < 4)
         {
         	rc.hireGardener(dirToEnemy);
         	incrementCount(RobotType.GARDENER);
+        	return;
         }
-        else if (rc.canBuildRobot(RobotType.GARDENER, random)) {
-        	rc.hireGardener(random);
-        	incrementCount(RobotType.GARDENER);
+        
+        // try a few more directions
+        float offset = 10;
+        for(int i = 1; i < 10; i ++)
+        {
+        	Direction dir = dirToEnemy.rotateLeftDegrees(offset * i);
+        	canBuild = rc.canBuildRobot(RobotType.GARDENER, dir);
+        	if (canBuild)
+        	{
+        		rc.hireGardener(dir);
+        		incrementCount(RobotType.GARDENER);
+        		return;
+        	}
+        	
+        	dir = dirToEnemy.rotateRightDegrees(offset * i);
+        	canBuild = rc.canBuildRobot(RobotType.GARDENER, dir);
+        	if(canBuild)
+        	{
+        		rc.hireGardener(dir);
+        		incrementCount(RobotType.GARDENER);
+        		return;
+        	}
+        	
         }
+//        else if (rc.canBuildRobot(RobotType.GARDENER, random)) {
+//        	rc.hireGardener(random);
+//        	incrementCount(RobotType.GARDENER);
+//        }
 	}
 	
 	void updateTeamAreaOfInterest() throws GameActionException

@@ -28,7 +28,7 @@ public class Util {
      * @throws GameActionException
      */
     public static boolean tryMove(RobotController rc, Direction dir) throws GameActionException {
-        return tryMove(rc, dir,20,3);
+        return tryMove(rc, dir,10,5);
     }
 
     /**
