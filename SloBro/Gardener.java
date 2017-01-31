@@ -1,4 +1,4 @@
-package AlphaBattle;
+package SloBro;
 
 import battlecode.common.*;
 
@@ -133,7 +133,7 @@ public class Gardener extends RobotPlayer {
 	public boolean foundLand(int radius) throws GameActionException
 	{
 		RobotInfo[] team = rc.senseNearbyRobots(radius, rc.getTeam());
-		TreeInfo[] trees = rc.senseNearbyTrees();
+		TreeInfo[] trees = rc.senseNearbyTrees(radius, rc.getTeam());
 		
 		if (team.length == 0 && trees.length == 0)
 		{
