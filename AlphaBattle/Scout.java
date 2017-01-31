@@ -87,24 +87,21 @@ public class Scout extends RobotPlayer {
 		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
-			if (tree != null && tree.getTeam() == rc.getTeam().opponent() && enemies.length > 0)
-			{
-				if (enemies[0].getType() == RobotType.GARDENER || enemies[0].getType() == RobotType.ARCHON)
+			if (tree != null && tree.getTeam() == rc.getTeam().opponent() && enemies.length > 0) {
+				RobotType type = enemies[0].getType();
+				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT)
 				{
-					//Move to the middle of tree
+					//Stop moving
 					mem.setDirection(Util.getDirectionToLocation(rc, rc.getLocation()));
-					//Util.tryMove(rc, mem.getMyDirection());
 					//While there are still enemies and the path is clear, shoot at them from cover!
 					while (enemies.length > 0)
 					{
-						System.out.println("Shoot enemy scout");
 					   MilitaryUtil.shootEnemy(rc, 3, enemies[0].ID);
 					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
 					//No more enemies, continue to scout the map.
 					mem.setDirection(Util.randomDirection());
-					//Util.tryMove(rc, mem.getMyDirection());
 				}
 			}
 		} catch (GameActionException e) {
