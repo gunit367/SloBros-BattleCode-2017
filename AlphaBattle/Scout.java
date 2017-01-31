@@ -82,13 +82,16 @@ public class Scout extends RobotPlayer {
 	void harassFromCover()
 	{
 		RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-		// If enemies nearby & on a tree, move toward enemy
+		RobotType type;
+		
 		try {
+			// If enemies nearby & on a tree, move toward enemy
 			if (rc.isLocationOccupiedByTree(rc.getLocation()) && enemies.length > 0)
 			{
-				if (enemies[0].getType() == RobotType.GARDENER || enemies[0].getType() == RobotType.ARCHON)
+				type = enemies[0].getType();
+				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT)
 				{
-					//Move to the middle of tree
+					//Stop moving
 					mem.setDirection(Util.getDirectionToLocation(rc, rc.getLocation()));
 					Util.tryMove(rc, mem.getMyDirection());
 					//While there are still enemies and the path is clear, shoot at them from cover!
