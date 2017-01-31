@@ -7,6 +7,7 @@ public class Gardener extends RobotPlayer {
 	RobotController rc;
 	GardenerMemory mem;
 	
+	public final float LARGE_MAP_DIST = 50;
 
 	public Gardener(RobotController rc) throws GameActionException
 	{
@@ -46,7 +47,7 @@ public class Gardener extends RobotPlayer {
 			tryPlantFarm();
 			break;
 		case 3:
-			if (mem.trees.length > 5)
+			if (mem.trees.length > 5 || (mem.archonLocation.distanceTo(TeamComms.getInitialArchonLocation()) < LARGE_MAP_DIST))
 			{
 				deployInitialUnit(RobotType.LUMBERJACK);
 			}
@@ -68,7 +69,7 @@ public class Gardener extends RobotPlayer {
 	
 	public void deployRobotLogic() throws GameActionException 
 	{
-		if (rc.senseNearbyTrees(-1, Team.NEUTRAL).length > 20 || rc.senseNearbyTrees(mem.FARM_RADIUS, Team.NEUTRAL).length > 0)
+		if (rc.senseNearbyTrees(-1, Team.NEUTRAL).length > 10 || rc.senseNearbyTrees(mem.FARM_RADIUS, Team.NEUTRAL).length > 0)
 		{
 			deployRobot(RobotType.LUMBERJACK);
 		} 
@@ -76,9 +77,9 @@ public class Gardener extends RobotPlayer {
 		{
 			deployRobot(RobotType.SOLDIER);
 		} else {
-			int random = (int) (Math.random() * 11);
+			int random = (int) (Math.random() * 12);
 			
-			if (random < 5)
+			if (random < 4)
 			{
 				deployRobot(RobotType.SOLDIER);
 			} 
@@ -160,33 +161,12 @@ public class Gardener extends RobotPlayer {
 			}
 		}
 		
-		RobotInfo lumberjack = mem.findInView(RobotType.LUMBERJACK);
-		if(lumberjack != null && Util.pathClearTo(lumberjack.location))
+		if (mem.exploreDirection != null)
 		{
-			// try to follow a nearby lumberjack first.
-			return MilitaryUtil.followEnemy(lumberjack, 0.5f);
+			return mem.exploreDirection;
 		}
 		
-		Direction toExplorationLocation = rc.getLocation().directionTo(mem.explorationLocation);
-		if(mem.canSeeAlly(RobotType.GARDENER))
-		{	
-			RobotInfo gard = mem.findInView(RobotType.GARDENER);
-			if(gard != null && rc.senseNearbyTrees(gard.location, 1.5f, rc.getTeam()).length > 0)
-			{
-				// If that gardener has a farm, try to expand past it.
-				Direction tmp = mem.archonLocation.directionTo(gard.location);
-				MapLocation newLoc = gard.location.add(tmp, 2);
-				mem.explorationLocation = newLoc;
-				return rc.getLocation().directionTo(gard.location).rotateLeftDegrees(90);
-			}
-			
-			// move past its farm from nearby gardener
-			Direction dir = mem.findInView(RobotType.GARDENER).location.directionTo(rc.getLocation());
-			float degrees = dir.degreesBetween(toExplorationLocation);
-			return dir.rotateRightDegrees(degrees / 2);
-		}
-		
-		return toExplorationLocation;
+		return mem.archonLocation.directionTo(rc.getLocation());
 	}
 	
 	void constructFarm() throws GameActionException
@@ -211,7 +191,7 @@ public class Gardener extends RobotPlayer {
 		// Calculate Move
 		if (!Util.tryMove(getExploreDirection()))
 		{
-			mem.explorationLocation = mem.explorationLocation.add(rc.getLocation().directionTo(mem.explorationLocation).rotateRightDegrees(90));
+			mem.updateExplorationLocation();
 		}
 		
 		// Update to see it this place is chill
@@ -244,41 +224,6 @@ public class Gardener extends RobotPlayer {
 			// Expand, Explore, find better land
 			manifestDestiny();
 		}
-		
-		
-		// OLD CODE STARTS HERE
-//		if (mem.foundFarmland)
-//		{
-//			// Construct Trees on the farm
-//			while (mem.treeCount < 4)
-//			{
-//				rc.setIndicatorLine(rc.getLocation(), rc.getLocation().add(toEnemyArchon), 222, 0, 0);
-//				rc.setIndicatorLine(rc.getLocation(), rc.getLocation().add(dir), 0, 0, 222);
-//
-//				System.out.println("Degrees: " + dir.getAngleDegrees() + " = " + toEnemyArchon.getAngleDegrees() + " !");
-//				if ((int)dir.getAngleDegrees() != (int)toEnemyArchon.getAngleDegrees()) {
-//					if (plantTree(dir)) {
-//						mem.treeCount++;
-//					} 
-//					
-//					waterTree();
-//				} else {
-//					System.out.println("Equaled the enemy loc");
-//				}
-//				
-//				
-//				dir = dir.rotateRightDegrees(72);
-//				Clock.yield();
-//			}
-//		} 
-//		else 
-//		{
-//			deployRobotLogic();
-//			Clock.yield();
-//			tryPlantFarm(); 
-//		}
-//		
-//		mem.setStrat(1);
 	}
 	
 	public boolean foundLand(float radius) throws GameActionException

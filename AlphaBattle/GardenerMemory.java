@@ -4,7 +4,7 @@ import battlecode.common.*;
 public class GardenerMemory extends RobotMemory
 {
 	//final double FARM_RADIUS = (GameConstants.BULLET_TREE_RADIUS * 2) + RobotType.GARDENER.bodyRadius + 0.3;
-	final float FARM_RADIUS = 1.75f;
+	final float FARM_RADIUS = 1.5f;
 	Direction dir; 
 	TreeInfo tree; 
 	int strat;
@@ -15,6 +15,7 @@ public class GardenerMemory extends RobotMemory
 	MapLocation farmLocation;
 	
 	MapLocation explorationLocation;
+	Direction exploreDirection;
 
 	public GardenerMemory(RobotController rc)
 	{
@@ -28,6 +29,7 @@ public class GardenerMemory extends RobotMemory
 		try
 		{
 			explorationLocation = rc.getLocation().add(TeamComms.getDirectionToInitialArchonLoc(), FARM_RADIUS);
+			exploreDirection = archonLocation.directionTo(rc.getLocation());
 		}
 		catch (GameActionException e)
 		{
@@ -36,22 +38,36 @@ public class GardenerMemory extends RobotMemory
 		}
 	}
 	
-	void updateExplorationLocation()
+	void updateExplorationLocation() throws GameActionException
 	{
-		// Spiral Out From Archon
-		float dist = (float)(archonLocation.distanceTo(explorationLocation) + .5);
-		Direction dir = archonLocation.directionTo(explorationLocation).rotateLeftDegrees(15);
-		explorationLocation = archonLocation.add(dir, dist);
+		if(rc.getLocation().distanceTo(archonLocation) > archonLocation.distanceTo(TeamComms.getInitialArchonLocation()) / 2)
+		{
+			explorationLocation = archonLocation;
+			exploreDirection = rc.getLocation().directionTo(archonLocation);
+		}
+		
+		Direction init = archonLocation.directionTo(rc.getLocation());
+		float angle = (float)((Math.random() - .5) * 120);
+		exploreDirection = init.rotateLeftDegrees(angle);
+		explorationLocation = rc.getLocation().add(exploreDirection, rc.getType().sensorRadius);
 	}
 	
 	public void updateMemory()
 	{
 		super.updateMemory();
-		if(explorationLocation == null)
-			return;
-		if(!foundFarmland && rc.getLocation().distanceTo(explorationLocation) < .2)
+		try
 		{
-			updateExplorationLocation();
+			if(explorationLocation == null)
+				return;
+			if(!foundFarmland && rc.getLocation().distanceTo(explorationLocation) <= rc.getType().bodyRadius)
+			{
+				updateExplorationLocation();
+			}
+		}
+		catch (GameActionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -106,8 +122,7 @@ public class GardenerMemory extends RobotMemory
 		Direction dir = getInitialDirection();
 		if(dir == null)
 		{
-			foundFarmland = false;
-			return;
+			dir = archonLocation.directionTo(rc.getLocation());
 		}
 		
 		for(int i = 0; i < 5; i++)
@@ -120,7 +135,7 @@ public class GardenerMemory extends RobotMemory
 			}
 		}
 		
-		if(openSpots < 3)
+		if(openSpots < 1)
 		{
 			foundFarmland = false;
 			return;

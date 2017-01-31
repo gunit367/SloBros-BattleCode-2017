@@ -33,7 +33,7 @@ public class Util {
     public static boolean tryMove(Direction dir) throws GameActionException 
     {
     	
-        return tryMove(dir, 10, 9);
+        return tryMove(dir, 10, 11);
     }
 
     /**
@@ -60,7 +60,7 @@ public class Util {
         }
         else if (Util.lastMove != null && rc.canMove(Util.lastMove))
         {
-        	rc.move(dir);
+        	rc.move(Util.lastMove);
         	return true;
         }
         
