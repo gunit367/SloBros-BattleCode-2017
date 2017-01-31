@@ -1,4 +1,4 @@
-package AnotherBattle;
+package OldBattle;
 import battlecode.common.*;
 
 // Maximum channels: 1000
