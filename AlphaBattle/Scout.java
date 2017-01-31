@@ -51,14 +51,10 @@ public class Scout extends RobotPlayer {
 		//if (loc != null) {
 			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
 		findEnemyTree();
-	    if (!rc.canMove(mem.getMyDirection())) {
+	    if (!Util.tryMove(mem.getMyDirection())) {
 	    	System.out.println("Setting direction to random!!!");
 			mem.setDirection(Util.randomDirection()); 
 		}
-	    else
-	    {
-	    	rc.move(mem.getMyDirection());
-	    }
 	}
 	
 	void executeAction() throws GameActionException {
@@ -87,14 +83,33 @@ public class Scout extends RobotPlayer {
 		return mem.enemiesInView.length > 0;
 	}
 	
-	void findEnemyTree()
+	void findEnemyTree() throws GameActionException
 	{
-		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, rc.getTeam().opponent());
+		TreeInfo[] enemyTrees = rc.senseNearbyTrees(RobotType.SCOUT.sensorRadius-1.0f, rc.getTeam().opponent());
+		RobotInfo robot = null;
+		int i;
 		
 		if (enemyTrees.length > 0)
 		{
-			mem.setDirection(Util.getDirectionToLocation(rc, enemyTrees[0].getLocation()));
-		}		
+			for (i=0; i<enemyTrees.length; i++)
+			{
+				robot = rc.senseRobotAtLocation(enemyTrees[i].getLocation());
+				//If there is no robot at tree's location
+				if (robot == null || robot.getID() == rc.getID())
+				{
+					break;
+				}
+				else
+				{
+					rc.setIndicatorLine(rc.getLocation(), robot.getLocation(), 0, 100, 100);
+				}
+			}
+			mem.setDirection(Util.getDirectionToLocation(rc, enemyTrees[i].getLocation()));
+			if (i == enemyTrees.length)
+			{
+				mem.setDirection(Util.randomDirection());
+			}
+		}	
 	}
 	
 	void harassFromCover() throws GameActionException
@@ -103,25 +118,25 @@ public class Scout extends RobotPlayer {
 		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
-			if (tree != null && tree.getTeam() == rc.getTeam().opponent()) {
+			if (tree != null && tree.getTeam() == rc.getTeam().opponent() && enemies.length > 0) {
 				RobotType type = enemies[0].getType();
 				
 				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT && rc.getTeamBullets() > 50)
 				{	
 					// If too far, attempt to follow the enemy
-					if (rc.getLocation().distanceTo(enemies[0].getLocation()) >= 1)
-					{
-						System.out.println("HERE");
-						MilitaryUtil.followEnemy(enemies[0], 0.5f);
-					}
+					//if (rc.getLocation().distanceTo(enemies[0].getLocation()) >= 1)
+					//{
+					//	System.out.println("HERE");
+					//	Util.tryMove(enemies[0].getLocation().add(enemies[0].getLocation().directionTo(rc.getLocation()), 0.5f), 1.0f);
+					//}
 					
-					System.out.println("Distance To: " + rc.getLocation().distanceTo(enemies[0].getLocation()));
+					//System.out.println("Distance To: " + rc.getLocation().distanceTo(enemies[0].getLocation()));
 					
 					//While there are still enemies and the path is clear, shoot at them from cover!
 					while (enemies.length > 0)
 					{
 					   MilitaryUtil.shootEnemy(rc, 3, enemies[0].ID);
-					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+					   enemies = rc.senseNearbyRobots(1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
 					
