@@ -38,6 +38,7 @@ public class LumberjackMemory extends RobotMemory
 		if (trees.length == 0)
 		{
 			bestTree = null;
+			isChopping = false;
 			return;
 		}
 		if (bestTree != null && rc.canSenseTree(bestTree.ID))
@@ -67,7 +68,7 @@ public class LumberjackMemory extends RobotMemory
 	
 	public boolean shouldChop()
 	{
-		return trees.length > 0;
+		return rc.senseNearbyTrees(GameConstants.LUMBERJACK_STRIKE_RADIUS, Team.NEUTRAL).length > 0 || bestTree != null;
 	}
 	
 	public boolean shouldMove() {

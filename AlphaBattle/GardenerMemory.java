@@ -4,7 +4,7 @@ import battlecode.common.*;
 public class GardenerMemory extends RobotMemory
 {
 	//final double FARM_RADIUS = (GameConstants.BULLET_TREE_RADIUS * 2) + RobotType.GARDENER.bodyRadius + 0.3;
-	final float FARM_RADIUS = 1.3f;
+	final float FARM_RADIUS = 1.75f;
 	Direction dir; 
 	TreeInfo tree; 
 	int strat;

@@ -192,6 +192,7 @@ public class Gardener extends RobotPlayer {
 	void constructFarm() throws GameActionException
 	{
 		// Construct Farm
+		waterTree();
 		if(mem.treeCount < mem.farmDirections.length - 1)
 		{
 			// Not enough trees, try and plant one
@@ -208,7 +209,10 @@ public class Gardener extends RobotPlayer {
 	{
 		// Expand Outward to find better land
 		// Calculate Move
-		Util.tryMove(getExploreDirection());
+		if (!Util.tryMove(getExploreDirection()))
+		{
+			mem.explorationLocation = mem.explorationLocation.add(rc.getLocation().directionTo(mem.explorationLocation).rotateRightDegrees(90));
+		}
 		
 		// Update to see it this place is chill
 		mem.foundFarmland = foundLand((float)mem.FARM_RADIUS);
@@ -217,6 +221,9 @@ public class Gardener extends RobotPlayer {
 			// Just found a suitable place!
 			mem.newFarm();
 		}
+		
+		// Spawn a Lumberjack
+		attemptDeploy(Util.randomDirection(), RobotType.LUMBERJACK);
 	}
 	
 	public void tryPlantFarm() throws GameActionException 
@@ -278,7 +285,7 @@ public class Gardener extends RobotPlayer {
 	{
 		TreeInfo[] trees = rc.senseNearbyTrees(radius, rc.getTeam());
 		
-		if (trees.length == 0 && !(mem.canSeeAllyArchon(mem.FARM_RADIUS)) && rc.onTheMap(rc.getLocation(), radius))
+		if (trees.length == 0 && rc.getLocation().distanceTo(mem.archonLocation) > mem.FARM_RADIUS && rc.onTheMap(rc.getLocation(), radius))
 		{
 			return true;
 		}

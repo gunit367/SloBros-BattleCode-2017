@@ -33,7 +33,22 @@ public class Util {
     {
     	
         if(!tryMove(dir, 10,5))
-        	return tryMove(dir.rotateLeftDegrees(90), 10, 5);
+        {
+        	if (tryMove(dir.rotateLeftDegrees(90), 10, 5))
+        	{
+        		moveDir = -1;
+        		return true;
+        	}
+        	else if (tryMove(dir.rotateRightDegrees(90),10, 5))
+        	{
+        		moveDir = 1;
+        		return true;
+        	}
+        	else
+        	{
+        		return tryMove(dir.opposite(), 10, 5);
+        	}
+        }
         return true;
     }
 
