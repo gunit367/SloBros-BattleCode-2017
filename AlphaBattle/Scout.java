@@ -51,10 +51,14 @@ public class Scout extends RobotPlayer {
 		//if (loc != null) {
 			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
 		findEnemyTree();
-	    if (!Util.tryMove(mem.getMyDirection())) {
-	    	System.out.println("Setting diretion to random!!!");
+	    if (!rc.canMove(mem.getMyDirection())) {
+	    	System.out.println("Setting direction to random!!!");
 			mem.setDirection(Util.randomDirection()); 
 		}
+	    else
+	    {
+	    	rc.move(mem.getMyDirection());
+	    }
 	}
 	
 	void executeAction() throws GameActionException {
@@ -67,6 +71,7 @@ public class Scout extends RobotPlayer {
 		try
 		{
 			int num = TeamComms.getScouts();
+			mem.setDirection(rc.getLocation().directionTo(TeamComms.getOppArchonLoc()));
 			return num;
 		}
 		catch (Exception e)
@@ -104,10 +109,13 @@ public class Scout extends RobotPlayer {
 				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT && rc.getTeamBullets() > 50)
 				{	
 					// If too far, attempt to follow the enemy
-					if (rc.getLocation().distanceTo(enemies[0].getLocation()) > 1)
+					if (rc.getLocation().distanceTo(enemies[0].getLocation()) >= 1)
 					{
+						System.out.println("HERE");
 						MilitaryUtil.followEnemy(enemies[0], 0.5f);
 					}
+					
+					System.out.println("Distance To: " + rc.getLocation().distanceTo(enemies[0].getLocation()));
 					
 					//While there are still enemies and the path is clear, shoot at them from cover!
 					while (enemies.length > 0)
@@ -116,6 +124,7 @@ public class Scout extends RobotPlayer {
 					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
+					
 				}
 			}
 		} catch (GameActionException e) {
