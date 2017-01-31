@@ -50,9 +50,10 @@ public class Scout extends RobotPlayer {
 		//avoidFriendlyScout();
 		//if (loc != null) {
 			//Util.tryMove(rc, rc.getLocation().directionTo(loc));
-		if (!Util.tryMove(mem.getMyDirection())) {
+		findEnemyTree();
+	    if (!Util.tryMove(mem.getMyDirection())) {
+	    	System.out.println("Setting diretion to random!!!");
 			mem.setDirection(Util.randomDirection()); 
-			Util.tryMove(mem.getMyDirection());
 		}
 	}
 	
@@ -81,18 +82,33 @@ public class Scout extends RobotPlayer {
 		return mem.enemiesInView.length > 0;
 	}
 	
+	void findEnemyTree()
+	{
+		TreeInfo[] enemyTrees = rc.senseNearbyTrees(-1, rc.getTeam().opponent());
+		
+		if (enemyTrees.length > 0)
+		{
+			mem.setDirection(Util.getDirectionToLocation(rc, enemyTrees[0].getLocation()));
+		}		
+	}
+	
 	void harassFromCover() throws GameActionException
 	{
 		RobotInfo[] enemies = mem.enemiesInView;
 		TreeInfo tree = rc.senseTreeAtLocation(rc.getLocation());
 		// If enemies nearby & on a tree, move toward enemy
 		try {
-			if (tree != null && tree.getTeam() == rc.getTeam().opponent() && enemies.length > 0) {
+			if (tree != null && tree.getTeam() == rc.getTeam().opponent()) {
 				RobotType type = enemies[0].getType();
-				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT)
-				{
-					//Stop moving
-					mem.setDirection(Util.getDirectionToLocation(rc, rc.getLocation()));
+				
+				if (type == RobotType.GARDENER || type == RobotType.ARCHON || type == RobotType.SCOUT && rc.getTeamBullets() > 50)
+				{	
+					// If too far, attempt to follow the enemy
+					if (rc.getLocation().distanceTo(enemies[0].getLocation()) > 1)
+					{
+						MilitaryUtil.followEnemy(enemies[0], 0.5f);
+					}
+					
 					//While there are still enemies and the path is clear, shoot at them from cover!
 					while (enemies.length > 0)
 					{
@@ -100,100 +116,10 @@ public class Scout extends RobotPlayer {
 					   enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
 					   Clock.yield();
 					}
-					//No more enemies, move to next enemy tree. ***IMPLEMENT***
-					moveToNextEnemyTree();
 				}
 			}
 		} catch (GameActionException e) {
 			System.out.println("Error in Scout harassFromCover!");
-			e.printStackTrace();
-		}
-	}
-	
-	void moveToNextEnemyTree()
-	{
-		TreeInfo t = findNextEnemyTree();
-		
-		if (t == null)
-		{
-			return;
-		}
-		
-		mem.setDirection(rc.getLocation().directionTo(t.getLocation()));
-		try {
-			if (Util.tryMove(mem.getMyDirection()))
-			{
-			   	harassFromCover();
-			}
-			else
-			{
-				System.out.println("Error moving to tree in moveToNextEnemyTree!");
-			}
-		} catch (GameActionException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error moving to next enemy tree in scout!");
-			e.printStackTrace();
-		}
-	}
-	
-	TreeInfo findNextEnemyTree()
-	{
-		TreeInfo[] enemyTrees = rc.senseNearbyTrees(5, rc.getTeam().opponent());
-		int i=0;
-		
-		while (i<enemyTrees.length)
-		{
-			if (enemyTrees[i].getLocation() != rc.getLocation())
-			{
-				return enemyTrees[i];
-			}
-			i++;
-		}
-		return null;
-	}
-	
-	void returnToCover(MapLocation tree_loc)
-	{
-		BulletInfo[] bullets = RobotPlayer.rc.senseNearbyBullets();
-		
-		if (bullets.length > 0)
-		{
-			mem.setDirection(Util.getDirectionToLocation(rc, tree_loc));
-		}
-	}
-	
-	void avoidFriendlyScout()
-	{
-	   RobotInfo[] robots = rc.senseNearbyRobots(3, rc.getTeam()); 	
-	   
-	   for (int i=0; i<robots.length; i++)
-	   {
-		   // If scout comes in contact with a friendly scout, choose a new random direction
-		   if (robots[i].type == RobotType.SCOUT)
-		   {
-			   mem.setDirection(Util.randomDirection());
-		   }
-	   }
-	}
-	
-	// Attempts to fire at the first enemy seen this turn, 
-	void fireAtFirstEnemy()
-	{
-		try
-		{
-			if (rc.canFireSingleShot()) {
-	            // ...Then fire a bullet in the direction of the enemy.
-	            rc.fireSingleShot(rc.getLocation().directionTo(mem.enemiesInView[0].location));
-	        }
-			if (!rc.hasAttacked())
-			{
-				// Try to follow the enemy if attacking couldn't happen
-				Util.tryMove(followEnemy(mem.enemiesInView[0], 8.5f));
-			}
-		} 
-		catch (Exception e)
-		{
-			System.out.println("Scout Raised Exception while Firing");
 			e.printStackTrace();
 		}
 	}
